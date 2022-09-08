@@ -8,6 +8,8 @@ upload-chart:
   tags:
     - k8s
     - graphaware
+  variables:
+    HARBOR_USERNAME: 'robot$imagepull-secret-shared'
   script:
     - apt update && apt install -y curl git
     - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 &&  chmod 700 get_helm.sh
