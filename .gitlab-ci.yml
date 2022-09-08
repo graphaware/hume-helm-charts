@@ -13,8 +13,7 @@ upload-chart:
     - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 &&  chmod 700 get_helm.sh
     - ./get_helm.sh
     - helm plugin install https://github.com/chartmuseum/helm-push
-    - export HARBOR_USERNAME='robot$imagepull-secret-shared' 
-    - echo $HARBOR_USERNAME
+    - export HARBOR_USERNAME='robot$imagepull-secret-shared'
     - helm repo add --username $HARBOR_USERNAME --password $HARBOR_PASSWORD ga-public https://docker.graphaware.com/chartrepo/public
     - helm package .
     - helm cm-push hume-*.tgz ga-public
