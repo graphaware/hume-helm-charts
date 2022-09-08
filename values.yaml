@@ -1,0 +1,228 @@
+# Default values for hume-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Base domain as Hume entrypoint
+baseDomain: ""
+
+imagePullSecrets:
+   - name: graphaware-docker-creds
+
+nameOverride: ""
+fullnameOverride: "hume"
+
+# Used to have predictable service name to configure networking between API and Postgres Core
+postgresql-core-reference: &postgresql_core_reference postgresql-core
+
+repositoryBase: "docker.graphaware.com/internal/"
+imagePullPolicy: "Always"
+tiers:
+  discover:
+    name: "hume-discover"
+keycloak:
+  enabled: false
+  realm: hume
+  client: "hume-web"
+  fullnameOverride: hume-keycloak
+  service:
+    type: ClusterIP
+  app:
+    name: hume-keycloak
+  proxyAddressForwarding: true
+web:
+  image:
+    name: "hume-web"
+  port: 8081
+  service:
+    type: ClusterIP
+  replicaCount: 1
+  app:
+    name: hume-web
+api:
+  image:
+    name: "hume-api"
+  port: 8080  
+  replicaCount: 1
+  service:
+    type: NodePort
+  app:
+    name: hume-api  
+  admin:
+    auto_create: true
+    # neo4j random password
+    username: admin@hume.k8s
+    password: password
+  gitsync: false  
+  licence:
+    auto_install: false
+    key: ""
+gitsync:
+  username: ""
+  token: ""
+  branch: ""     
+  repository: ""
+neo4j:
+  enabled: true
+  image: "docker.graphaware.com/mirror/neo4j"
+  imageTag: "4.3.3-enterprise"
+  fullnameOverride: "neo4j"
+  fullnamePrefix: "hume-"
+  existingPasswordSecret: ""
+  core:
+    standalone: true
+  plugins: "['apoc','graph-data-science']"
+  acceptLicenseAgreement: "yes"
+  neo4jPassword: password
+orchestra:
+  enabled: true
+  image:
+    name: "hume-orchestra"
+  port: 8100
+  service:
+    type: ClusterIP
+  persistence:
+    enabled: false
+    ## A manually managed Persistent Volume and Claim
+    ## If defined, PVC must be created manually before volume will be bound
+    ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
+    ##
+    # existingClaim:
+    accessModes:
+      - ReadWriteOnce
+    mountPath: "/data"
+    subPath: ""
+    size: 100Mi
+    annotations: {}
+    ## selector can be used to match an existing PersistentVolume
+    ## selector:
+    ##   matchLabels:
+    ##     app: my-app
+    selector: {}
+  startupProbe:
+    failureThreshold: 20
+    periodSeconds: 7
+    path: /actuator/metrics
+    port: metrics
+  livenessProbe:
+    failureThreshold: 10
+    timeoutSeconds: 10
+    periodSeconds: 5
+    path: /actuator/metrics
+    port: metrics
+  readinessProbe:
+    failureThreshold: 10
+    timeoutSeconds: 10
+    periodSeconds: 5
+    path: /actuator/metrics
+    port: metrics
+postgres:
+  enabled: true
+alerting:
+  enabled: false
+  uri: "http://hume-alerting-development"
+  client:
+    enabled: true
+
+hume-alerting:
+  internal-kafka:
+    enabled: false
+  kafka:
+    host: pkc-e8mp5.eu-west-1.aws.confluent.cloud
+  postgresqlAlertingOperator:
+    global:
+      postgresqlPassword: ""
+
+  postgresqlAlertingControllerperator:
+    global:
+      postgresqlPassword: ""
+
+
+postgresqlCore:
+  global:
+    postgresql:
+      postgresqlDatabase: hume
+      postgresqlUsername: hume
+      postgresqlPassword: hume
+      servicePort: 5432
+  fullnameOverride: *postgresql_core_reference
+
+
+replicaCount: 1
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+
+ingress:
+  enabled: true
+  apiVersion: networking.k8s.io/v1
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/group.name: default-internal
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+  appNameSuffix: "-test"
+  ingressClassName: ""
+  pathType: Prefix
+  protocol:
+    scheme: https
+  path: "/"
+  startupProbe:
+    failureThreshold: 20
+    periodSeconds: 7
+  livenessProbe:
+    failureThreshold: 10
+    timeoutSeconds: 10
+    periodSeconds: 5
+  readinessProbe:
+    failureThreshold: 10
+    timeoutSeconds: 10
+    periodSeconds: 5
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+annotations: {}
+
+deploymentStrategy:
+  type: RollingUpdate

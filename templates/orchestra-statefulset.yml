@@ -1,0 +1,115 @@
+{{- if .Values.orchestra.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  serviceName: "orchestra"
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-orchestra
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-orchestra
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-orchestra
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.repositoryBase }}{{ .Values.orchestra.image.name }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: orchestra
+              containerPort: {{ .Values.orchestra.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: {{ .Values.orchestra.startupProbe.path }}
+              port: {{ .Values.orchestra.startupProbe.port }}
+            failureThreshold: {{ .Values.orchestra.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.orchestra.startupProbe.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.orchestra.livenessProbe.path }}
+              port: {{ .Values.orchestra.livenessProbe.port }}
+            failureThreshold: {{ .Values.orchestra.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.orchestra.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.orchestra.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.orchestra.readinessProbe.path }}
+              port: {{ .Values.orchestra.readinessProbe.port }}
+            failureThreshold: {{ .Values.orchestra.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.orchestra.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.orchestra.readinessProbe.timeoutSeconds }}
+          env:
+            {{- if .Values.orchestra.persistence.enabled }}
+            - name: "orchestra.tmpdir"
+              value: "{{ .Values.orchestra.persistence.mountPath }}"
+            {{- end }}
+            - name: "orchestra.autostart.default.enabled"
+              value: "true"
+            - name: "orchestra.startup.workflows.autoload"
+              value: "true"
+          resources:
+            {{- toYaml .Values.orchestra.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.orchestra.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.orchestra.persistence.mountPath }}
+              subPath: {{ .Values.orchestra.persistence.subPath }}
+            {{- end }}
+      volumes:
+{{- if and .Values.orchestra.persistence.enabled .Values.orchestra.persistence.existingClaim }}
+        - name: data
+          persistentVolumeClaim:
+{{- with .Values.orchestra.persistence.existingClaim }}
+            claimName: {{ tpl . $ }}
+{{- end }}
+{{- else if not .Values.orchestra.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+{{- else if and .Values.orchestra.persistence.enabled (not .Values.orchestra.persistence.existingClaim) }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      {{- with .Values.orchestra.persistence.annotations }}
+        annotations:
+        {{- range $key, $value := . }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+      {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.orchestra.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.orchestra.persistence.size | quote }}
+        {{ include "common.storage.class" (dict "persistence" .Values.orchestra.persistence "global" .Values.global) }}
+        {{- if .Values.orchestra.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.orchestra.persistence.selector "context" $) | nindent 10 }}
+        {{- end -}}
+{{- end }}
+{{- end }}

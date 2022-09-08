@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-api-configmap
+  labels:
+  {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-core:{{ .Values.postgresqlCore.global.postgresql.servicePort }}/{{ .Values.postgresqlCore.global.postgresql.postgresqlDatabase }}"
+  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlCore.global.postgresql.postgresqlUsername }}
+  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlCore.global.postgresql.postgresqlPassword }}
+  hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
+  {{- if .Values.keycloak.enabled }}
+  hume.security.provider: 'keycloak'
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ .Values.baseDomain }}/auth"
+  keycloak.realm: {{ .Values.keycloak.realm }}
+  keycloak.resource: {{ .Values.keycloak.client }}
+  keycloak.public-client: 'true'
+  keycloak.principal-attribute: 'preferred_username'
+  keycloak.use-resource-role-mappings: 'true'
+  keycloak.enabled: 'true'
+  {{- end}}
+  {{- if .Values.alerting.enabled }}
+  hume.feature.alerts.enabled: 'true'
+  hume.feature.collections.enabled: true'
+  hume.alerting.uri: {{ .Values.alerting.uri }}
+  alerting.client.enabled: 'true'
+  {{- end}}
+  {{- if .Values.api.admin.auto_create }}
+  com.hume.core.admin.setup.step.admin_creation.auto: 'true'
+  com.hume.core.admin.setup.step.admin_creation.username: {{ .Values.api.admin.username }}
+  com.hume.core.admin.setup.step.admin_creation.name: {{ .Values.api.admin.username }}
+  com.hume.core.admin.setup.step.admin_creation.password: {{ .Values.api.admin.password }}
+  {{- end}}
+  {{- if .Values.api.licence.auto_install }}
+  com.hume.core.security.license.b64: {{ .Values.api.licence.key }}
+  {{- end}}
+  {{- if .Values.api.gitsync }}
+  hume.init.directory: '/init/sync/config'
+  hume.init.enabled: 'true'
+  com.hume.testing.unsecure.enabled: 'true'
+  {{- end}}
+---

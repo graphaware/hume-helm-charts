@@ -1,0 +1,25 @@
+apiVersion: v2
+name: hume
+home: https://www.graphaware.com
+version: 2.13.0-1
+appVersion: "2.13.0-SNAPSHOT"
+type: application
+description: "Helm Chart for GraphAware Hume - A Graph-Powered Insights Engine"
+dependencies:
+    - name: postgresql
+      version: 10.16.1
+      repository: https://charts.bitnami.com/bitnami
+      alias: postgresqlCore
+    - name: keycloak
+      version: 6.2.5
+      repository: https://charts.bitnami.com/bitnami
+      alias: keycloak
+      condition: keycloak.enabled
+    - name: neo4j
+      version: "4.3.6"
+      repository: "https://docker.graphaware.com/chartrepo/mirror"
+      condition: neo4j.enabled
+    - name: hume-alerting
+      version: "0.1.4"
+      repository: "https://docker.graphaware.com/chartrepo/public" 
+      condition: alerting.enabled

@@ -1,0 +1,20 @@
+image: debian:stable-slim
+
+stages:
+  - upload
+
+upload-chart:
+  stage: upload
+  tags:
+    - k8s
+    - graphaware
+  script:
+    - apt update && apt install -y curl git
+    - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 &&  chmod 700 get_helm.sh
+    - ./get_helm.sh
+    - helm plugin install https://github.com/chartmuseum/helm-push
+    - helm repo add --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}' ga-public https://docker.graphaware.com/chartrepo/public
+    - helm package hume-helm-public
+    - helm cm-push hume-*.tgz ga-public
+  only:
+    - main

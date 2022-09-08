@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-web
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.web.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-web
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{ toYaml . | trim | indent 4 }}
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-web
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-web
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.repositoryBase }}{{ .Values.web.image.name }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: web
+              containerPort: 8081
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-web-configmap
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-api
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.api.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-api
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{ toYaml . | trim | indent 4 }}
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-api
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: sync-data
+          emptyDir: {}
+      containers:
+        {{- if .Values.api.gitsync }}
+        - name: git-sync-sidecar
+          image: k8s.gcr.io/git-sync:v3.1.6
+          args:
+            - "-repo={{ .Values.gitsync.repository}}"
+            - "-branch={{ .Values.gitsync.branch}}"
+            - "-depth=1"
+            - "-max-sync-failures=-1"
+            - "-root=/data/sync"
+            - "-dest=config"
+            - "-wait=60"
+            - "-username={{ .Values.gitsync.username}}"
+            - "-password={{ .Values.gitsync.token}}"
+          volumeMounts:
+            - name: sync-data
+              mountPath: /data
+              readOnly: false
+        {{- end }}
+        - name: {{ include "hume-helm.fullname" . }}-api
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.repositoryBase }}{{ .Values.api.image.name }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: api
+              containerPort: 8080
+              protocol: TCP
+          # Seems there is an issue in 2.11 snapshot with the probe and the commit-id plugin
+          # Disabling for now
+          # livenessProbe:
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: api
+          # readinessProbe:
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: api
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-api-configmap
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+          {{- if .Values.api.gitsync }}
+          volumeMounts:
+            - name: sync-data
+              mountPath: /init
+              readOnly: true
+          {{- end}}

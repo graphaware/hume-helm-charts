@@ -1,0 +1,15 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.16.1
+- name: keycloak
+  repository: https://charts.bitnami.com/bitnami
+  version: 6.2.5
+- name: neo4j
+  repository: https://docker.graphaware.com/chartrepo/mirror
+  version: 4.3.6
+- name: hume-alerting
+  repository: https://docker.graphaware.com/chartrepo/public
+  version: 0.1.4
+digest: sha256:2a8326cc88cb97201bf34873c54fcfe188a6a509903ff4121e3c930cf99f54fa
+generated: "2022-09-08T10:54:13.96436+02:00"
