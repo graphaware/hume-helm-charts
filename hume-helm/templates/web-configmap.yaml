@@ -9,10 +9,10 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
-  HUME_API_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.api.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ .Values.baseDomain }}"
+  HUME_API_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.api.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
   {{- if .Values.keycloak.enabled}}
   KEYCLOAK_ENABLED: 'true'
-  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ .Values.baseDomain }}/auth"
+  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}/auth"
   KEYCLOAK_REALM: {{ .Values.keycloak.realm }}
   KEYCLOAK_CLIENT: {{ .Values.keycloak.client }}
   {{- end}}

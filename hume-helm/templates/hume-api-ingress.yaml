@@ -15,7 +15,7 @@ metadata:
   annotations:
   {{ toYaml . | indent 4 }}
   {{- end }}
-spec:
+spec:s
   {{- if .Values.ingress.ingressClassName }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
   {{- end -}}
@@ -24,7 +24,7 @@ spec:
 {{ tpl (toYaml .Values.ingress.tls) $ | indent 4 }}
 {{- end }}
   rules:
-    - host: {{ .Values.api.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ .Values.baseDomain }}
+    - host: {{ .Values.api.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}
       http:
         paths:
           - path: {{ .Values.ingress.path }}

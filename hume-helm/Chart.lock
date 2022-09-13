@@ -5,11 +5,11 @@ dependencies:
 - name: keycloak
   repository: https://charts.bitnami.com/bitnami
   version: 10.0.0
-- name: neo4j
-  repository: https://docker.graphaware.com/chartrepo/mirror
-  version: 4.3.6
+- name: neo4j-standalone
+  repository: https://helm.neo4j.com/neo4j
+  version: 4.4.11
 - name: hume-alerting
   repository: https://docker.graphaware.com/chartrepo/public
   version: 0.1.4
-digest: sha256:bca0afe906d5e9261e6d813ef17a64d4969306f8dfe5e63107378b166ebad7b0
-generated: "2022-09-13T09:38:09.262597+02:00"
+digest: sha256:31436a489e74b5a2cfe06e794dcbae650f63ff3bbeebe71ce1dc00603a71fc8d
+generated: "2022-09-13T15:12:46.001116+02:00"

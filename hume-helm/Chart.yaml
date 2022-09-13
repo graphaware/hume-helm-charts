@@ -6,9 +6,10 @@ appVersion: "2.16.0-SNAPSHOT"
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/graphaware.com/favicon.ico
 keywords:
+  - graphaware
   - hume
   - neo4j
-  - graphs
+  - graph
 description: "Helm Chart for GraphAware Hume - A Graph-Powered Insights Engine"
 dependencies:
     - name: postgresql
@@ -20,10 +21,11 @@ dependencies:
       repository: https://charts.bitnami.com/bitnami
       alias: keycloak
       condition: keycloak.enabled
-    - name: neo4j
-      version: "4.3.6"
-      repository: "https://docker.graphaware.com/chartrepo/mirror"
+    - name: neo4j-standalone
+      version: "4.4.11"
+      repository: "https://helm.neo4j.com/neo4j"
       condition: neo4j.enabled
+      alias: neo4j
     - name: hume-alerting
       version: "0.1.4"
       repository: "https://docker.graphaware.com/chartrepo/public" 

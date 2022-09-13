@@ -11,6 +11,8 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: "hume"
 
+services: ""
+
 # Used to have predictable service name to configure networking between API and Postgres Core
 postgresql-core-reference: &postgresql_core_reference postgresql-core
 
@@ -62,17 +64,18 @@ gitsync:
   branch: ""     
   repository: ""
 neo4j:
-  enabled: true
-  image: "docker.graphaware.com/mirror/neo4j"
-  imageTag: "4.3.3-enterprise"
-  fullnameOverride: "neo4j"
-  fullnamePrefix: "hume-"
-  existingPasswordSecret: ""
-  core:
-    standalone: true
-  plugins: "['apoc','graph-data-science']"
-  acceptLicenseAgreement: "yes"
-  neo4jPassword: password
+  nameOverride: "neo4j"
+  namePrefix: "hume-"
+  neo4j:
+    name: neo4j
+    enabled: true
+    fullnameOverride: "neo4j"
+    fullnamePrefix: "hume-"
+    acceptLicenseAgreement: "yes"
+    password: password
+  volumes:
+    data:
+      mode: "defaultStorageClass"
 orchestra:
   enabled: true
   image:
