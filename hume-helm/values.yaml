@@ -117,6 +117,7 @@ orchestra:
     port: metrics
 postgres:
   enabled: true
+
 alerting:
   enabled: false
   uri: "http://hume-alerting-development"
@@ -136,16 +137,15 @@ hume-alerting:
     global:
       postgresqlPassword: ""
 
-
 postgresqlCore:
   global:
     postgresql:
-      postgresqlDatabase: hume
-      postgresqlUsername: hume
-      postgresqlPassword: hume
-      servicePort: 5432
+      auth:
+        database: hume
+        username: hume
+        password: hume
+        servicePort: 5432
   fullnameOverride: *postgresql_core_reference
-
 
 replicaCount: 1
 
@@ -170,15 +170,9 @@ securityContext:
   runAsNonRoot: true
 
 ingress:
-  enabled: true
+  enabled: false
   apiVersion: networking.k8s.io/v1
-  annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internal
-    alb.ingress.kubernetes.io/group.name: default-internal
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
-    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+  annotations: {}
   appNameSuffix: "-test"
   ingressClassName: ""
   pathType: Prefix
