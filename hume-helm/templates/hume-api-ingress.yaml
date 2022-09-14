@@ -15,7 +15,7 @@ metadata:
   annotations:
   {{ toYaml . | indent 4 }}
   {{- end }}
-spec:s
+spec:
   {{- if .Values.ingress.ingressClassName }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
   {{- end -}}

@@ -40,7 +40,6 @@ $ helm install my-release graphaware/hume -f values.yaml
 
 These commands deploy a Hume application on the Kubernetes cluster in the default configuration.
 
-> **Tip**: List all releases using `helm list`
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
