@@ -24,16 +24,17 @@ This chart bootstraps a [Hume](https://github.com/graphaware/hume-helm-charts) d
 
 To install the chart with the release name `my-release`:
 
-1, Create ImagePullSecret:
+1, Create Docker secret in order to pull Docker images from private registry:
 ```bash
-kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' --docker-email='tomas.hrabec@graphaware.com' -n helm
+$ kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' --docker-email='<email>' -n helm
 ```
-2, Add Helm Chart and install it:
+2, Add GraphAware Helm repository and install it:
 ```bash
 $ helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
+
 $ helm install my-release graphaware/hume --set baseDomain=<your-domain> -n hume --create-namespace
 or
-$ helm install my-release graphaware/hume -f values.yaml
+$ helm install my-release graphaware/hume -n hume --create-namespace -f values.yaml
 ```
 
 These commands deploy a Hume application on the Kubernetes cluster in the default configuration.
