@@ -2,7 +2,7 @@
 
 # Hume packaged by GraphAware
 
-Hume is a 
+Hume is an enterprise-level graph analytics solution that is easy to set up, maintain, and use. Hume helps organisations gain a competitive advantage by leveraging the power of graphs.
 
 [Overview of Hume](https://www.graphaware.com/products/hume/)
 
@@ -33,35 +33,64 @@ $ kubectl create secret docker-registry graphaware-docker-creds --docker-server=
 ```bash
 $ helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
 
-$ helm install my-release graphaware/hume --set baseDomain=<your-domain> -n hume
+$ helm install my-release graphaware/hume -n hume
 or
 $ helm install my-release graphaware/hume -n hume -f values.yaml
 ```
+> **_NOTE:_**  These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
 
-These commands deploy a Hume application on the Kubernetes cluster in the default configuration.
+## Ingress
 
+In order to deploy Ingress resource we have to define `baseDomain` parameter and annotations per your Ingress Controller.
+
+**[AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/)**
+
+Example of `values.yaml`:
+```bash
+baseDomain: "<your-domain>"
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: "internal"
+    alb.ingress.kubernetes.io/group.name: "default-internal"
+    alb.ingress.kubernetes.io/target-type: "ip"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+```
+
+**[Nginx Ingresss Controller](https://kubernetes.github.io/ingress-nginx/)**
+
+Example of `values.yaml`:
+```bash
+baseDomain: "<your-domain>"
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+```
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
 
 ```bash
-$ helm uninstall my-release
+$ helm uninstall my-release -n hume
 ```
-
 The command removes all the Kubernetes components associated with the chart and deletes the release.
-
-## Ingress
-
-xxx
-
 ## Parameters
 
-### Global parameters
-| Name                      | Description                                     | Value |
-| ------------------------- | ----------------------------------------------- | ----- |
-| `global.imageRegistry`    | Global Docker image registry                    | `""`  |
-| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]`  |
-| `global.storageClass`     | Global StorageClass for Persistent Volume(s)    | `""`  |
+| Name                      | Description                                                                         | Value                             |
+| ------------------------- | ----------------------------------------------------------------------------------- | --------------------------------- |
+| `baseDomain`              | Domain name (for example graphaware.com)                                            | `""`                              |
+| `imagePullSecrets`        | Docker registry secret name                                                         | `graphaware-docker-creds`         |
+| `autoscaling`             | Enable autoscaling for Hume                                                         | `"false"`                         |
+| `deploymentStrategy`      | Kubernetes Deployment Strategy Type                                                 | `"RollingUpdate"`                 |
+| `nameOverride`            | String to partially override hume.fullname                                          | `""`                              |
+| `fullnameOverride`        | String to fully override hume.fullname                                              | `"hume"`                          |
+| `ingress.enabled`         | Enables ingress                                                                     | `"false"`                         |
+| `autoscaling`             | Enable autoscaling for Hume                                                         | `"false"`                         |
+| `keycloak.enabled`        | Enable Keycloak                                                                     | `"false"`                         |
+| `serviceAccount.create`   | Enable ServiceAccount                                                               | `"true"`                          |
 
 ## License
 

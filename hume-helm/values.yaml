@@ -2,25 +2,47 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Base domain as Hume entrypoint
+### Global parameters ###
 baseDomain: ""
-
 imagePullSecrets:
    - name: graphaware-docker-creds
-
-nameOverride: ""
-fullnameOverride: "hume"
-
-services: ""
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+deploymentStrategy:
+  type: RollingUpdate
+nodeSelector: {}
+tolerations: []
+affinity: {}
+annotations: {}
+podAnnotations: {}
 
 # Used to have predictable service name to configure networking between API and Postgres Core
 postgresql-core-reference: &postgresql_core_reference postgresql-core
-
 repositoryBase: "docker.graphaware.com/internal/"
 imagePullPolicy: "Always"
 tiers:
   discover:
     name: "hume-discover"
+
+### Exposure paratemters
+ingress:
+  enabled: false
+  apiVersion: networking.k8s.io/v1
+  annotations: {}
+  ingressClassName: ""
+  pathType: Prefix
+  protocol:
+    scheme: https
+  path: "/"
+
+### Common parameters
+nameOverride: ""
+fullnameOverride: "hume"
+
+### Application based parameters ###
 keycloak:
   enabled: false
   realm: hume
@@ -85,21 +107,12 @@ orchestra:
     type: ClusterIP
   persistence:
     enabled: false
-    ## A manually managed Persistent Volume and Claim
-    ## If defined, PVC must be created manually before volume will be bound
-    ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
-    ##
-    # existingClaim:
     accessModes:
       - ReadWriteOnce
     mountPath: "/data"
     subPath: ""
     size: 100Mi
     annotations: {}
-    ## selector can be used to match an existing PersistentVolume
-    ## selector:
-    ##   matchLabels:
-    ##     app: my-app
     selector: {}
   startupProbe:
     failureThreshold: 20
@@ -120,13 +133,11 @@ orchestra:
     port: metrics
 postgres:
   enabled: true
-
 alerting:
   enabled: false
   uri: "http://hume-alerting-development"
   client:
     enabled: true
-
 hume-alerting:
   internal-kafka:
     enabled: false
@@ -135,11 +146,9 @@ hume-alerting:
   postgresqlAlertingOperator:
     global:
       postgresqlPassword: ""
-
   postgresqlAlertingControllerperator:
     global:
       postgresqlPassword: ""
-
 postgresqlCore:
   global:
     postgresql:
@@ -150,8 +159,7 @@ postgresqlCore:
         servicePort: 5432
   fullnameOverride: *postgresql_core_reference
 
-replicaCount: 1
-
+### RBAC parameters
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -161,65 +169,11 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
-
+### Security parameters
 podSecurityContext:
   fsGroup: 2000
-
 securityContext:
   capabilities:
     drop:
     - ALL
   runAsNonRoot: true
-
-ingress:
-  enabled: false
-  apiVersion: networking.k8s.io/v1
-  annotations: {}
-  appNameSuffix: "-test"
-  ingressClassName: ""
-  pathType: Prefix
-  protocol:
-    scheme: https
-  path: "/"
-  startupProbe:
-    failureThreshold: 20
-    periodSeconds: 7
-  livenessProbe:
-    failureThreshold: 10
-    timeoutSeconds: 10
-    periodSeconds: 5
-  readinessProbe:
-    failureThreshold: 10
-    timeoutSeconds: 10
-    periodSeconds: 5
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-annotations: {}
-
-deploymentStrategy:
-  type: RollingUpdate

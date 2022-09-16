@@ -1,4 +1,4 @@
 {{- if .Values.ingress.enabled }}
 1. The application URL:
-Please visit {{ .Values.ingress.protocol.scheme }}://{{ .Values.web.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ .Values.baseDomain }}
+Please visit {{ .Values.ingress.protocol.scheme }}://{{ .Values.web.app.name }}.{{ .Values.baseDomain }}
 {{- end }}
