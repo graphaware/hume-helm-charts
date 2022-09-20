@@ -25,26 +25,40 @@ This chart bootstraps a [Hume](https://github.com/graphaware/hume-helm-charts) d
 
 ### Prepare the release
 
-To install the chart with the release name `my-release`:
-
-1. Create Docker secret in order to pull Docker images from private registry:
+1. Create a new namespace dedicated for Hume, assuming `hume` will be the namespace name
 ```bash
-$ kubectl create namespace hume
-$ kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' --docker-email='<email>' -n hume
+kubectl create namespace hume
 ```
-2. Add GraphAware Helm repository and install it:
+
+2. Create the `docker-registry` secret with your GraphAware docker registry credentials
 ```bash
-$ helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
+kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' -n hume
+```
+
+3. Optionally, create the `hume-licence` secret with your Hume licence key (.b64 file content)
+```bash
+kubectl create secret generic --from-literal=hume.licence.key=<licence-b64-string> -n hume
+```
+
+> **NOTE**
+> Providing the `hume-licence` secret will install the licence automatically. If not provided you will be prompt to upload the licence file when logging in to Hume for the first time.
+
+4. Add the GraphAware Helm repository to your local repository
+```bash
+helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
 ```
 
 ### Install the Helm chart
+
+Assuming `hume` is the namespace name and `my-release` is the helm release name.
 
 ```bash
 $ helm install my-release graphaware/hume -n hume
 or
 $ helm install my-release graphaware/hume -n hume -f values.yaml
 ```
-> **_NOTE:_**  These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
+> **NOTE**  
+> These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
 
 ### Verify the installation
 
