@@ -73,22 +73,31 @@ api:
     name: hume-api  
   admin:
     auto_create: true
-    # neo4j random password
+    # check neo4j random password script
     username: admin@hume.k8s
     password: password
   licence:
     auto_install: false
     key: ""
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
+    startupProbe:
+      # use a startup probe so the API has the time to perform db migrations before the livenessProbe kicks in.
+      # startup probe will fail after (failureTreshold * periodSeconds )
+      # by default we use a large value of 300 seconds for slow environments
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 60
 neo4j:
-  nameOverride: "neo4j"
-  namePrefix: "hume-"
   neo4j:
     name: neo4j
     enabled: true
-    fullnameOverride: "neo4j"
-    fullnamePrefix: "hume-"
     acceptLicenseAgreement: "yes"
     password: password
+    edition: enterprise
   volumes:
     data:
       mode: "defaultStorageClass"
