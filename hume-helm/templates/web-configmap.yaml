@@ -16,7 +16,11 @@ data:
   {{ end }}
   {{- if .Values.keycloak.enabled}}
   KEYCLOAK_ENABLED: 'true'
+  {{- if .Values.ingress.enabled }}
   KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
+  {{ else }}
+  KEYCLOAK_URL: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
+  {{ end }}
   KEYCLOAK_REALM: {{ .Values.keycloak.realm }}
   KEYCLOAK_CLIENT: {{ .Values.keycloak.client }}
   {{- end}}

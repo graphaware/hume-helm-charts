@@ -15,7 +15,11 @@ data:
   hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
   {{- if .Values.keycloak.enabled }}
   hume.security.provider: 'keycloak'
-  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}/auth"
+  {{- if .Values.ingress.enabled }}
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
+  {{ else }}
+  keycloak.auth-server-url: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
+  {{ end }}
   keycloak.realm: {{ .Values.keycloak.realm }}
   keycloak.resource: {{ .Values.keycloak.client }}
   keycloak.public-client: 'true'
