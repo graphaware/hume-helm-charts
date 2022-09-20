@@ -12,11 +12,11 @@ data:
   {{ if .Values.ingress.enabled }}
   HUME_API_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.api.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
   {{ else }}
-  HUME_API_URL: "http://localhost"
+  HUME_API_URL: "http://localhost:{{ .Values.api.port }}"
   {{ end }}
   {{- if .Values.keycloak.enabled}}
   KEYCLOAK_ENABLED: 'true'
-  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}/auth"
+  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
   KEYCLOAK_REALM: {{ .Values.keycloak.realm }}
   KEYCLOAK_CLIENT: {{ .Values.keycloak.client }}
   {{- end}}
