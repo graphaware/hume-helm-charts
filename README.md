@@ -22,22 +22,72 @@ This chart bootstraps a [Hume](https://github.com/graphaware/hume-helm-charts) d
 
 ## Installing the Chart
 
+### Prepare the release
+
 To install the chart with the release name `my-release`:
 
-1, Create Docker secret in order to pull Docker images from private registry:
+1. Create Docker secret in order to pull Docker images from private registry:
 ```bash
 $ kubectl create namespace hume
 $ kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' --docker-email='<email>' -n hume
 ```
-2, Add GraphAware Helm repository and install it:
+2. Add GraphAware Helm repository and install it:
 ```bash
 $ helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
+```
 
+### Install the Helm chart
+
+```bash
 $ helm install my-release graphaware/hume -n hume
 or
 $ helm install my-release graphaware/hume -n hume -f values.yaml
 ```
 > **_NOTE:_**  These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
+
+### Verify the installation
+
+1. Check the pods are ready
+```bash
+kubectl get pods -n hume
+NAME                       READY   STATUS    RESTARTS        AGE
+dev-release-0              1/1     Running   0               8m24s
+hume-api-897bbccb7-6g6vk   1/1     Running   1 (8m13s ago)   8m24s
+hume-orchestra-0           1/1     Running   0               8m24s
+hume-web-8d7d855fc-kwhvv   1/1     Running   0               8m24s
+postgresql-core-0          1/1     Running   0               8m24s
+```
+
+2. Check the services look OK
+
+```bash
+kubectl get svc -n hume
+NAME                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                        AGE
+dev-release          ClusterIP      10.99.0.111     <none>        7687/TCP,7474/TCP,7473/TCP                     9m29s
+dev-release-admin    ClusterIP      10.100.142.91   <none>        6362/TCP,7687/TCP,7474/TCP,7473/TCP            9m29s
+dev-release-neo4j    LoadBalancer   10.106.141.47   localhost     7474:31776/TCP,7473:31964/TCP,7687:30353/TCP   9m29s
+hume-api             NodePort       10.97.248.25    <none>        8080:32081/TCP                                 9m29s
+hume-orchestra       ClusterIP      10.98.32.28     <none>        8100/TCP                                       9m29s
+hume-web             ClusterIP      10.104.105.20   <none>        8081/TCP                                       9m29s
+postgresql-core      ClusterIP      10.106.90.201   <none>        5432/TCP                                       9m29s
+postgresql-core-hl   ClusterIP      None            <none>        5432/TCP                                       9m29s
+```
+
+3. Use `port-forwarding` to get access to the Hume user interface
+
+From one terminal run the following command : 
+```bash
+kubectl port-forward service/hume-web 8081:8081 -n hume
+```
+
+From another terminal run the following command : 
+```bash
+kubectl port-forward service/hume-api 8080:8080 -n hume
+```
+
+In a web browser, open the Hume user interface at http://localhost:8081.
+
+Use the default username/password `admin@hume.k8s / password` to log in to Hume.
 
 ## Ingress
 
