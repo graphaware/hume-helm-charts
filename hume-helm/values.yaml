@@ -76,15 +76,9 @@ api:
     # neo4j random password
     username: admin@hume.k8s
     password: password
-  gitsync: false  
   licence:
     auto_install: false
     key: ""
-gitsync:
-  username: ""
-  token: ""
-  branch: ""     
-  repository: ""
 neo4j:
   nameOverride: "neo4j"
   namePrefix: "hume-"

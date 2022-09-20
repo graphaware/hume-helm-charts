@@ -84,28 +84,7 @@ spec:
       {{ end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      volumes:
-        - name: sync-data
-          emptyDir: {}
       containers:
-        {{- if .Values.api.gitsync }}
-        - name: git-sync-sidecar
-          image: k8s.gcr.io/git-sync:v3.1.6
-          args:
-            - "-repo={{ .Values.gitsync.repository}}"
-            - "-branch={{ .Values.gitsync.branch}}"
-            - "-depth=1"
-            - "-max-sync-failures=-1"
-            - "-root=/data/sync"
-            - "-dest=config"
-            - "-wait=60"
-            - "-username={{ .Values.gitsync.username}}"
-            - "-password={{ .Values.gitsync.token}}"
-          volumeMounts:
-            - name: sync-data
-              mountPath: /data
-              readOnly: false
-        {{- end }}
         - name: {{ include "hume-helm.fullname" . }}-api
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -115,24 +94,16 @@ spec:
             - name: api
               containerPort: 8080
               protocol: TCP
-          # Seems there is an issue in 2.11 snapshot with the probe and the commit-id plugin
-          # Disabling for now
-          # livenessProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: api
-          # readinessProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: api
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: api
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: api
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-api-configmap
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
-          {{- if .Values.api.gitsync }}
-          volumeMounts:
-            - name: sync-data
-              mountPath: /init
-              readOnly: true
-          {{- end}}
