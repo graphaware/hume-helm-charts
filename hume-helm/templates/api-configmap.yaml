@@ -35,12 +35,4 @@ data:
   com.hume.core.admin.setup.step.admin_creation.name: {{ .Values.api.admin.username }}
   com.hume.core.admin.setup.step.admin_creation.password: {{ .Values.api.admin.password }}
   {{- end}}
-  {{- if .Values.api.licence.auto_install }}
-  com.hume.core.security.license.b64: {{ .Values.api.licence.key }}
-  {{- end}}
-  {{- if .Values.api.gitsync }}
-  hume.init.directory: '/init/sync/config'
-  hume.init.enabled: 'true'
-  com.hume.testing.unsecure.enabled: 'true'
-  {{- end}}
 ---

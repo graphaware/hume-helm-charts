@@ -76,9 +76,6 @@ api:
     # check neo4j random password script
     username: admin@hume.k8s
     password: password
-  licence:
-    auto_install: false
-    key: ""
   probes:
     livenessProbe:
       inititalDelaySeconds: 0

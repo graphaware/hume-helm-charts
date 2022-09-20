@@ -19,6 +19,7 @@ This chart bootstraps a [Hume](https://github.com/graphaware/hume-helm-charts) d
 - Kubernetes 1.19+
 - Helm 3.2.0+
 - Customer account in https://docker.graphaware.com/ in order to download both Helm chart and docker images
+- A Hume licence key
 
 ## Installing the Chart
 
