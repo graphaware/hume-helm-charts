@@ -16,6 +16,11 @@ dependencies:
       version: 11.9.1
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlCore
+    - name: postgresql
+      version: 11.9.1
+      repository: https://charts.bitnami.com/bitnami
+      alias: postgresqlOrchestra
+      condition: postgresqlOrchestra.enabled
     - name: keycloak
       version: 10.1.0
       repository: https://charts.bitnami.com/bitnami

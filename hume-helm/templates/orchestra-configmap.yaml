@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra-configmap
+  labels:
+  {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-orchestra:{{ .Values.postgresqlOrchestra.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlOrchestra.global.postgresql.auth.database }}"
+  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlOrchestra.global.postgresql.auth.username }}
+  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlOrchestra.global.postgresql.auth.password }}
+  orchestra.autostart.default.enable: "true"
+  orchestra.startup.workflows.autoload: "true"
+  orchestra.storage-engine: "db"
+  orchestra.metrics.persistence.enabled: "true"
+---
