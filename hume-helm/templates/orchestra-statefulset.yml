@@ -62,15 +62,14 @@ spec:
             failureThreshold: {{ .Values.orchestra.readinessProbe.failureThreshold }}
             periodSeconds: {{ .Values.orchestra.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.orchestra.readinessProbe.timeoutSeconds }}
-          env:
-            {{- if .Values.orchestra.persistence.enabled }}
-            - name: "orchestra.tmpdir"
-              value: "{{ .Values.orchestra.persistence.mountPath }}"
-            {{- end }}
-            - name: "orchestra.autostart.default.enabled"
-              value: "true"
-            - name: "orchestra.startup.workflows.autoload"
-              value: "true"
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-orchestra-configmap
+          # env:
+          #   {{- if .Values.orchestra.persistence.enabled }}
+          #   - name: "orchestra.tmpdir"
+          #     value: "{{ .Values.orchestra.persistence.mountPath }}"
+          #   {{- end }}
           resources:
             {{- toYaml .Values.orchestra.resources | nindent 12 }}
           volumeMounts:

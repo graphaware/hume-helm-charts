@@ -21,6 +21,7 @@ podAnnotations: {}
 
 # Used to have predictable service name to configure networking between API and Postgres Core
 postgresql-core-reference: &postgresql_core_reference postgresql-core
+postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
 repositoryBase: "docker.graphaware.com/internal/"
 imagePullPolicy: "Always"
 tiers:
@@ -109,12 +110,12 @@ orchestra:
   service:
     type: ClusterIP
   persistence:
-    enabled: false
+    enabled: true
     accessModes:
       - ReadWriteOnce
     mountPath: "/data"
     subPath: ""
-    size: 100Mi
+    size: 1Gi
     annotations: {}
     selector: {}
   startupProbe:
@@ -134,8 +135,8 @@ orchestra:
     periodSeconds: 5
     path: /actuator/metrics
     port: metrics
-postgres:
-  enabled: true
+# postgres:
+#   enabled: true
 alerting:
   enabled: false
   uri: "http://hume-alerting-development"
@@ -161,7 +162,16 @@ postgresqlCore:
         password: hume
         servicePort: 5432
   fullnameOverride: *postgresql_core_reference
-
+postgresqlOrchestra:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: orchestra
+        username: orchestra
+        password: pgsqls3cr3t
+        servicePort: 5432
+  fullnameOverride: *postgresql_orchestra_reference
 ### RBAC parameters
 serviceAccount:
   # Specifies whether a service account should be created
