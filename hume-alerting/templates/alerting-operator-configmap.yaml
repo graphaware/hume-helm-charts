@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-operator-configmap
+data:
+  logging.format: {{ .Values.operator.logging_format }}
+  {{- if .Values.kafka.internal_kafka_enabled }}
+  BROKERS: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.port }}"
+  ZKNODES: "{{ include "hume-alerting.fullname" . }}-zookeper:{{ .Values.kafka.zookeper_port }}"
+  {{- else }}
+  BROKERS: "{{ .Values.kafka.external.host }}:{{ .Values.kafka.external.port }}"
+  spring.cloud.stream.kafka.binder.configuration.ssl.endpoint.identification.algorithm: {{ .Values.operator.spring_cloud_stream_kafka_binder_configuration_ssl_endpoint_identification_algorithm }}
+  spring.cloud.stream.kafka.binder.configuration.sasl.mechanism: {{ .Values.operator.spring_cloud_stream_kafka_binder_configuration_sasl_mechanism }}
+  spring.cloud.stream.kafka.binder.configuration.security.protocol: {{ .Values.operator.spring_cloud_stream_kafka_binder_configuration_security_protocol }}
+  spring.cloud.stream.kafka.binder.configuration.sasl.jaas.config: {{ .Values.operator.spring_cloud_stream_kafka_binder_configuration_sasl_jaas_config }}
+  spring.kafka.properties.sasl.jaas.config: {{ .Values.controller.spring_kafka_properties_sasl_jaas_config | quote }} 
+  spring.kafka.properties.security.protocol: {{ .Values.controller.spring_kafka_properties_security_protocol | quote }}
+  spring.kafka.properties.ssl.endpoint.identification.algorithm: {{ .Values.controller.spring_kafka_properties_ssl_endpoint_identification_algorithm | quote }}
+  spring.kafka.properties.sasl.mechanism: {{ .Values.operator.spring_kafka_properties_sasl_mechanism }}
+  {{- end }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-alerting-operator:{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.database }}?rewriteBatchedStatements=true"
+  spring.datasource.username: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.password }}
+  hume.security.encryption.engine: {{ .Values.operator.hume_security_encryption_engine }}
+  hume.security.encryption.keystore.file: "{{ .Values.operator.hume_security_encryption_keystore_file }}"
+  hume.security.encryption.keystore.password: {{ .Values.operator.hume_security_encryption_keystore_password }}
+  hume.security.encryption.keystore.secret.alias: {{ .Values.operator.hume_security_encryption_keystore_secret_alias }}
+  kafka.topics.prefix:  "{{ .Values.kafka.topics.prefix }}"
+  kafka.topics.names.feedback: {{ .Values.kafka.topics.names.feedback }}
+  kafka.topics.names.scheduler: {{ .Values.kafka.topics.names.scheduler }}
+  kafka.topics.names.action: {{ .Values.kafka.topics.names.action }}
+  kafka.topics.names.notification: {{ .Values.kafka.topics.names.notification }}
+  kafka.topics.names.dryRunRequest: {{ .Values.kafka.topics.names.dryRunRequest }}
+  kafka.topics.names.dryRunResult: {{ .Values.kafka.topics.names.dryRunResult }}
+  management.endpoints.web.exposure.include: {{ .Values.operator.management_endpoints_web_exposure_include }}
+---
