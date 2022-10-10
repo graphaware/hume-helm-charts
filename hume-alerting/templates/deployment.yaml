@@ -44,6 +44,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-controller-configmap
+            - configMapRef:
+                name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
             - secretRef:
                 name: postgresql-alerting-controller   
           livenessProbe:
@@ -116,6 +118,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-operator-configmap
+            - configMapRef:
+                name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
             - secretRef:
                 name: postgresql-alerting-operator
           livenessProbe:

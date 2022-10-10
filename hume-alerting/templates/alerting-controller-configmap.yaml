@@ -4,17 +4,6 @@ metadata:
   name: {{ include "hume-alerting.fullname" . }}-controller-configmap
 data:
   logging.format: {{ .Values.controller.logging_format }}
-  {{- if .Values.kafka.internal_kafka_enabled }}
-  BROKERS: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.port }}"
-  spring.kafka.consumer.bootstrap-servers: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.port }}"
-  {{- else }}
-  BROKERS: {{ .Values.kafka.external.host }}:{{ .Values.kafka.external.port }}
-  spring.kafka.properties.sasl.jaas.config: {{ .Values.controller.spring_kafka_properties_sasl_jaas_config | quote }} 
-  spring.kafka.properties.security.protocol: {{ .Values.controller.spring_kafka_properties_security_protocol | quote }}
-  spring.kafka.properties.ssl.endpoint.identification.algorithm: {{ .Values.controller.spring_kafka_properties_ssl_endpoint_identification_algorithm | quote }}
-  spring.kafka.properties.sasl.mechanism: {{ .Values.controller.spring_kafka_properties_sasl_mechanism | quote }}
-  spring.kafka.consumer.bootstrap-servers: {{ .Values.kafka.external.host }}:{{ .Values.kafka.external.port }}
-  {{- end }}
   spring.mail.host: {{ .Values.controller.mail_host }}
   spring.mail.port: {{ .Values.controller.mail_port | quote }}
   spring.mail.username: "{{ .Values.controller.mail_username }}"
@@ -26,14 +15,6 @@ data:
   spring.datasource.username: {{ .Values.postgresqlAlertingController.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlAlertingController.global.postgresql.auth.password }}
   controller.remoteEventsEnabled: "{{ .Values.controller.remoteEventsEnabled }}"
-  kafka.topics.prefix: "{{ .Values.kafka.topics.prefix }}"
-  kafka.topics.names.feedback: "{{ .Values.kafka.topics.names.feedback }}"
-  kafka.topics.names.scheduler: "{{ .Values.kafka.topics.names.scheduler }}"
-  kafka.topics.names.action: "{{ .Values.kafka.topics.names.action }}"
-  kafka.topics.names.notification : "{{ .Values.kafka.topics.names.notification }}"
-  kafka.topics.names.dryRunRequest: "{{ .Values.kafka.topics.names.dryRunRequest }}"
-  kafka.topics.names.dryRunResult: {{ .Values.kafka.topics.names.dryRunResult | quote }}
-  kafka.topics.names.remoteEvents: {{ .Values.kafka.topics.names.remoteEvents | quote }}
   controller.execution.ttl.active: {{ .Values.controller.execution_ttl_active | quote }}
   controller.execution.ttl.ms: {{ .Values.controller.execution_ttl_ms | quote }}
 ---

@@ -3,12 +3,14 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-baseRepository: "docker.graphaware.com/public"
+baseRepository: "docker.graphaware.com/internal"
+humeMessagingProvider: "kafka"
 
 kafka:
   internal_kafka_enabled: true
-  port: 9092
-  zookeper_port: 2181
+  internal:
+    port: 9092
+    zookeper_port: 2181
   external:
     host: ""
     port: "9092"
@@ -23,16 +25,32 @@ kafka:
       dryRunResult: "dryrun-result"
       remoteEvents: "events"
       operatorMetrics: "operator-metrics"
+  spring_cloud_stream_kafka_binder_configuration_ssl_endpoint_identification_algorithm: "https"
+  spring_cloud_stream_kafka_binder_configuration_sasl_mechanism: "PLAIN"
+  spring_cloud_stream_kafka_binder_configuration_security_protocol: "SASL_SSL"
+  spring_cloud_stream_kafka_binder_configuration_sasl_jaas_config: ""
+  spring_kafka_properties_sasl_mechanism: "PLAIN"
+  spring_kafka_properties_sasl_jaas_config: ""
+  spring_kafka_properties_security_protocol: "SASL_SSL"
+  spring_kafka_properties_ssl_endpoint_identification_algorithm: "https"
+
+azure:
+  serviceBus:
+    connection_string: ""
+    subscription_id: ""
+    topics_names_scheduler: "scheduler"
+    topics_names_action: "action"
+    topics_names_notification: "notification"
+    topics_names_feedback: "feedback"
+    topics_names_operator_metrics: "operator-metrics"
+    topics_names_dryRunRequest: "dryrun-request"
+    topics_names_dryRunResult: "dryrun-result"
 
 controller:
   image: 
     name: "hume-alerting-controller"
-    tag: "2.15.3"
+    tag: ""
   logging_format: "json"
-  spring_kafka_properties_sasl_jaas_config: ""
-  spring_kafka_properties_security_protocol: "SASL_SSL"
-  spring_kafka_properties_ssl_endpoint_identification_algorithm: "https"
-  spring_kafka_properties_sasl_mechanism: "PLAIN"
   mail_host: "smtp"
   mail_port: 1025
   mail_username: ""
@@ -48,7 +66,7 @@ operator:
   image:
     name: "hume-alerting-operator"
     pullPolicy: "Always"
-    tag: "2.15.3"
+    tag: ""
   logging_format: "json"
   maxTransactionRetry: 0
   connectionAcquisitionTimeoutSeconds: 3
@@ -57,11 +75,6 @@ operator:
   maxPollIntervalMs: 600000000
   globalBatchSize: 50000
   slotBatchSize: 25000
-  spring_cloud_stream_kafka_binder_configuration_ssl_endpoint_identification_algorithm: "https"
-  spring_cloud_stream_kafka_binder_configuration_sasl_mechanism: "PLAIN"
-  spring_cloud_stream_kafka_binder_configuration_security_protocol: "SASL_SSL"
-  spring_cloud_stream_kafka_binder_configuration_sasl_jaas_config: ""
-  spring_kafka_properties_sasl_mechanism: "PLAIN"
   hume_security_encryption_engine: "keystore"
   management_endpoints_web_exposure_include: "bindings,health,prometheus"
   hume_security_encryption_keystore_file: /opt/hume-keystore
