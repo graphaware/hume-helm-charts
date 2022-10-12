@@ -7,8 +7,8 @@ baseRepository: "docker.graphaware.com/internal"
 humeMessagingProvider: "kafka"
 
 kafka:
-  internal_kafka_enabled: true
   internal:
+    enabled: true
     port: 9092
     zookeper_port: 2181
   external:

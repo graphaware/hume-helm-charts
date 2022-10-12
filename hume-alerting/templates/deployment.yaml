@@ -16,8 +16,6 @@ spec:
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
-        # ref: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
-        # Roll new deployment on alerting-controller-configmap changes
         checksum/config: {{ include (print $.Template.BasePath "alerting-controller-configmap.yaml") . | sha256sum }}
       {{- end }}
       labels:
@@ -45,9 +43,11 @@ spec:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-controller-configmap
             - configMapRef:
+            {{- if eq .Values.humeMessagingProvider "kafka" }}
                 name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
-            - secretRef:
-                name: postgresql-alerting-controller   
+            {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
+                name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+            {{- end }}
           livenessProbe:
              httpGet:
                path: /actuator/health
@@ -119,9 +119,11 @@ spec:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-operator-configmap
             - configMapRef:
+            {{- if eq .Values.humeMessagingProvider "kafka" }}
                 name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
-            - secretRef:
-                name: postgresql-alerting-operator
+            {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
+                name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+            {{- end }}
           livenessProbe:
              httpGet:
                path: /actuator/health
@@ -135,7 +137,6 @@ spec:
              failureThreshold: 10
              initialDelaySeconds: 20
              periodSeconds: 20
-
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

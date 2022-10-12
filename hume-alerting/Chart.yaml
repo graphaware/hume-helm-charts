@@ -16,4 +16,4 @@ dependencies:
   - name: kafka
     version: 18.4.4
     repository: https://charts.bitnami.com/bitnami
-    condition: kafka.internal_kafka_enabled
+    condition: kafka.internal.enabled

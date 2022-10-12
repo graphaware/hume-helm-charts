@@ -1,10 +1,10 @@
+{{- if eq .Values.humeMessagingProvider "kafka" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
 data:
-  {{- if eq .Values.humeMessagingProvider "kafka" }}
-  {{- if .Values.kafka.internal_kafka_enabled }}
+  {{- if .Values.kafka.internal.enabled }}
   BROKERS: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"
   ZKNODES: "{{ include "hume-alerting.fullname" . }}-zookeper:{{ .Values.kafka.internal.zookeper_port }}"
   spring.kafka.consumer.bootstrap-servers: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"
@@ -27,15 +27,5 @@ data:
   kafka.topics.names.dryRunRequest: {{ .Values.kafka.topics.names.dryRunRequest | quote }}
   kafka.topics.names.dryRunResult: {{ .Values.kafka.topics.names.dryRunResult | quote }}
   kafka.topics.names.remoteEvents: {{ .Values.kafka.topics.names.remoteEvents | quote }}
-  {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
-  azure.servicebus.connection.string: {{ required .Values.azure.serviceBus.connection_string | quote }}
-  azure.servicebus.subscription.id: {{ required .Values.azure.serviceBus.subscription_id | quote }}
-  azure.servicebus.topics.names.scheduler: {{ .Values.azure.serviceBus.topics_names_scheduler | quote }}
-  azure.servicebus.topics.names.action: {{ .Values.azure.serviceBus.topics_names_action | quote }}
-  azure.servicebus.topics.names.notification: {{ .Values.azure.serviceBus.topics_names_notification | quote }}
-  azure.servicebus.topics.names.feedback: {{ .Values.azure.serviceBus.topics_names_feedback | quote }}
-  azure.servicebus.topics.names.operator-metrics: {{ .Values.azure.serviceBus.topics_names_operator_metrics | quote }}
-  azure.servicebus.topics.names.dryRunRequest: {{ .Values.azure.serviceBus.topics_names_dryRunRequest | quote }}
-  azure.servicebus.topics.names.dryRunResult: {{ .Values.azure.serviceBus.topics_names_dryRunResult }}
-  {{- end }}
+{{- end }}
 ---
