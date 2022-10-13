@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-operator-configmap
+data:
+  logging.format: {{ .Values.operator.logging_format }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-alerting-operator:{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.database }}?rewriteBatchedStatements=true"
+  spring.datasource.username: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.password }}
+  hume.security.encryption.engine: {{ .Values.operator.hume_security_encryption_engine }}
+  hume.security.encryption.keystore.file: "{{ .Values.operator.hume_security_encryption_keystore_file }}"
+  hume.security.encryption.keystore.password: {{ .Values.operator.hume_security_encryption_keystore_password }}
+  hume.security.encryption.keystore.secret.alias: {{ .Values.operator.hume_security_encryption_keystore_secret_alias }}
+  management.endpoints.web.exposure.include: {{ .Values.operator.management_endpoints_web_exposure_include }}
+---

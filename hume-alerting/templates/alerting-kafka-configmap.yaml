@@ -1,0 +1,31 @@
+{{- if eq .Values.humeMessagingProvider "kafka" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
+data:
+  {{- if .Values.kafka.internal.enabled }}
+  BROKERS: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"
+  ZKNODES: "{{ include "hume-alerting.fullname" . }}-zookeper:{{ .Values.kafka.internal.zookeper_port }}"
+  spring.kafka.consumer.bootstrap-servers: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"
+  {{- else }}
+  BROKERS: "{{ required "A valid external kafka endpoint required" .Values.kafka.external.host }}:{{ required "A valid external kafka port required" .Values.kafka.external.port }}"
+  spring.cloud.stream.kafka.binder.configuration.ssl.endpoint.identification.algorithm: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_ssl_endpoint_identification_algorithm }}
+  spring.cloud.stream.kafka.binder.configuration.sasl.mechanism: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_sasl_mechanism }}
+  spring.cloud.stream.kafka.binder.configuration.security.protocol: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_security_protocol }}
+  spring.cloud.stream.kafka.binder.configuration.sasl.jaas.config: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_sasl_jaas_config }}
+  spring.kafka.properties.sasl.jaas.config: {{ .Values.kafka.spring_kafka_properties_sasl_jaas_config | quote }} 
+  spring.kafka.properties.security.protocol: {{ .Values.kafka.spring_kafka_properties_security_protocol | quote }}
+  spring.kafka.properties.ssl.endpoint.identification.algorithm: {{ .Values.kafka.spring_kafka_properties_ssl_endpoint_identification_algorithm | quote }}
+  spring.kafka.properties.sasl.mechanism: {{ .Values.kafka.spring_kafka_properties_sasl_mechanism }}
+  {{- end }}
+  kafka.topics.prefix: {{ .Values.kafka.topics.prefix | quote }}
+  kafka.topics.names.feedback: {{ .Values.kafka.topics.names.feedback | quote }}
+  kafka.topics.names.scheduler: {{ .Values.kafka.topics.names.scheduler | quote }}
+  kafka.topics.names.action: {{ .Values.kafka.topics.names.action | quote }}
+  kafka.topics.names.notification : {{ .Values.kafka.topics.names.notification | quote }}
+  kafka.topics.names.dryRunRequest: {{ .Values.kafka.topics.names.dryRunRequest | quote }}
+  kafka.topics.names.dryRunResult: {{ .Values.kafka.topics.names.dryRunResult | quote }}
+  kafka.topics.names.remoteEvents: {{ .Values.kafka.topics.names.remoteEvents | quote }}
+{{- end }}
+---

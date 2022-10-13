@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-controller
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-alerting.fullname" . }}-controller
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+        checksum/config: {{ include (print $.Template.BasePath "alerting-controller-configmap.yaml") . | sha256sum }}
+      {{- end }}
+      labels:
+        {{- include "hume-alerting.selectorLabels" . | nindent 8 }}
+        app: {{ include "hume-alerting.fullname" . }}-controller
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hume-alerting.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hume-alerting.fullname" . }}-controller
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.baseRepository }}/{{ .Values.controller.image.name }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8200
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-alerting.fullname" . }}-controller-configmap
+            - configMapRef:
+            {{- if eq .Values.humeMessagingProvider "kafka" }}
+                name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
+            {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
+                name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+            {{- end }}
+          livenessProbe:
+             httpGet:
+               path: /actuator/health
+               port: http
+             initialDelaySeconds: 20
+             periodSeconds: 20
+          readinessProbe:
+             httpGet:
+               path: /actuator/health
+               port: http
+             failureThreshold: 10
+             initialDelaySeconds: 20
+             periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-operator
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hume-alerting.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.operator.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "hume-alerting.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hume-alerting.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hume-alerting.fullname" . }}-operator
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.baseRepository }}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8083
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-alerting.fullname" . }}-operator-configmap
+            - configMapRef:
+            {{- if eq .Values.humeMessagingProvider "kafka" }}
+                name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
+            {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
+                name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+            {{- end }}
+          livenessProbe:
+             httpGet:
+               path: /actuator/health
+               port: http
+             initialDelaySeconds: 20
+             periodSeconds: 20
+          readinessProbe:
+             httpGet:
+               path: /actuator/health
+               port: http
+             failureThreshold: 10
+             initialDelaySeconds: 20
+             periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
