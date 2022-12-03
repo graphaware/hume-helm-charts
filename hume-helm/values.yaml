@@ -80,6 +80,10 @@ api:
     # check neo4j random password script
     username: admin@hume.k8s
     password: password
+  neo4j:
+    driver:
+      transaction:
+        timeout: 90000
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
@@ -100,7 +104,9 @@ neo4j:
     password: password
     edition: enterprise
   env:
-    NEO4JLABS_PLUGINS: '["apoc"]'
+    NEO4J_PLUGINS: '["apoc"]'
+  config:
+    dbms.security.procedures.unrestricted: "apoc.*"
   volumes:
     data:
       mode: "defaultStorageClass"

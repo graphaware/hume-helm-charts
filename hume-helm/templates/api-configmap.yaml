@@ -13,6 +13,7 @@ data:
   SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlCore.global.postgresql.auth.username }}
   SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
   hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
+  hume.driver.neo4j.transaction.timeout: "{{ .Values.api.neo4j.driver.transaction.timeout }}"
   {{- if .Values.keycloak.enabled }}
   hume.security.provider: 'keycloak'
   {{- if .Values.ingress.enabled }}
