@@ -99,9 +99,8 @@ neo4j:
     acceptLicenseAgreement: "yes"
     password: password
     edition: enterprise
-    config:
-      dbms.directories.plugins: "/var/lib/neo4j/labs"
-      dbms.security.procedures.unrestricted: "apoc.*"
+  env:
+    NEO4JLABS_PLUGINS: '["apoc"]'
   volumes:
     data:
       mode: "defaultStorageClass"
