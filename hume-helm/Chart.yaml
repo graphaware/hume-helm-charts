@@ -1,8 +1,8 @@
 apiVersion: v2
 name: hume
 home: https://www.graphaware.com
-version: "2.16.0"
-appVersion: "2.16.0-SNAPSHOT"
+version: "2.16.7.0"
+appVersion: "2.16.7"
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/graphaware.com/favicon.ico
 keywords:
