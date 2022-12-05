@@ -27,7 +27,7 @@ dependencies:
       alias: keycloak
       condition: keycloak.enabled
     - name: neo4j-standalone
-      version: "4.4.11"
+      version: "4.4.15"
       repository: "https://helm.neo4j.com/neo4j"
       condition: neo4j.enabled
       alias: neo4j

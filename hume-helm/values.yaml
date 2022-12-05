@@ -97,6 +97,7 @@ api:
       periodSeconds: 5
       failureThreshold: 60
 neo4j:
+  enabled: true
   neo4j:
     name: neo4j
     enabled: true
