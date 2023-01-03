@@ -98,7 +98,10 @@ api:
       failureThreshold: 60
 neo4j:
   enabled: true
-  fullnameOverride: "neo4j"
+  services:
+    neo4j:
+      enabled: false
+  fullnameOverride: "hume-neo4j"
   neo4j:
     name: neo4j
     enabled: true
