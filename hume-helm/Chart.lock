@@ -14,5 +14,5 @@ dependencies:
 - name: hume-alerting
   repository: https://docker.graphaware.com/chartrepo/public
   version: 0.1.4
-digest: sha256:0ec0b85750aef9df813b22895dbae44fd67d6ab33981c1d0c5ae225af8b53264
-generated: "2022-12-05T11:05:48.00666+01:00"
+digest: sha256:5ebbf78eec7bf1c173d9ac80969d4941265515502349ba8af2b83688098bb59d
+generated: "2022-12-12T13:40:15.369775+01:00"
