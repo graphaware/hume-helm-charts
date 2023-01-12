@@ -6,7 +6,7 @@ metadata:
     {{- include "hume-alerting.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.controller.deployment.replicas | default 1 }}
   {{- end }}
   selector:
     matchLabels:
@@ -84,7 +84,7 @@ metadata:
     {{- include "hume-alerting.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.operator.deployment.replicas | default 1 }}
   {{- end }}
   selector:
     matchLabels:

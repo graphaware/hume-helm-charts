@@ -64,7 +64,8 @@ web:
   port: 8081
   service:
     type: ClusterIP
-  replicaCount: 1
+  deployment:
+    replicas: ""
   app:
     name: hume-web
 api:
@@ -72,7 +73,8 @@ api:
     name: "hume-api"
     tag: ""
   port: 8080  
-  replicaCount: 1
+  deployment:
+    replicas: ""
   service:
     type: NodePort
   app:
@@ -123,6 +125,8 @@ orchestra:
     name: "hume-orchestra"
     tag: ""
   port: 8100
+  deployment:
+    replicas: ""
   service:
     type: ClusterIP
   persistence:

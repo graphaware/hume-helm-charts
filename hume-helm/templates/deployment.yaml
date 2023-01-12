@@ -10,7 +10,7 @@ metadata:
   {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.web.replicaCount }}
+  replicas: {{ .Values.web.deployment.replicas | default 1 }}
   {{ end }}
   selector:
     matchLabels:
@@ -61,7 +61,7 @@ metadata:
   {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.api.replicaCount }}
+  replicas: {{ .Values.api.deployment.replicas | default 1 }}
   {{ end }}
   selector:
     matchLabels:

@@ -50,6 +50,8 @@ controller:
   image: 
     name: "hume-alerting-controller"
     tag: ""
+  deployment:
+    replicas: ""
   logging_format: "json"
   mail_host: "smtp"
   mail_port: 1025
@@ -75,6 +77,8 @@ operator:
   maxPollIntervalMs: 600000000
   globalBatchSize: 50000
   slotBatchSize: 25000
+  deployment:
+    replicas: ""
   hume_security_encryption_engine: "keystore"
   management_endpoints_web_exposure_include: "bindings,health,prometheus"
   hume_security_encryption_keystore_file: /opt/hume-keystore
