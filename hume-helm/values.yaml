@@ -60,7 +60,7 @@ keycloak:
 web:
   image:
     name: "hume-web"
-  appVersion: ""
+    tag: ""
   port: 8081
   service:
     type: ClusterIP
@@ -70,7 +70,7 @@ web:
 api:
   image:
     name: "hume-api"
-  appVersion: ""
+    tag: ""
   port: 8080  
   replicaCount: 1
   service:
@@ -121,7 +121,7 @@ orchestra:
   enabled: true
   image:
     name: "hume-orchestra"
-  appVersion: ""
+    tag: ""
   port: 8100
   service:
     type: ClusterIP
