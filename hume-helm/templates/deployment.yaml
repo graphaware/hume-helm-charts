@@ -37,7 +37,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-web
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.repositoryBase }}{{ .Values.web.image.name }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.repositoryBase }}{{ .Values.web.image.name }}:{{ .Values.web.appVersion | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: web
@@ -88,7 +88,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-api
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.repositoryBase }}{{ .Values.api.image.name }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.repositoryBase }}{{ .Values.api.image.name }}:{{ .Values.api.appVersion | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: api
