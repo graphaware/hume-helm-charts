@@ -16,7 +16,8 @@ upload-chart:
     - export HARBOR_USERNAME='robot$imagepull-secret-shared'
     - helm repo add --username $HARBOR_USERNAME --password $HARBOR_PASSWORD ga-public https://docker.graphaware.com/chartrepo/public
     - helm package hume-helm
-    - helm package hume-alerting
     - helm cm-push hume-*.tgz ga-public
+    - helm package hume-alerting
+    - helm cm-push hume-alerting-*.tgz ga-public
   only:
     - main
