@@ -32,3 +32,5 @@ Session.vim
 .netrwhist
 
 .history
+
+*.tgz
