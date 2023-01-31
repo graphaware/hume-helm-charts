@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-baseRepository: "docker.graphaware.com/internal"
+humeAlertingBaseRepository: "docker.graphaware.com/hume-alerting/"
 humeMessagingProvider: "kafka"
 
 kafka:
