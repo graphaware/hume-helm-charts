@@ -157,6 +157,21 @@ The command removes all the Kubernetes components associated with the chart and 
 | `keycloak.enabled`        | Enable Keycloak                                                                     | `"false"`                         |
 | `serviceAccount.create`   | Enable ServiceAccount                                                               | `"true"`                          |
 
+## Using your own Docker registry
+
+When you need to use your own Docker registry, for example in air gapped environments you will need to copy the images from our Docker registry to yours.
+
+Additionally you need to adapt the chart to change the coordinates of the Docker images, to do so you can 
+override the following values : 
+
+| Chart | value | default | override |
+| --- | --- | --- | --- |
+| hume-core | `humeCoreBaseRepository` | `docker.graphaware.com/hume-core/` | `your-docker-domain.example/` |
+| hume-alerting | `humeAlertingBaseRepository` | `docker.graphaware.com/hume-alerting/` | `your-docker-domain.example/` |
+
+**Don't forget the trailing slash at the end of the repository name**
+
+
 ## License
 
 Copyright &copy; 2022 GraphAware
