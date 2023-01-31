@@ -33,7 +33,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-orchestra
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.repositoryBase }}{{ .Values.orchestra.image.name }}:{{ .Values.orchestra.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.orchestra.image.name }}:{{ .Values.orchestra.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: orchestra

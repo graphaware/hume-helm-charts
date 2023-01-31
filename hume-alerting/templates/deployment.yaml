@@ -33,7 +33,7 @@ spec:
         - name: {{ include "hume-alerting.fullname" . }}-controller
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.baseRepository }}/{{ .Values.controller.image.name }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.humeAlertingBaseRepository }}{{ .Values.controller.image.name }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
           ports:
             - name: http
@@ -109,7 +109,7 @@ spec:
         - name: {{ include "hume-alerting.fullname" . }}-operator
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.baseRepository }}/{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.humeAlertingBaseRepository }}{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
           ports:
             - name: http

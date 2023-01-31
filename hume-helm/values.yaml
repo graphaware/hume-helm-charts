@@ -23,6 +23,7 @@ podAnnotations: {}
 postgresql-core-reference: &postgresql_core_reference postgresql-core
 postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
 repositoryBase: "docker.graphaware.com/internal/"
+humeCoreBaseRepository: "docker.graphaware.com/hume-core/"
 imagePullPolicy: "Always"
 tiers:
   discover:
