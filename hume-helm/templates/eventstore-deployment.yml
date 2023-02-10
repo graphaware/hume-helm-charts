@@ -1,3 +1,4 @@
+{{- if .Values.eventstore.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -40,11 +41,29 @@ spec:
           image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.eventstore.image.name }}:{{ .Values.eventstore.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
-            - name: eventstore
+            - name: eventstore-grpc
               containerPort: 9090
+              protocol: TCP
+            - name: eventstore-http
+              containerPort: 8080
               protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-eventstore-configmap
           resources:
             {{- toYaml .Values.eventstore.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: eventstore-http
+            initialDelaySeconds: {{ .Values.api.probes.livenessProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.livenessProbe.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: eventstore-http
+            initialDelaySeconds: {{ .Values.api.probes.startupProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.startupProbe.failureThreshold }}
+{{- end }}

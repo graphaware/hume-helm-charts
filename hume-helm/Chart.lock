@@ -1,18 +1,18 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 11.9.1
+  version: 12.1.5
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 11.9.1
+  version: 12.1.5
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.5
 - name: keycloak
   repository: https://charts.bitnami.com/bitnami
-  version: 10.1.0
+  version: 13.0.4
 - name: neo4j-standalone
   repository: https://helm.neo4j.com/neo4j
-  version: 4.4.15
-- name: hume-alerting
-  repository: https://docker.graphaware.com/chartrepo/public
-  version: 0.1.4
-digest: sha256:5ebbf78eec7bf1c173d9ac80969d4941265515502349ba8af2b83688098bb59d
-generated: "2022-12-12T13:40:15.369775+01:00"
+  version: 4.4.17
+digest: sha256:46aeb1efc7e32fdb648b18f8ccbc0251d95333cbbb167acb8ffbe07746b4ecb5
+generated: "2023-02-10T22:46:14.120288+01:00"

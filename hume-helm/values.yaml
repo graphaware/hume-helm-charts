@@ -21,7 +21,7 @@ affinity: {}
 annotations: {}
 podAnnotations: {}
 
-# Used to have predictable service name to configure networking between API and Postgres Core
+# Used to have predictable service name to configure networking between services and postgres instances
 postgresql-core-reference: &postgresql_core_reference postgresql-core
 postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
 postgresql-eventstore-reference: &postgresql_eventstore_reference postgresql-eventstore
@@ -121,18 +121,15 @@ eventstore:
     name: hume-eventstore
   username: hume
   password: megaSecretPwd
-  # probes:
-  #   livenessProbe:
-  #     inititalDelaySeconds: 0
-  #     periodSeconds: 10
-  #     failureThreshold: 3
-  #   startupProbe:
-  #     # use a startup probe so the API has the time to perform db migrations before the livenessProbe kicks in.
-  #     # startup probe will fail after (failureTreshold * periodSeconds )
-  #     # by default we use a large value of 300 seconds for slow environments
-  #     initialDelaySeconds: 30
-  #     periodSeconds: 5
-  #     failureThreshold: 60
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
+    startupProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 60
 neo4j:
   enabled: true
   services:
@@ -151,7 +148,7 @@ neo4j:
     dbms.security.procedures.unrestricted: "apoc.*"
   volumes:
     data:
-      mode: "defaultStorageClass"
+      mode: defaultStorageClass
 orchestra:
   enabled: true
   image:
@@ -188,8 +185,6 @@ orchestra:
     periodSeconds: 5
     path: /actuator/metrics
     port: metrics
-# postgres:
-#   enabled: true
 alerting:
   enabled: false
   uri: "http://hume-alerting-development"
@@ -197,9 +192,7 @@ alerting:
     enabled: true
 hume-alerting:
   internal-kafka:
-    enabled: false
-  kafka:
-    host: pkc-e8mp5.eu-west-1.aws.confluent.cloud
+    enabled: true
   postgresqlAlertingOperator:
     global:
       postgresqlPassword: ""

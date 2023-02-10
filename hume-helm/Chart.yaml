@@ -13,16 +13,16 @@ keywords:
 description: "Helm Chart for GraphAware Hume - A Graph-Powered Insights Engine"
 dependencies:
     - name: postgresql
-      version: 11.9.1
+      version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlCore
     - name: postgresql
-      version: 11.9.1
+      version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlOrchestra
       condition: postgresqlOrchestra.enabled
     - name: postgresql
-      version: 11.9.1
+      version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlEventStore
       condition: postgresqlEventStore.enabled
@@ -32,7 +32,7 @@ dependencies:
       alias: keycloak
       condition: keycloak.enabled
     - name: neo4j-standalone
-      version: "4.4.15"
+      version: "4.4.17"
       repository: "https://helm.neo4j.com/neo4j"
       condition: neo4j.enabled
       alias: neo4j

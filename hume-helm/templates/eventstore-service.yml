@@ -1,3 +1,4 @@
+{{- if .Values.eventstore.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,8 +9,9 @@ spec:
   type: {{ .Values.eventstore.service.type }}
   ports:
     - port: {{ .Values.eventstore.port }}
-      targetPort: eventstore
+      targetPort: eventstore-grpc
       protocol: TCP
       name: eventstore
   selector:
     app: {{ include "hume-helm.fullname" . }}-eventstore
+{{- end }}
