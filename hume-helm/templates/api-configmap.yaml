@@ -14,6 +14,15 @@ data:
   SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
   hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
   hume.driver.neo4j.transaction.timeout: "{{ .Values.api.neo4j.driver.transaction.timeout }}"
+  {{- if .Values.api.features.mde }}
+  hume.feature.mde.enabled: "true"
+  {{- end }}
+  {{- if .Values.eventstore.enabled }}
+  hume.eventstore.hostname: "{{ .Values.eventstore.app.name }}"
+  hume.eventstore.port: "{{ .Values.eventstore.port }}"
+  hume.eventstore.username: "{{ .Values.eventstore.username }}"
+  hume.eventstore.password: "{{ .Values.eventstore.password }}"
+  {{- end }}
   {{- if .Values.keycloak.enabled }}
   hume.security.provider: 'keycloak'
   {{- if .Values.ingress.enabled }}

@@ -1,0 +1,17 @@
+{{- if .Values.eventstore.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-eventstore
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.eventstore.service.type }}
+  ports:
+    - port: {{ .Values.eventstore.port }}
+      targetPort: eventstore-grpc
+      protocol: TCP
+      name: eventstore
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-eventstore
+{{- end }}

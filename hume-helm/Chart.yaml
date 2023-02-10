@@ -1,8 +1,8 @@
 apiVersion: v2
 name: hume
 home: https://www.graphaware.com
-version: "2.16.9"
-appVersion: "2.16.9"
+version: "2.17.0-RC1"
+appVersion: "2.17.0-RC1"
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/graphaware.com/favicon.ico
 keywords:
@@ -13,25 +13,32 @@ keywords:
 description: "Helm Chart for GraphAware Hume - A Graph-Powered Insights Engine"
 dependencies:
     - name: postgresql
-      version: 11.9.1
+      version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlCore
     - name: postgresql
-      version: 11.9.1
+      version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlOrchestra
       condition: postgresqlOrchestra.enabled
+    - name: postgresql
+      version: 12.1.5
+      repository: https://charts.bitnami.com/bitnami
+      alias: postgresqlEventStore
+      condition: postgresqlEventStore.enabled
     - name: keycloak
-      version: 10.1.0
+      version: 13.0.4
       repository: https://charts.bitnami.com/bitnami
       alias: keycloak
       condition: keycloak.enabled
     - name: neo4j-standalone
-      version: "4.4.15"
+      version: "4.4.17"
       repository: "https://helm.neo4j.com/neo4j"
       condition: neo4j.enabled
       alias: neo4j
+      tags:
+        - neo4j
     - name: hume-alerting
-      version: "2.16.9"
+      version: "2.17.0-RC1"
       repository: "https://docker.graphaware.com/chartrepo/public" 
       condition: alerting.enabled
