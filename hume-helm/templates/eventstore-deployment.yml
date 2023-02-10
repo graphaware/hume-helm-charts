@@ -1,0 +1,69 @@
+{{- if .Values.eventstore.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-eventstore
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.eventstore.deployment.replicas | default 1 }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-eventstore
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{ toYaml . | trim | indent 4 }}
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-eventstore
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-eventstore
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.eventstore.image.name }}:{{ .Values.eventstore.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: eventstore-grpc
+              containerPort: 9090
+              protocol: TCP
+            - name: eventstore-http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-eventstore-configmap
+          resources:
+            {{- toYaml .Values.eventstore.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: eventstore-http
+            initialDelaySeconds: {{ .Values.api.probes.livenessProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.livenessProbe.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: eventstore-http
+            initialDelaySeconds: {{ .Values.api.probes.startupProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.startupProbe.failureThreshold }}
+{{- end }}

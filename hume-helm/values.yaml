@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+### Tags for dependencies
+
 ### Global parameters ###
 baseDomain: ""
 imagePullSecrets:
@@ -19,11 +21,13 @@ affinity: {}
 annotations: {}
 podAnnotations: {}
 
-# Used to have predictable service name to configure networking between API and Postgres Core
+# Used to have predictable service name to configure networking between services and postgres instances
 postgresql-core-reference: &postgresql_core_reference postgresql-core
 postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
-repositoryBase: "docker.graphaware.com/internal/"
+postgresql-eventstore-reference: &postgresql_eventstore_reference postgresql-eventstore
+
 humeCoreBaseRepository: "docker.graphaware.com/hume-core/"
+humeAnnotateBaseRepository: "docker.graphaware.com/hume-eventstore/"
 imagePullPolicy: "Always"
 tiers:
   discover:
@@ -89,6 +93,8 @@ api:
     driver:
       transaction:
         timeout: 90000
+  features:
+    mde: false
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
@@ -98,6 +104,29 @@ api:
       # use a startup probe so the API has the time to perform db migrations before the livenessProbe kicks in.
       # startup probe will fail after (failureTreshold * periodSeconds )
       # by default we use a large value of 300 seconds for slow environments
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 60
+eventstore:
+  enabled: false
+  image:
+    name: "hume-eventstore"
+    tag: ""
+  port: 9090
+  deployment:
+    replicas: ""
+  service:
+    type: NodePort
+  app:
+    name: hume-eventstore
+  username: hume
+  password: megaSecretPwd
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
+    startupProbe:
       initialDelaySeconds: 30
       periodSeconds: 5
       failureThreshold: 60
@@ -119,7 +148,7 @@ neo4j:
     dbms.security.procedures.unrestricted: "apoc.*"
   volumes:
     data:
-      mode: "defaultStorageClass"
+      mode: defaultStorageClass
 orchestra:
   enabled: true
   image:
@@ -156,8 +185,6 @@ orchestra:
     periodSeconds: 5
     path: /actuator/metrics
     port: metrics
-# postgres:
-#   enabled: true
 alerting:
   enabled: false
   uri: "http://hume-alerting-development"
@@ -165,9 +192,7 @@ alerting:
     enabled: true
 hume-alerting:
   internal-kafka:
-    enabled: false
-  kafka:
-    host: pkc-e8mp5.eu-west-1.aws.confluent.cloud
+    enabled: true
   postgresqlAlertingOperator:
     global:
       postgresqlPassword: ""
@@ -193,6 +218,16 @@ postgresqlOrchestra:
         password: pgsqls3cr3t
         servicePort: 5432
   fullnameOverride: *postgresql_orchestra_reference
+postgresqlEventStore:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: eventstore
+        username: eventstore
+        password: eventstore
+        servicePort: 5432
+  fullnameOverride: *postgresql_eventstore_reference
 ### RBAC parameters
 serviceAccount:
   # Specifies whether a service account should be created
