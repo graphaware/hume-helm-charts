@@ -171,6 +171,14 @@ override the following values :
 
 **Don't forget the trailing slash at the end of the repository name**
 
+## Install specific versios
+
+You can install a specific version of the chart by specifying the chart version 
+
+```bash
+helm install my-release graphaware/hume -f values.yml --version 2.16.8
+```
+
 
 ## License
 
