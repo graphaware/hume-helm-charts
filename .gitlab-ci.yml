@@ -15,9 +15,11 @@ upload-chart:
     - helm plugin install https://github.com/chartmuseum/helm-push
     - export HARBOR_USERNAME='robot$imagepull-secret-shared'
     - helm repo add --username $HARBOR_USERNAME --password $HARBOR_PASSWORD ga-public https://docker.graphaware.com/chartrepo/public
+    - helm dependency update hume-alerting
     - helm package hume-alerting
     - helm cm-push hume-alerting-*.tgz ga-public
     - rm -f hume-alerting-*.tgz
+    - helm dependency update hume-helm
     - helm package hume-helm
     - ls -la
     - helm cm-push hume-*.tgz ga-public
