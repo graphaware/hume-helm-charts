@@ -1,8 +1,8 @@
 apiVersion: v2
 name: hume
 home: https://www.graphaware.com
-version: "2.17.0-RC1"
-appVersion: "2.17.0-RC1"
+version: "2.17.0"
+appVersion: "2.17.0"
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/graphaware.com/favicon.ico
 keywords:
@@ -39,6 +39,6 @@ dependencies:
       tags:
         - neo4j
     - name: hume-alerting
-      version: "2.17.0-RC1"
+      version: "2.17.0"
       repository: "https://docker.graphaware.com/chartrepo/public" 
       condition: alerting.enabled
