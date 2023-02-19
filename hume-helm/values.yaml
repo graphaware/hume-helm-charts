@@ -73,6 +73,11 @@ web:
     replicas: ""
   app:
     name: hume-web
+  # Additional environment variables for hume-core/web
+  # Can also override existing environment variables
+  env: []
+    # - name: KEYCLOAK_URL
+    #   value: https://myexistingkeycloak.com
 api:
   image:
     name: "hume-api"
@@ -95,6 +100,14 @@ api:
         timeout: 90000
   features:
     mde: false
+  # Additional environment variables for hume-core/api
+  # Can also override existing environment variables
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: core-postgres-db-username
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
@@ -121,6 +134,14 @@ eventstore:
     name: hume-eventstore
   username: hume
   password: megaSecretPwd
+  # Additional environment variables for hume-eventstore/eventstore
+  # Can also override existing environment variables
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: eventstore-postgres-db-username
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
@@ -168,6 +189,20 @@ orchestra:
     size: 1Gi
     annotations: {}
     selector: {}
+  # Additional environment variables for hume-core/orchestra
+  # Can also override existing environment variables
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: orchestra-postgres-db-username
+  # volumeMounts config that will be set on the container
+  volumeMounts: []
+  # volumes config to be set on the orchestra pod
+  volumes: []
+  # volumes claim templates configs to be set on the deployment
+  volumeClaimTemplates: []
   startupProbe:
     failureThreshold: 20
     periodSeconds: 7
@@ -200,6 +235,7 @@ hume-alerting:
     global:
       postgresqlPassword: ""
 postgresqlCore:
+  enabled: true
   global:
     postgresql:
       auth:
@@ -219,7 +255,7 @@ postgresqlOrchestra:
         servicePort: 5432
   fullnameOverride: *postgresql_orchestra_reference
 postgresqlEventStore:
-  enabled: true
+  enabled: false
   global:
     postgresql:
       auth:
@@ -246,3 +282,4 @@ securityContext:
     drop:
     - ALL
   runAsNonRoot: true
+  runAsUser: 1001

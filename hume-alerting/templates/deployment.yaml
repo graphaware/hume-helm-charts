@@ -48,6 +48,10 @@ spec:
             {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
                 name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
             {{- end }}
+          env:
+            {{- with .Values.controller.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           livenessProbe:
              httpGet:
                path: /actuator/health
@@ -123,6 +127,10 @@ spec:
                 name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
             {{- else if eq .Values.humeMessagingProvider "azure-servicebus-topics" }}
                 name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+            {{- end }}
+          env:
+            {{- with .Values.operator.env }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           livenessProbe:
              httpGet:

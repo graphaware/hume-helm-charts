@@ -1,0 +1,45 @@
+# Disable all persistence dependencies
+postgresqlCore:
+  enabled: false
+postgresqlOrchestra:
+  enabled: false
+neo4j:
+  enabled: false
+keycloak:
+  enabled: false
+# provide custom jdbc connection parameters for API and Orchestra
+# provide Keycloak connection parameters for API and Web
+api:
+  env:
+    - name: "spring.datasource.url"
+      value: "jdbc:postgresql://my-external-host.example:5432/api"
+    - name: "spring.datasource.username"
+      value: "postgres"
+    - name: "spring.datasource.password"
+      value: "my-secret-password"
+    - name: "keycloak.enabled"
+      value: "true"
+    - name: "keycloak.realm"
+      value: "hume"
+    - name: "keycloak.resource"
+      value: "hume-web"
+    - name: "keycloak.auth-server-url"
+      value: "https://my-keycloak-server-url/auth"
+web:
+  env:
+    - name: "KEYCLOAK_ENABLED"
+      value: "true"
+    - name: "KEYCLOAK_URL"
+      value: "https://my-keycloak-server-url/auth"
+    - name: "KEYCLOAK_REALM"
+      value: "hume"
+    - name: "KEYCLOAK_CLIENT"
+      value: "hume-web"
+orchestra:
+  env:
+    - name: "spring.datasource.url"
+      value: "jdbc:postgresql://my-external-host.example:5432/orchestra"
+    - name: "spring.datasource.username"
+      value: "postgres"
+    - name: "spring.datasource.password"
+      value: "my-secret-password"

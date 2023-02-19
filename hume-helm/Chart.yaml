@@ -16,6 +16,7 @@ dependencies:
       version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlCore
+      condition: postgresqlCore.enabled
     - name: postgresql
       version: 12.1.5
       repository: https://charts.bitnami.com/bitnami
@@ -36,8 +37,6 @@ dependencies:
       repository: "https://helm.neo4j.com/neo4j"
       condition: neo4j.enabled
       alias: neo4j
-      tags:
-        - neo4j
     - name: hume-alerting
       version: "2.17.0"
       repository: "https://docker.graphaware.com/chartrepo/public" 

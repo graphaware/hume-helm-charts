@@ -9,11 +9,8 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-orchestra:{{ .Values.postgresqlOrchestra.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlOrchestra.global.postgresql.auth.database }}"
-  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlOrchestra.global.postgresql.auth.username }}
-  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlOrchestra.global.postgresql.auth.password }}
-  orchestra.autostart.default.enable: "true"
-  orchestra.startup.workflows.autoload: "true"
-  orchestra.storage-engine: "db"
-  orchestra.metrics.persistence.enabled: "true"
+  spring.datasource.url: "jdbc:postgresql://postgresql-orchestra:{{ .Values.postgresqlOrchestra.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlOrchestra.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlOrchestra.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlOrchestra.global.postgresql.auth.password }}
+  orchestra.storage.engine: "db"
 ---

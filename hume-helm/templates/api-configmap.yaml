@@ -9,9 +9,9 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-core:{{ .Values.postgresqlCore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlCore.global.postgresql.auth.database }}"
-  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlCore.global.postgresql.auth.username }}
-  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-core:{{ .Values.postgresqlCore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlCore.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlCore.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
   hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
   hume.driver.neo4j.transaction.timeout: "{{ .Values.api.neo4j.driver.transaction.timeout }}"
   {{- if .Values.api.features.mde }}

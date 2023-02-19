@@ -171,7 +171,30 @@ override the following values :
 
 **Don't forget the trailing slash at the end of the repository name**
 
-## Install specific versios
+## Overriding container environment variables
+
+The chart comes with default sensible environment variables. Those variables can be overriden for each service in their respective `env` section.
+
+For eg, to use a secret for the API postgres database password, you can provide the secret name like this 
+
+```yaml
+# values.yml
+api:
+  env:
+    - name: spring.datasource.password
+      valueFrom:
+        secretKeyRef:
+          key: db-password
+          name: api-postgres-db-password
+```
+
+## Deployment with all the persistence outside of Kubernetes
+
+It is not uncommon to have a PostgreSQL server and Neo4j server outside of Kubernetes. It's then necessary to disable all persistence dependencies and override the defaults for connections to those, Keycloak is often installed outside of the chart as well.
+
+See [`deployment-scenarios/external-persistence/values.yaml`](./deployment-scenarios/external-persistence/values.yml) for an example configuration.
+
+## Install specific versions
 
 You can install a specific version of the chart by specifying the chart version 
 
