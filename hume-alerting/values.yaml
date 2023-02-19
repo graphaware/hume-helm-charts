@@ -63,6 +63,12 @@ controller:
   remoteEventsEnabled: "true"
   execution_ttl_active: "true"
   execution_ttl_ms: "60000"
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: alerting-controller-postgres-db-username
 
 operator:
   image:
@@ -84,6 +90,12 @@ operator:
   hume_security_encryption_keystore_file: /opt/hume-keystore
   hume_security_encryption_keystore_password: changeit
   hume_security_encryption_keystore_secret_alias: secret
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: alerting-operator-postgres-db-username
 
 imagePullSecrets:
   - name: graphaware-docker-creds
