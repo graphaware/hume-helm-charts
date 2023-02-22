@@ -28,7 +28,7 @@ dependencies:
       alias: postgresqlEventStore
       condition: postgresqlEventStore.enabled
     - name: keycloak
-      version: 13.0.4
+      version: 13.1.1
       repository: https://charts.bitnami.com/bitnami
       alias: keycloak
       condition: keycloak.enabled
