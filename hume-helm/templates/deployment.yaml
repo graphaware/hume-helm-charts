@@ -90,6 +90,10 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       # temporary disable serviceLinks until single uri config setting is available in API for eventstore connection
       enableServiceLinks: false
+      volumes:
+        {{- with .Values.api.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       containers:
         - name: {{ include "hume-helm.fullname" . }}-api
           securityContext:
@@ -124,5 +128,10 @@ spec:
             {{- with .Values.api.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          volumeMounts:
+            {{- with .Values.api.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
+          

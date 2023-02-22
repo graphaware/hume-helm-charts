@@ -108,6 +108,10 @@ api:
     #     secretKeyRef:
     #       key: db-username
     #       name: core-postgres-db-username
+  # volumes templates configs to be set on the deployment
+  volumes: []
+  # volumeMounts config that will be set on the container
+  volumeMounts: []
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
