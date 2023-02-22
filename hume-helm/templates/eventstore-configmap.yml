@@ -10,8 +10,8 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql-eventstore:{{ .Values.postgresqlEventStore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlEventStore.global.postgresql.auth.database }}"
-  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresqlEventStore.global.postgresql.auth.username }}
-  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresqlEventStore.global.postgresql.auth.password }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-eventstore:{{ .Values.postgresqlEventStore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlEventStore.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlEventStore.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlEventStore.global.postgresql.auth.password }}
 {{- end }}
 ---
