@@ -50,4 +50,6 @@ data:
   com.hume.core.admin.setup.step.admin_creation.name: {{ .Values.api.admin.username }}
   com.hume.core.admin.setup.step.admin_creation.password: {{ .Values.api.admin.password }}
   {{- end}}
+  # temporary fix for MDE, issue747
+  server.tomcat.relaxed-path-chars: "<,>"
 ---
