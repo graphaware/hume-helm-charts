@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-orchestra.fullname" . }}-orchestra-controller-configmap
+  labels:
+  {{- include "orchestra.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  spring.datasource.url: {{ printf "jdbc:postgresql://%s-postgresql:5432/%s" .Release.Name .Values.postgresql.auth.database }}
+  spring.datasource.username: {{ .Values.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresql.auth.password }}
+  orchestra.storage.engine: "db"
+  orchestra.cluster.enabled: "true"
+  orchestra.instance.mode: "clusterController"
+  orchestra.cluster.nodes.active.number: "{{ .Values.cluster.nodes.active.number | default 2}}"
+  orchestra.cluster.node.advertised.protocol: "http"
+#   orchestra.cluster.node.advertised.host=orchestra-cluster-member-1
+  orchestra.cluster.zookeeper.host: {{ printf "%s-zookeeper" .Release.Name }}
+  orchestra.cluster.zookeeper.port: "2181"
+---

@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "hume-orchestra.fullname" . }}-sts
+  labels:
+    {{- include "hume-orchestra.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  serviceName: "orchestra-worker"
+  replicas: {{ .Values.cluster.nodes.active.number | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-orchestra.fullname" . }}-sts
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-orchestra.fullname" . }}-sts
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-orchestra.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: orchestra
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.path }}
+              port: {{ .Values.startupProbe.port }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-orchestra.fullname" . }}-orchestra-worker-configmap
+          env:
+            {{- with .Values.worker.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.worker.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- with .Values.worker.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+  volumeClaimTemplates:
+    {{- with .Values.worker.volumeClaimTemplates }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
