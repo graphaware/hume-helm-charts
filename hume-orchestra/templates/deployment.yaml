@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "hume-orchestra.fullname" . }}-orchestra-controller
+  name: {{ include "hume-orchestra.fullname" . }}-controller
   labels:
     {{- include "orchestra.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
@@ -14,7 +14,7 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-orchestra.fullname" . }}-orchestra-controller
+      app: {{ include "hume-orchestra.fullname" . }}-controller
   {{- with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -22,7 +22,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-orchestra.fullname" . }}-orchestra-controller
+        app: {{ include "hume-orchestra.fullname" . }}-controller
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -40,14 +40,14 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
-        - name: {{ include "hume-orchestra.fullname" . }}-orchestra-controller
+        - name: orchestra
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 8100
               protocol: TCP
             - name: metrics
               containerPort: 7001
