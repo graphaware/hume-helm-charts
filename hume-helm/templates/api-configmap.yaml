@@ -50,4 +50,10 @@ data:
   com.hume.core.admin.setup.step.admin_creation.name: {{ .Values.api.admin.username }}
   com.hume.core.admin.setup.step.admin_creation.password: {{ .Values.api.admin.password }}
   {{- end}}
+  # Remote API Key config
+  hume.api.enabled: "{{ .Values.api.remoteApi.enabled }}"
+  hume.api.initial-key.create: "{{ .Values.api.remoteApi.initialKey.create }}"
+  hume.api.initial-key.name: {{ .Values.api.remoteApi.initialKey.name }}
+  hume.api.initial-key.token: {{ .Values.api.remoteApi.initialKey.token }}
+  hume.api.initial-key.roles: {{ .Values.api.remoteApi.initialKey.roles }}
 ---
