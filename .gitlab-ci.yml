@@ -24,4 +24,4 @@ upload-chart:
     - ls -la
     - helm cm-push hume-*.tgz ga-public
   only:
-    - main
+    - tags

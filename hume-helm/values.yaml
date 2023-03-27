@@ -100,6 +100,15 @@ api:
         timeout: 90000
   features:
     mde: false
+  remoteApi:
+    enabled: false
+    # https://documentation.hume.graphaware.com/operations-manual/hume-api/api.html
+    initialKey:
+      create: false
+      name: initial-api-key
+      token: my-super-secret-token
+      # roles should be a comma spearated list of existing Hume roles
+      roles: USER
   # Additional environment variables for hume-core/api
   # Can also override existing environment variables
   env: []
