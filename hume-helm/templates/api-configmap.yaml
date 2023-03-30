@@ -62,4 +62,8 @@ data:
   {{- end }}
   {{- end }}
   {{- end }}
+  # Alerting
+  {{- if .Values.alerting.enabled }}
+  alerting.client.enabled: 'true'
+  {{- end }}
 ---

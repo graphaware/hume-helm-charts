@@ -99,6 +99,7 @@ api:
       transaction:
         timeout: 90000
   features:
+    # Separately licensed module. Please make sure you have the appropriate licence before enabling this feature.
     mde: false
   remoteApi:
     enabled: false
@@ -234,10 +235,9 @@ orchestra:
     path: /actuator/metrics
     port: metrics
 alerting:
+  # Separately licensed module. Please make sure you have the appropriate licence before enabling this module.
   enabled: false
   uri: "http://hume-alerting-development"
-  client:
-    enabled: true
 hume-alerting:
   internal-kafka:
     enabled: true
