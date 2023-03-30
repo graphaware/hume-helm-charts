@@ -128,6 +128,13 @@ spec:
             {{- with .Values.api.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if and .Values.api.remoteApi.enabled .Values.api.remoteApi.initialKey.create .Values.api.remoteApi.initialKey.existingSecret }}
+            - name: hume.api.initial-key.token
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.remoteApi.initialKey.existingSecret }}
+                  key: {{ .Values.api.remoteApi.initialKey.existingSecretKey | default "token" }}
+            {{- end }}
           volumeMounts:
             {{- with .Values.api.volumeMounts }}
             {{- toYaml . | nindent 12 }}

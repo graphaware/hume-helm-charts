@@ -202,6 +202,35 @@ You can install a specific version of the chart by specifying the chart version
 helm install my-release graphaware/hume -f values.yml --version 2.16.8
 ```
 
+## Initial API Key creation
+
+Hume can be configured to have an initial api key created when the application starts the first time.
+
+```yaml
+api:
+  remoteApi:
+    enabled: true
+    initialKey:
+      create: true
+      name: my-initial-key
+      token: my-insecure-token
+      roles: ADMINISTRATOR
+```
+
+Optionally, you can use an existing secret for the token
+
+```yaml
+api:
+  remoteApi:
+    enabled: true
+      initialyKey:
+        create: true
+        name: my-initial-key
+        roles: ADMINISTRATOR
+        existingSecret: hume-api-key-secret # name of the secret to use
+        existingSecretKey: secret # optional, defaults to "token"
+```
+
 
 ## License
 
