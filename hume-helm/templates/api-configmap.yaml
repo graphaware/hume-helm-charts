@@ -54,8 +54,10 @@ data:
   {{- if .Values.api.remoteApi.enabled }}
   hume.api.enabled: "{{ .Values.api.remoteApi.enabled }}"
   hume.api.initial-key.create: "{{ .Values.api.remoteApi.initialKey.create }}"
+  {{- if not .Values.api.remoteApi.initialKey.existingSecret }}
   hume.api.initial-key.name: {{ .Values.api.remoteApi.initialKey.name }}
   hume.api.initial-key.token: {{ .Values.api.remoteApi.initialKey.token }}
   hume.api.initial-key.roles: {{ .Values.api.remoteApi.initialKey.roles }}
+  {{- end}}
   {{- end}}
 ---
