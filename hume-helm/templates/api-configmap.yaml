@@ -37,27 +37,29 @@ data:
   keycloak.principal-attribute: 'preferred_username'
   keycloak.use-resource-role-mappings: 'true'
   keycloak.enabled: 'true'
-  {{- end}}
+  {{- end }}
   {{- if .Values.alerting.enabled }}
   hume.feature.alerts.enabled: 'true'
   hume.feature.collections.enabled: true'
   hume.alerting.uri: {{ .Values.alerting.uri }}
   alerting.client.enabled: 'true'
-  {{- end}}
+  {{- end }}
   {{- if .Values.api.admin.auto_create }}
   com.hume.core.admin.setup.step.admin_creation.auto: 'true'
   com.hume.core.admin.setup.step.admin_creation.username: {{ .Values.api.admin.username }}
   com.hume.core.admin.setup.step.admin_creation.name: {{ .Values.api.admin.username }}
   com.hume.core.admin.setup.step.admin_creation.password: {{ .Values.api.admin.password }}
-  {{- end}}
+  {{- end }}
   # Remote API Key config
   {{- if .Values.api.remoteApi.enabled }}
   hume.api.enabled: "{{ .Values.api.remoteApi.enabled }}"
+  {{- if .Values.api.remoteApi.initialKey.create }}
   hume.api.initial-key.create: "{{ .Values.api.remoteApi.initialKey.create }}"
   {{- if not .Values.api.remoteApi.initialKey.existingSecret }}
   hume.api.initial-key.name: {{ .Values.api.remoteApi.initialKey.name }}
   hume.api.initial-key.token: {{ .Values.api.remoteApi.initialKey.token }}
   hume.api.initial-key.roles: {{ .Values.api.remoteApi.initialKey.roles }}
-  {{- end}}
-  {{- end}}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 ---
