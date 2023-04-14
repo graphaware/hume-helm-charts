@@ -82,7 +82,7 @@ api:
   image:
     name: "hume-api"
     tag: ""
-  port: 8080  
+  port: 8080
   deployment:
     replicas: ""
   service:
@@ -138,8 +138,8 @@ api:
     enabled: false
     service:
       type: ClusterIP
-      port: 8080
-      targetPort: api
+      port: 7001
+      targetPort: metrics
     serviceMonitor:
       enabled: false
       jobLabel: ""

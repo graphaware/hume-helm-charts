@@ -10,6 +10,7 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
+  management.server.port: "7001"
   spring.datasource.url: "jdbc:postgresql://postgresql-core:{{ .Values.postgresqlCore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlCore.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlCore.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
