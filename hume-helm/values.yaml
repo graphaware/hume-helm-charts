@@ -186,6 +186,8 @@ neo4j:
       mode: defaultStorageClass
 orchestra:
   enabled: true
+  cluster:
+    enabled: false
   image:
     name: "hume-orchestra"
     tag: ""

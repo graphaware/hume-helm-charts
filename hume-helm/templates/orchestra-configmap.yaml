@@ -12,5 +12,11 @@ data:
   spring.datasource.url: "jdbc:postgresql://postgresql-orchestra:{{ .Values.postgresqlOrchestra.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlOrchestra.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlOrchestra.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlOrchestra.global.postgresql.auth.password }}
-  orchestra.storage.engine: "db"
+  orchestra.storage.engine: db
+  {{- if or (.Values.orchestra.cluster.enabled) (gt (.Values.orchestra.deployment.replicas | int | default 1) 1) }}
+  orchestra.cluster.node.advertised.host: "${HOSTNAME}"
+  orchestra.instance.mode: "cluster"
+  orchestra.member.controller.info.enabled: "true"
+  orchestra.cluster.nodes.active.number: "{{ .Values.orchestra.deployment.replicas | default 1 }}"
+  {{- end }}
 ---
