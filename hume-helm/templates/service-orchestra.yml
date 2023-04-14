@@ -18,11 +18,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $podIndex }}
+  name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $podIndex }}-cluster
   labels:
     {{- include "hume.labels" $ | nindent 4 }}
 spec:
-  type: {{ $.Values.orchestra.service.type }}
+  type: {{ $.Values.orchestra.cluster.service.type }}
   ports:
     - port: {{ $.Values.orchestra.port }}
       targetPort: orchestra

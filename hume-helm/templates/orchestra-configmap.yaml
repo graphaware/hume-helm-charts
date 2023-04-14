@@ -15,7 +15,7 @@ data:
   orchestra.storage.engine: db
   {{- if or (.Values.orchestra.cluster.enabled) (gt (.Values.orchestra.deployment.replicas | int | default 1) 1) }}
   orchestra.cluster.enabled: "true"
-  orchestra.cluster.node.advertised.host: "${HOSTNAME}"
+  orchestra.cluster.node.advertised.host: "${HOSTNAME}-cluster"
   orchestra.instance.mode: "cluster"
   orchestra.cluster.provider: "db"
   orchestra.member.controller.info.enabled: "true"

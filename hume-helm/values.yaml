@@ -188,6 +188,8 @@ orchestra:
   enabled: true
   cluster:
     enabled: false
+    service:
+      type: ClusterIP
   image:
     name: "hume-orchestra"
     tag: ""
