@@ -178,6 +178,19 @@ eventstore:
       initialDelaySeconds: 30
       periodSeconds: 5
       failureThreshold: 60
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 neo4j:
   enabled: true
   services:

@@ -10,8 +10,12 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
+  management.server.port: "7001"
   spring.datasource.url: "jdbc:postgresql://postgresql-eventstore:{{ .Values.postgresqlEventStore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlEventStore.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlEventStore.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlEventStore.global.postgresql.auth.password }}
+  {{- if .Values.eventstore.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
 {{- end }}
 ---

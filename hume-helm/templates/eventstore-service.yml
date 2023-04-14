@@ -14,4 +14,24 @@ spec:
       name: eventstore
   selector:
     app: {{ include "hume-helm.fullname" . }}-eventstore
+---
+{{- if .Values.eventstore.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-eventstore-metrics
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+    app.kubernetes.io/component: eventstore-metrics
+spec:
+  type: {{ .Values.eventstore.metrics.service.type }}
+  ports:
+    - port: {{ .Values.eventstore.metrics.service.port }}
+      targetPort: {{ .Values.eventstore.metrics.service.targetPort }}
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-eventstore
+{{- end }}
+---
 {{- end }}

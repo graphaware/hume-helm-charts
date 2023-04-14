@@ -21,4 +21,7 @@ data:
   orchestra.member.controller.info.enabled: "true"
   orchestra.cluster.nodes.active.number: "{{ .Values.orchestra.deployment.replicas | default 1 }}"
   {{- end }}
+  {{- if .Values.orchestra.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
 ---

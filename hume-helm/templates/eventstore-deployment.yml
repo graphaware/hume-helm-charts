@@ -47,6 +47,9 @@ spec:
             - name: eventstore-http
               containerPort: 8080
               protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-eventstore-configmap
@@ -63,14 +66,14 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: eventstore-http
+              port: metrics
             initialDelaySeconds: {{ .Values.api.probes.livenessProbe.inititalDelaySeconds }}
             periodSeconds: {{ .Values.api.probes.livenessProbe.periodSeconds }}
             failureThreshold: {{ .Values.api.probes.livenessProbe.failureThreshold }}
           startupProbe:
             httpGet:
               path: /actuator/health
-              port: eventstore-http
+              port: metrics
             initialDelaySeconds: {{ .Values.api.probes.startupProbe.inititalDelaySeconds }}
             periodSeconds: {{ .Values.api.probes.startupProbe.periodSeconds }}
             failureThreshold: {{ .Values.api.probes.startupProbe.failureThreshold }}
