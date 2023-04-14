@@ -14,8 +14,10 @@ data:
   spring.datasource.password: {{ .Values.postgresqlOrchestra.global.postgresql.auth.password }}
   orchestra.storage.engine: db
   {{- if or (.Values.orchestra.cluster.enabled) (gt (.Values.orchestra.deployment.replicas | int | default 1) 1) }}
+  orchestra.cluster.enabled: "true"
   orchestra.cluster.node.advertised.host: "${HOSTNAME}"
   orchestra.instance.mode: "cluster"
+  orchestra.cluster.provider: "db"
   orchestra.member.controller.info.enabled: "true"
   orchestra.cluster.nodes.active.number: "{{ .Values.orchestra.deployment.replicas | default 1 }}"
   {{- end }}

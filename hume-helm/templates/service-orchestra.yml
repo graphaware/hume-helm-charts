@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.orchestra.service.type }}
+  ports:
+    - port: {{ .Values.orchestra.port }}
+      targetPort: orchestra
+      protocol: TCP
+      name: orchestra
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-orchestra
+---
 {{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
 apiVersion: v1
 kind: Service
