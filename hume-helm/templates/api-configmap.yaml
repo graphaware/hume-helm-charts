@@ -66,4 +66,7 @@ data:
   {{- if .Values.alerting.enabled }}
   alerting.client.enabled: 'true'
   {{- end }}
+  {{- if .Values.api.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
 ---

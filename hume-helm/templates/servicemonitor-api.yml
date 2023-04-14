@@ -1,0 +1,18 @@
+{{- if and .Values.api.metrics.enabled .Values.api.metrics.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-api-service-monitor
+  labels:
+    {{- with .Values.api.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  jobLabel: "api-metrics"
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api-metrics
+  endpoints:
+  - port: {{ .Values.api.metrics.serviceMonitor.port }}
+    path: {{ .Values.api.metrics.serviceMonitor.path }}
+{{- end -}}

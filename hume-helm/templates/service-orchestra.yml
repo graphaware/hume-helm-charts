@@ -14,6 +14,25 @@ spec:
   selector:
     app: {{ include "hume-helm.fullname" . }}-orchestra
 ---
+{{- if .Values.orchestra.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra-metrics
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestra-metrics
+spec:
+  type: {{ .Values.orchestra.metrics.service.type }}
+  ports:
+    - port: {{ .Values.orchestra.metrics.service.port }}
+      targetPort: {{ .Values.orchestra.metrics.service.targetPort }}
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-orchestra
+{{- end }}
+---
 {{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
 apiVersion: v1
 kind: Service

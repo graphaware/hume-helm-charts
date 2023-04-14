@@ -134,6 +134,19 @@ api:
       initialDelaySeconds: 30
       periodSeconds: 5
       failureThreshold: 60
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 8080
+      targetPort: api
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 eventstore:
   enabled: false
   image:
@@ -238,6 +251,19 @@ orchestra:
     periodSeconds: 5
     path: /actuator/metrics
     port: metrics
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 alerting:
   # Separately licensed module. Please make sure you have the appropriate licence before enabling this module.
   enabled: false

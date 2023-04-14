@@ -1,0 +1,18 @@
+{{- if and .Values.orchestra.metrics.enabled .Values.orchestra.metrics.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra-service-monitor
+  labels:
+    {{- with .Values.orchestra.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  jobLabel: "orchestra-metrics"
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: orchestra-metrics
+  endpoints:
+  - port: metrics
+    path: {{ .Values.orchestra.metrics.serviceMonitor.path }}
+{{- end -}}
