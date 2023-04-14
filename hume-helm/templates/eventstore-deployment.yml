@@ -38,7 +38,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-eventstore
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.eventstore.image.name }}:{{ .Values.eventstore.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.eventstore.image.name }}:{{ include "eventStoreImageTag" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: eventstore-grpc

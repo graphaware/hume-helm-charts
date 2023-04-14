@@ -1,0 +1,4 @@
+appVersion: 2.20.0-SNAPSHOT
+api:
+  image:
+    tag: 2.20.0-SNAPSHOT123

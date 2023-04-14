@@ -1,3 +1,7 @@
+2.19.0-SNAPSHOT
+
+- Added support for overriding app version for all services in values.yml
+
 2.18
 
 - Moved `alerting.client.enabled` to `api-configmap`
