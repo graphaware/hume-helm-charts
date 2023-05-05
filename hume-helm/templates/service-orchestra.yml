@@ -38,7 +38,7 @@ spec:
 {{- end }}
 ---
 {{- if .Values.orchestra.enabled -}}
-{{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
+{{- range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) }}
 apiVersion: v1
 kind: Service
 metadata:
