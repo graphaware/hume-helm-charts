@@ -138,6 +138,13 @@ spec:
                   name: {{ .Values.api.remoteApi.initialKey.existingSecret }}
                   key: {{ .Values.api.remoteApi.initialKey.existingSecretKey | default "token" }}
             {{- end }}
+            {{- if not .Values.postgresqlCore.enabled -}}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customApiPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customApiPostgresql.global.postgresql.secretRef.passwordSecretKey }}
+            {{- end }}
           volumeMounts:
             {{- with .Values.api.volumeMounts }}
             {{- toYaml . | nindent 12 }}

@@ -300,6 +300,17 @@ postgresqlCore:
         password: hume
         servicePort: 5432
   fullnameOverride: *postgresql_core_reference
+customApiPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: hume
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
 postgresqlOrchestra:
   enabled: true
   global:
@@ -310,6 +321,17 @@ postgresqlOrchestra:
         password: pgsqls3cr3t
         servicePort: 5432
   fullnameOverride: *postgresql_orchestra_reference
+customOrchestraPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: hume_orchestra
+        hostname: ""
+        username: hume
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
 postgresqlEventStore:
   enabled: false
   global:
@@ -320,6 +342,17 @@ postgresqlEventStore:
         password: eventstore
         servicePort: 5432
   fullnameOverride: *postgresql_eventstore_reference
+customEventstorePostgresql:
+  global:
+    postgresql:
+      auth:
+        database: hume_evenstore
+        hostname: ""
+        username: hume
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
 ### RBAC parameters
 serviceAccount:
   # Specifies whether a service account should be created

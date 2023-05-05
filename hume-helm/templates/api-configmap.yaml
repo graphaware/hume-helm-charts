@@ -11,9 +11,13 @@ metadata:
   {{- end }}
 data:
   management.server.port: "7001"
+  {{- if .Values.postgresqlCore.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-core:{{ .Values.postgresqlCore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlCore.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlCore.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlCore.global.postgresql.auth.password }}
+  {{ else }}
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customApiPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customApiPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customApiPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customApiPostgresql.global.postgresql.auth.username }}
   hume.orchestra.uri: "http://{{ include "hume-helm.fullname" . }}-orchestra:{{ .Values.orchestra.port }}"
   hume.driver.neo4j.transaction.timeout: "{{ .Values.api.neo4j.driver.transaction.timeout }}"
   {{- if .Values.api.features.mde }}

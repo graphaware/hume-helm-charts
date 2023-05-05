@@ -69,6 +69,13 @@ spec:
             {{- with .Values.orchestra.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if not .Values.postgresqlOrchestra.enabled}}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customOrchestraPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customOrchestraPostgresql.global.postgresql.secretRef.passwordSecretKey }}
+            {{- end }}
           resources:
             {{- toYaml .Values.orchestra.resources | nindent 12 }}
           volumeMounts:
