@@ -50,11 +50,17 @@ fullnameOverride: "hume"
 
 ### Application based parameters ###
 keycloak:
-  # see https://github.com/bitnami/charts/tree/master/bitnami/keycloak
-  # for subchart settings
-  enabled: false
-  realm: hume
-  client: "hume-web"
+  # See https://github.com/bitnami/charts/tree/master/bitnami/keycloak for subchart settings
+  # Whether to use Keycloak
+  useKeycloak:
+    enabled: false
+  # When enabled the chart will install internal Bitnami Keycloak, when false means use custom Keycloak endpoint
+  internal:
+    enabled: false
+  customKeycloak:
+    customKeycloakEndpoint: ""
+  realm: ""
+  client: ""
   fullnameOverride: hume-keycloak
   service:
     type: ClusterIP
@@ -291,6 +297,7 @@ hume-alerting:
     global:
       postgresqlPassword: ""
 postgresqlCore:
+  # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
   enabled: true
   global:
     postgresql:
@@ -306,11 +313,12 @@ customApiPostgresql:
       auth:
         database: ""
         hostname: ""
-        username: hume
+        username: ""
         servicePort: 5432
       secretRef:
         existingSecret: ""
         passwordSecretKey: ""
+# When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
 postgresqlOrchestra:
   enabled: true
   global:
@@ -325,15 +333,16 @@ customOrchestraPostgresql:
   global:
     postgresql:
       auth:
-        database: hume_orchestra
+        database: ""
         hostname: ""
-        username: hume
+        username: ""
         servicePort: 5432
       secretRef:
         existingSecret: ""
         passwordSecretKey: ""
+# When enabled the chart will install internal Bitnami PostgreSQL chart otherwise is using custom DB endpoint
 postgresqlEventStore:
-  enabled: false
+  enabled: true
   global:
     postgresql:
       auth:
@@ -346,9 +355,9 @@ customEventstorePostgresql:
   global:
     postgresql:
       auth:
-        database: hume_evenstore
+        database: ""
         hostname: ""
-        username: hume
+        username: ""
         servicePort: 5432
       secretRef:
         existingSecret: ""

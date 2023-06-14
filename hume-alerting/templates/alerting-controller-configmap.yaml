@@ -11,9 +11,14 @@ data:
   spring.mail.properties.mail.smtp.auth: "{{ .Values.controller.mail_properties_mail_smtp_auth }}"
   notifier.mail.from: "{{ .Values.controller.mail_from }}"
   notifier.mail.to: "{{ .Values.controller.mail_to }}"
+  {{- if .Values.postgresqlAlertingController.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-alerting-controller:{{ .Values.postgresqlAlertingController.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlAlertingController.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlAlertingController.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlAlertingController.global.postgresql.auth.password }}
+  {{ else }}
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customAlertingControllerPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customAlertingControllerPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customAlertingControllerPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customAlertingControllerPostgresql.global.postgresql.auth.username }}
+  {{- end }}
   controller.remoteEventsEnabled: "{{ .Values.controller.remoteEventsEnabled }}"
   controller.execution.ttl.active: {{ .Values.controller.execution_ttl_active | quote }}
   controller.execution.ttl.ms: {{ .Values.controller.execution_ttl_ms | quote }}
