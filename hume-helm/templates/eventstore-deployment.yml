@@ -57,13 +57,6 @@ spec:
             {{- with .Values.eventstore.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- if not .Values.postgresqlEventStore.enabled}}
-            - name: spring.datasource.password
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.existingSecret }}
-                  key: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.passwordSecretKey }}
-            {{- end }}
           volumeMounts:
             {{- with .Values.eventstore.volumeMounts }}
             {{- toYaml . | nindent 12 }}

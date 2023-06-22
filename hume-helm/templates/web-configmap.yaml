@@ -9,21 +9,19 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
-  {{- if .Values.ingress.enabled }}
+  {{ if .Values.ingress.enabled }}
   HUME_API_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.api.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
-  {{- else }}
+  {{ else }}
   HUME_API_URL: "http://localhost:{{ .Values.api.port }}"
-  {{- end }}
-  {{- if .Values.keycloak.useKeycloak.enabled }}
+  {{ end }}
+  {{- if .Values.keycloak.enabled}}
+  KEYCLOAK_ENABLED: 'true'
+  {{- if .Values.ingress.enabled }}
+  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
+  {{ else }}
+  KEYCLOAK_URL: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
+  {{ end }}
   KEYCLOAK_REALM: {{ .Values.keycloak.realm }}
   KEYCLOAK_CLIENT: {{ .Values.keycloak.client }}
-  KEYCLOAK_ENABLED: "true"
-  KEYCLOAK_LEGACY: "false"
-  {{- if not .Values.keycloak.internal.enabled }}
-  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.customKeycloak.customKeycloakEndpoint }}"
-  {{- else if and .Values.keycloak.internal.enabled .Values.ingress.enabled }}
-  KEYCLOAK_URL: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
-  {{- else }}
-  KEYCLOAK_URL: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
-  {{- end }}
-  {{- end }}
+  {{- end}}
+---

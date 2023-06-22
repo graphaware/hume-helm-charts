@@ -11,14 +11,9 @@ metadata:
   {{- end }}
 data:
   management.server.port: "7001"
-  {{- if .Values.postgresqlEventStore.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-eventstore:{{ .Values.postgresqlEventStore.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlEventStore.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlEventStore.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlEventStore.global.postgresql.auth.password }}
-  {{ else }}
-  spring.datasource.url: "jdbc:postgresql://{{ .Values.customEventstorePostgresql.global.postgresql.auth.hostname }}:{{ .Values.customEventstorePostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customEventstorePostgresql.global.postgresql.auth.database }}"
-  spring.datasource.username: {{ .Values.customEventstorePostgresql.global.postgresql.auth.username }}
-  {{- end }}
   {{- if .Values.eventstore.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}

@@ -66,25 +66,8 @@ spec:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-orchestra-configmap
           env:
-            {{- if .Values.orchestra.cluster.enabled -}}
-            - name: orchestra.cluster.enabled
-              value: true
-            - name: orchestra.cluster.nodes.active.number
-              value: {{ .Values.orchestra.deployment.replicas | int | default 1 }}
-            - name: orchestra.cluster.node.id
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            {{- end }}
             {{- with .Values.orchestra.env }}
             {{- toYaml . | nindent 12 }}
-            {{- end }}
-            {{- if not .Values.postgresqlOrchestra.enabled}}
-            - name: spring.datasource.password
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.customOrchestraPostgresql.global.postgresql.secretRef.existingSecret }}
-                  key: {{ .Values.customOrchestraPostgresql.global.postgresql.secretRef.passwordSecretKey }}
             {{- end }}
           resources:
             {{- toYaml .Values.orchestra.resources | nindent 12 }}
