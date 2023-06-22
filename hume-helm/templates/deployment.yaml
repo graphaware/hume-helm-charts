@@ -64,13 +64,13 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  {{ if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.api.deployment.replicas | default 1 }}
   {{ end }}
   selector:
     matchLabels:
       app: {{ include "hume-helm.fullname" . }}-api
-  {{- with .Values.deploymentStrategy }}
+  {{ with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
   {{ end }}
@@ -137,6 +137,13 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.api.remoteApi.initialKey.existingSecret }}
                   key: {{ .Values.api.remoteApi.initialKey.existingSecretKey | default "token" }}
+            {{- end }}
+            {{- if not .Values.postgresqlCore.enabled }}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customApiPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customApiPostgresql.global.postgresql.secretRef.passwordSecretKey }}
             {{- end }}
           volumeMounts:
             {{- with .Values.api.volumeMounts }}

@@ -3,7 +3,8 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-humeAlertingBaseRepository: "docker.graphaware.com/hume-alerting/"
+humeAlertingControllerBaseRepository: "docker.graphaware.com/internal/"
+humeAlertingOperatorBaseRepository: "docker.graphaware.com/internal/"
 humeMessagingProvider: "kafka"
 
 kafka:
@@ -98,10 +99,10 @@ operator:
     #       name: alerting-operator-postgres-db-username
 
 imagePullSecrets:
-  - name: graphaware-docker-creds
+  - name: image-pull-secret
 
 nameOverride: ""
-fullnameOverride: "alerting"
+fullnameOverride: ""
 
 postgresql-alerting-controller-reference: &postgresql_alerting_controller_reference postgresql-alerting-controller
 postgresql-alerting-operator-reference: &postgresql_alerting_operator_reference postgresql-alerting-operator
@@ -133,7 +134,7 @@ service:
   port: 80
 
 ingress:
-  ed: false
+  enabled: false
   className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
@@ -174,6 +175,7 @@ tolerations: []
 affinity: {}
 
 postgresqlAlertingController:
+  enabled: true
   global:
     postgresql:
       auth:
@@ -182,8 +184,20 @@ postgresqlAlertingController:
         password: controller-password
         servicePort: 5432
   fullnameOverride: *postgresql_alerting_controller_reference
+customAlertingControllerPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
 
 postgresqlAlertingOperator:
+  enabled: true
   global:
     postgresql:
       auth:
@@ -192,4 +206,14 @@ postgresqlAlertingOperator:
         password: operator-password
         servicePort: 5432
   fullnameOverride: *postgresql_alerting_operator_reference
-
+customAlertingOperatorPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
