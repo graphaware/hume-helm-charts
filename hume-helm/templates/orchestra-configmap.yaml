@@ -9,6 +9,7 @@ metadata:
   {{ toYaml . | indent 4 }}
   {{- end }}
 data:
+  orchestra.storage.engine: db
   {{- if .Values.postgresqlOrchestra.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-orchestra:{{ .Values.postgresqlOrchestra.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlOrchestra.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlOrchestra.global.postgresql.auth.username }}
@@ -16,15 +17,6 @@ data:
   {{ else }}
   spring.datasource.url: "jdbc:postgresql://{{ .Values.customOrchestraPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customOrchestraPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customOrchestraPostgresql.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.customOrchestraPostgresql.global.postgresql.auth.username }}
-  {{- end }}
-  orchestra.storage.engine: db
-  {{- if or (.Values.orchestra.cluster.enabled) (gt (.Values.orchestra.deployment.replicas | int | default 1) 1) }}
-  orchestra.cluster.enabled: "true"
-  orchestra.cluster.node.advertised.host: "${HOSTNAME}-cluster"
-  orchestra.instance.mode: "cluster"
-  orchestra.cluster.provider: "db"
-  orchestra.member.controller.info.enabled: "true"
-  orchestra.cluster.nodes.active.number: "{{ .Values.orchestra.deployment.replicas | default 1 }}"
   {{- end }}
   {{- if .Values.orchestra.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
