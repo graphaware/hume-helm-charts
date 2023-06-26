@@ -48,7 +48,7 @@ data:
   {{- end }}
   {{- if .Values.alerting.enabled }}
   hume.feature.alerts.enabled: 'true'
-  hume.feature.collections.enabled: true'
+  hume.feature.collections.enabled: 'true'
   hume.alerting.uri: {{ .Values.alerting.uri }}
   alerting.client.enabled: 'true'
   {{- end }}
