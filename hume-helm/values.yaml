@@ -50,11 +50,17 @@ fullnameOverride: "hume"
 
 ### Application based parameters ###
 keycloak:
-  # see https://github.com/bitnami/charts/tree/master/bitnami/keycloak
-  # for subchart settings
-  enabled: false
-  realm: hume
-  client: "hume-web"
+  # See https://github.com/bitnami/charts/tree/master/bitnami/keycloak for subchart settings
+  # Whether to use Keycloak
+  useKeycloak:
+    enabled: false
+  # When enabled the chart will install internal Bitnami Keycloak, when false means use custom Keycloak endpoint
+  internal:
+    enabled: false
+  customKeycloak:
+    customKeycloakEndpoint: ""
+  realm: ""
+  client: ""
   fullnameOverride: hume-keycloak
   service:
     type: ClusterIP
@@ -291,6 +297,7 @@ hume-alerting:
     global:
       postgresqlPassword: ""
 postgresqlCore:
+  # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
   enabled: true
   global:
     postgresql:
@@ -300,6 +307,18 @@ postgresqlCore:
         password: hume
         servicePort: 5432
   fullnameOverride: *postgresql_core_reference
+customApiPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
+# When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
 postgresqlOrchestra:
   enabled: true
   global:
@@ -310,8 +329,20 @@ postgresqlOrchestra:
         password: pgsqls3cr3t
         servicePort: 5432
   fullnameOverride: *postgresql_orchestra_reference
+customOrchestraPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
+# When enabled the chart will install internal Bitnami PostgreSQL chart otherwise is using custom DB endpoint
 postgresqlEventStore:
-  enabled: false
+  enabled: true
   global:
     postgresql:
       auth:
@@ -320,6 +351,17 @@ postgresqlEventStore:
         password: eventstore
         servicePort: 5432
   fullnameOverride: *postgresql_eventstore_reference
+customEventstorePostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
 ### RBAC parameters
 serviceAccount:
   # Specifies whether a service account should be created
