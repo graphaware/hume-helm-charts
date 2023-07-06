@@ -2,8 +2,9 @@ apiVersion: v2
 name: hume-alerting
 description: A Helm chart for Kubernetes
 type: application
-version: "0.0.4"
-appVersion: "2.20.0-SNAPSHOT"
+icon: https://s3.eu-west-1.amazonaws.com/www-graphaware-com.infra.graphaware.com/favicon.ico
+version: "2.19.1"
+appVersion: "2.19.1"
 dependencies:
   - name: postgresql
     version: 12.1.5

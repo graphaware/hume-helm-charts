@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-humeAlertingControllerBaseRepository: "docker.graphaware.com/internal/"
-humeAlertingOperatorBaseRepository: "docker.graphaware.com/internal/"
+humeAlertingControllerBaseRepository: "docker.graphaware.com/hume-alerting/"
+humeAlertingOperatorBaseRepository: "docker.graphaware.com/hume-alerting/"
 humeMessagingProvider: "kafka"
 
 kafka:
@@ -99,7 +99,7 @@ operator:
     #       name: alerting-operator-postgres-db-username
 
 imagePullSecrets:
-  - name: image-pull-secret
+  - name: graphaware-docker-creds
 
 nameOverride: ""
 fullnameOverride: ""
