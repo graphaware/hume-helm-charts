@@ -3,10 +3,15 @@ kind: ConfigMap
 metadata:
   name: {{ include "hume-alerting.fullname" . }}-operator-configmap
 data:
-  logging.format: {{ .Values.operator.logging_format }}
+  {{- if .Values.postgresqlAlertingOperator.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-alerting-operator:{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlAlertingOperator.global.postgresql.auth.database }}?rewriteBatchedStatements=true"
   spring.datasource.username: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlAlertingOperator.global.postgresql.auth.password }}
+  {{ else }}
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customAlertingOperatorPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customAlertingOperatorPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customAlertingOperatorPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customAlertingOperatorPostgresql.global.postgresql.auth.username }}
+  {{- end }}
+  logging.format: {{ .Values.operator.logging_format }}
   hume.security.encryption.engine: {{ .Values.operator.hume_security_encryption_engine }}
   hume.security.encryption.keystore.file: "{{ .Values.operator.hume_security_encryption_keystore_file }}"
   hume.security.encryption.keystore.password: {{ .Values.operator.hume_security_encryption_keystore_password }}
