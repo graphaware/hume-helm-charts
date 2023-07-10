@@ -42,9 +42,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-controller-configmap
-            {{- if .Values.controller.additionalSecretsStore }}
+            {{- if .Values.controller.extraSecrets }}
+            {{- range .Values.controller.extraSecrets }}
             - secretRef:
-                name: {{ .Values.controller.additionalSecretsStore }}
+                name: {{ . }}
+            {{- end }}
             {{- end }}
             - configMapRef:
             {{- if eq .Values.humeMessagingProvider "kafka" }}
@@ -133,9 +135,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-operator-configmap
-            {{- if .Values.operator.additionalSecretsStore }}
+            {{- if .Values.operator.extraSecrets }}
+            {{- range .Values.operator.extraSecrets }}
             - secretRef:
-                name: {{ .Values.operator.additionalSecretsStore }}
+                name: {{ . }}
+            {{- end }}
             {{- end }}
             - configMapRef:
             {{- if eq .Values.humeMessagingProvider "kafka" }}

@@ -51,7 +51,7 @@ controller:
   image: 
     name: "hume-alerting-controller"
     tag: ""
-  additionalSecretsStore: ""
+  extraSecrets: []
   deployment:
     replicas: ""
   logging_format: "json"
@@ -79,7 +79,7 @@ operator:
     tag: ""
   logging_format: "json"
   maxTransactionRetry: 0
-  additionalSecretsStore: ""
+  extraSecrets: []
   connectionAcquisitionTimeoutSeconds: 3
   connectionTimeoutSeconds: 3
   maxPollRecords: 1

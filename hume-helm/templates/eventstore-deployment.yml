@@ -53,9 +53,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-eventstore-configmap
-            {{- if .Values.eventstore.additionalSecretsStore }}
+            {{- if .Values.eventstore.extraSecrets }}
+            {{- range .Values.eventstore.extraSecrets }}
             - secretRef:
-                name: {{ .Values.eventstore.additionalSecretsStore }}
+                name: {{ . }}
+            {{- end }}
             {{- end }}
           env:
             {{- with .Values.eventstore.env }}

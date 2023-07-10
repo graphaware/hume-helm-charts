@@ -65,9 +65,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-orchestra-configmap
-            {{- if .Values.orchestra.additionalSecretsStore }}
+            {{- if .Values.orchestra.extraSecrets }}
+            {{- range .Values.orchestra.extraSecrets }}
             - secretRef:
-                name: {{ .Values.orchestra.additionalSecretsStore }}
+                name: {{ . }}
+            {{- end }}
             {{- end }}
           env:
             {{- if .Values.orchestra.cluster.enabled }}
