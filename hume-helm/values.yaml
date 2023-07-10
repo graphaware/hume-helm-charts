@@ -75,6 +75,7 @@ web:
   port: 8081
   service:
     type: ClusterIP
+  additionalSecretsStore: ""
   deployment:
     replicas: ""
   app:
@@ -89,6 +90,7 @@ api:
     name: "hume-api"
     tag: ""
   port: 8080
+  additionalSecretsStore: ""
   deployment:
     replicas: ""
   service:
@@ -155,6 +157,7 @@ api:
       labels: {}
 eventstore:
   enabled: false
+  additionalSecretsStore: ""
   image:
     name: "hume-eventstore"
     tag: ""
@@ -226,6 +229,7 @@ orchestra:
     name: "hume-orchestra"
     tag: ""
   port: 8100
+  additionalSecretsStore: ""
   deployment:
     replicas: ""
   service:

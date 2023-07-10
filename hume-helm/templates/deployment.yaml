@@ -46,6 +46,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-web-configmap
+            {{- if .Values.web.additionalSecretsStore }}
+            - secretRef:
+                name: {{ .Values.web.additionalSecretsStore }}
+            {{- end }}
           env:
             {{- with .Values.web.env }}
             {{- toYaml . | nindent 12 }}
@@ -124,6 +128,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-api-configmap
+            {{- if .Values.api.additionalSecretsStore }}
+            - secretRef:
+                name: {{ .Values.api.additionalSecretsStore }}
+            {{- end }}
             - secretRef:
                 name: hume-licence
                 optional: true
