@@ -10,6 +10,7 @@ data:
   spring.kafka.consumer.bootstrap-servers: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"
   {{- else }}
   BROKERS: "{{ required "A valid external kafka endpoint required" .Values.kafka.external.host }}:{{ required "A valid external kafka port required" .Values.kafka.external.port }}"
+  {{- if .Values.kafka.external.security.enabled }}
   spring.cloud.stream.kafka.binder.configuration.ssl.endpoint.identification.algorithm: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_ssl_endpoint_identification_algorithm }}
   spring.cloud.stream.kafka.binder.configuration.sasl.mechanism: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_sasl_mechanism }}
   spring.cloud.stream.kafka.binder.configuration.security.protocol: {{ .Values.kafka.spring_cloud_stream_kafka_binder_configuration_security_protocol }}
@@ -18,6 +19,7 @@ data:
   spring.kafka.properties.security.protocol: {{ .Values.kafka.spring_kafka_properties_security_protocol | quote }}
   spring.kafka.properties.ssl.endpoint.identification.algorithm: {{ .Values.kafka.spring_kafka_properties_ssl_endpoint_identification_algorithm | quote }}
   spring.kafka.properties.sasl.mechanism: {{ .Values.kafka.spring_kafka_properties_sasl_mechanism }}
+  {{- end }}
   {{- end }}
   kafka.topics.prefix: {{ .Values.kafka.topics.prefix | quote }}
   kafka.topics.names.feedback: {{ .Values.kafka.topics.names.feedback | quote }}
