@@ -1,0 +1,18 @@
+{{- if and .Values.operator.metrics.enabled .Values.operator.metrics.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-operator-service-monitor
+  labels:
+    {{- with .Values.operator.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  jobLabel: "alerting-operator-metrics"
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: alerting-operator-metrics
+  endpoints:
+  - port: {{ .Values.operator.metrics.serviceMonitor.port }}
+    path: {{ .Values.operator.metrics.serviceMonitor.path }}
+{{- end -}}

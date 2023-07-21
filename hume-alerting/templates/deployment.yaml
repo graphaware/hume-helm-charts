@@ -39,6 +39,9 @@ spec:
             - name: http
               containerPort: 8200
               protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.controller.metrics.service.port }}
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-controller-configmap
@@ -68,13 +71,13 @@ spec:
           livenessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              initialDelaySeconds: 20
              periodSeconds: 20
           readinessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              failureThreshold: 10
              initialDelaySeconds: 20
              periodSeconds: 20
@@ -132,6 +135,9 @@ spec:
             - name: http
               containerPort: 8083
               protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.operator.metrics.service.port }}
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-operator-configmap
@@ -161,13 +167,13 @@ spec:
           livenessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              initialDelaySeconds: 20
              periodSeconds: 20
           readinessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              failureThreshold: 10
              initialDelaySeconds: 20
              periodSeconds: 20

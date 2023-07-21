@@ -1,0 +1,17 @@
+{{- if and .Values.operator.metrics.enabled .Values.operator.metrics.serviceMonitor.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-alerting.fullname" . }}-operator
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.operator.metrics.service.type }}
+  ports:
+    - port: {{ .Values.operator.metrics.service.port }}
+      targetPort: {{ .Values.operator.metrics.service.targetPort }}
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ include "hume-alerting.fullname" . }}-operator
+{{- end }}

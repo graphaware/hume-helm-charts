@@ -67,12 +67,26 @@ controller:
   remoteEventsEnabled: "true"
   execution_ttl_active: "true"
   execution_ttl_ms: "60000"
+  management_endpoints_web_exposure_include: "bindings,health,prometheus"
   env: []
     # - name: spring.datasource.username
     #   valueFrom:
     #     secretKeyRef:
     #       key: db-username
     #       name: alerting-controller-postgres-db-username
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 
 operator:
   image:
@@ -101,6 +115,19 @@ operator:
     #     secretKeyRef:
     #       key: db-username
     #       name: alerting-operator-postgres-db-username
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 
 imagePullSecrets:
   - name: graphaware-docker-creds

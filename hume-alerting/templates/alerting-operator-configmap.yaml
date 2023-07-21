@@ -16,5 +16,8 @@ data:
   hume.security.encryption.keystore.file: "{{ .Values.operator.hume_security_encryption_keystore_file }}"
   hume.security.encryption.keystore.password: {{ .Values.operator.hume_security_encryption_keystore_password }}
   hume.security.encryption.keystore.secret.alias: {{ .Values.operator.hume_security_encryption_keystore_secret_alias }}
+  management.server.port: "{{ .Values.operator.metrics.port }}"
+  {{- if .Values.operator.metrics.enabled }}
   management.endpoints.web.exposure.include: {{ .Values.operator.management_endpoints_web_exposure_include }}
+  {{- end }}
 ---

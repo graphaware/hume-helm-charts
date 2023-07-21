@@ -30,3 +30,4 @@ upload-chart:
   only:
     - main
     - tags
+    - alerting/service-monitor
