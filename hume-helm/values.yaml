@@ -200,6 +200,9 @@ eventstore:
       path: '/actuator/prometheus'
       interval: 30s
       labels: {}
+      basicAuth:
+        enabled: false
+        secretName: eventstore-credentials-secret
 neo4j:
   enabled: true
   services:

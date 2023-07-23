@@ -16,5 +16,14 @@ spec:
   endpoints:
   - port: {{ .Values.eventstore.metrics.serviceMonitor.port }}
     path: {{ .Values.eventstore.metrics.serviceMonitor.path }}
+    {{- if .Values.eventstore.metrics.serviceMonitor.basicAuth.enabled }}
+    basicAuth:
+      password:
+        name: {{ .Values.eventstore.metrics.serviceMonitor.basicAuth.secretName }}
+        key: password
+      username:
+        name: {{ .Values.eventstore.metrics.serviceMonitor.basicAuth.secretName }}
+        key: username
+    {{- end }}
 {{- end -}}
 {{- end -}}
