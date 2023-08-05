@@ -32,11 +32,6 @@ dependencies:
       repository: https://charts.bitnami.com/bitnami
       alias: keycloak
       condition: keycloak.internal.enabled
-    - name: neo4j-standalone
-      version: "4.4.17"
-      repository: "https://helm.neo4j.com/neo4j"
-      condition: neo4j.enabled
-      alias: neo4j
     - name: hume-alerting
       version: "2.20.0-SNAPSHOT"
       repository: "https://docker.graphaware.com/chartrepo/public" 

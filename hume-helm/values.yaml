@@ -203,25 +203,6 @@ eventstore:
       basicAuth:
         enabled: false
         secretName: eventstore-credentials-secret
-neo4j:
-  enabled: true
-  services:
-    neo4j:
-      enabled: false
-  fullnameOverride: "hume-neo4j"
-  neo4j:
-    name: neo4j
-    enabled: true
-    acceptLicenseAgreement: "yes"
-    password: password
-    edition: enterprise
-  env:
-    NEO4J_PLUGINS: '["apoc"]'
-  config:
-    dbms.security.procedures.unrestricted: "apoc.*"
-  volumes:
-    data:
-      mode: defaultStorageClass
 orchestra:
   enabled: true
   cluster:
