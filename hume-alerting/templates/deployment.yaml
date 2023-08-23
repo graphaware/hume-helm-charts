@@ -105,7 +105,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "hume-alerting.selectorLabels" . | nindent 6 }}
+      app: {{ include "hume-alerting.fullname" . }}-operator
   template:
     metadata:
       {{- with .Values.operator.podAnnotations }}
