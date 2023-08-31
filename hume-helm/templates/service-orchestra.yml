@@ -56,3 +56,4 @@ spec:
   selector:
     app: {{ include "hume-helm.fullname" . }}-orchestra-{{ $podIndex }}
 {{- end}}
+{{ end -}}
