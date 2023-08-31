@@ -4,7 +4,7 @@ description: A Helm chart for Kubernetes
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/www-graphaware-com.infra.graphaware.com/favicon.ico
 version: "2.20.0-SNAPSHOT"
-appVersion: "2.20.0-SNAPSHOT"
+appVersion: "2.20.0-RC"
 dependencies:
   - name: postgresql
     version: 12.1.5
