@@ -37,6 +37,7 @@ spec:
 {{- end }}
 {{- end }}
 {{- if .Values.orchestra.webhooks.enabled }}
+# add one service per pod as we want to be able to target a specific pod's service
 ---
 {{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
 apiVersion: v1
