@@ -36,3 +36,22 @@ spec:
     app: {{ include "hume-helm.fullname" . }}-orchestra
 {{- end }}
 {{- end }}
+{{- if .Values.orchestra.webhooks.enabled }}
+---
+{{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-orchestra-webhook-{{ $podIndex }}
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.orchestra.webhooks.service.type }}
+  ports:
+    - port: {{ .Values.orchestra.port }}
+      targetPort: webhook
+      protocol: TCP
+      name: orchestra-webhook-{{ $podIndex }}
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-orchestra-{{ $podIndex }}
+{{- end}}
