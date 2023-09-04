@@ -36,24 +36,25 @@ spec:
     app: {{ include "hume-helm.fullname" . }}-orchestra
 {{- end }}
 {{- end }}
-{{- if .Values.orchestra.webhooks.enabled }}
-# add one service per pod as we want to be able to target a specific pod's service
 ---
-{{ range $podIndex := until (.Values.orchestra.deployment.replicas | int | default 1) -}}
+{{- if .Values.orchestra.webhooks.enabled -}}
+{{ $sumPods := ( .Values.orchestra.deployment.replicas | int | default 1) }}
+{{- range $index := until $sumPods }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hume-helm.fullname" . }}-orchestra-webhook-{{ $podIndex }}
+  name: {{ include "hume-helm.fullname" $ }}-orchestra-webhook-{{ $index }}
   labels:
-    {{- include "hume.labels" . | nindent 4 }}
+    {{- include "hume.labels" $ | nindent 4 }}
 spec:
-  type: {{ .Values.orchestra.webhooks.service.type }}
+  type: {{ $.Values.orchestra.webhooks.service.type }}
   ports:
-    - port: {{ .Values.orchestra.port }}
+    - port: {{ $.Values.orchestra.port }}
       targetPort: webhook
       protocol: TCP
-      name: orchestra-webhook-{{ $podIndex }}
+      name: orchestra-webhook-{{ $index }}
   selector:
-    app: {{ include "hume-helm.fullname" . }}-orchestra-{{ $podIndex }}
-{{- end}}
-{{ end -}}
+    statefulset.kubernetes.io/pod-name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $index }}
+---
+{{- end }}
+{{- end }}
