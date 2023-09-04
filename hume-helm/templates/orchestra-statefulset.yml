@@ -42,6 +42,11 @@ spec:
             - name: metrics
               containerPort: 7001
               protocol: TCP
+            {{- if .Values.orchestra.webhooks.enabled }}
+            - name: webhook
+              containerPort: {{ .Values.orchestra.webhooks.port }}
+              protocol: TCP
+            {{- end }}
             {{- with .Values.orchestra.additionalPorts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
