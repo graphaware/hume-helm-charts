@@ -241,6 +241,7 @@ orchestra:
     #       key: db-username
     #       name: orchestra-postgres-db-username
   # volumeMounts config that will be set on the container
+  additionalPorts: []
   volumeMounts: []
   # volumes config to be set on the orchestra pod
   volumes: []

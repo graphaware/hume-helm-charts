@@ -47,6 +47,9 @@ spec:
               containerPort: {{ .Values.orchestra.webhooks.port }}
               protocol: TCP
             {{- end }}
+            {{- with .Values.orchestra.additionalPorts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           startupProbe:
             httpGet:
               path: {{ .Values.orchestra.startupProbe.path }}
