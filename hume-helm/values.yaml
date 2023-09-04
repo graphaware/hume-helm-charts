@@ -213,6 +213,11 @@ orchestra:
     name: "hume-orchestra"
     tag: ""
   port: 8100
+  webhooks:
+    enabled: true
+    port: 8101
+    service:
+      type: ClusterIP
   extraSecrets: []
   deployment:
     replicas: ""
