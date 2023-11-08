@@ -12,21 +12,22 @@ upload-chart:
     - apt update && apt install -y curl git
     - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 &&  chmod 700 get_helm.sh
     - ./get_helm.sh
-    - helm plugin install https://github.com/chartmuseum/helm-push
     - export HARBOR_USERNAME='robot$imagepull-secret-shared'
-    - helm repo add --username $HARBOR_USERNAME --password $HARBOR_PASSWORD ga-public https://docker.graphaware.com/chartrepo/public
     - helm lint hume-alerting
     - helm dependency update hume-alerting
     - helm template hume-alerting -f hume-alerting/values.yaml
     - helm package hume-alerting
-    - helm cm-push hume-alerting-*.tgz ga-public
+    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public/hume-alerting
+    - helm push hume-alerting-*.tgz oci://docker.graphaware.com/public/hume-alerting
+    - helm registry logout docker.graphaware.com/public/hume-alerting
     - rm -f hume-alerting-*.tgz
     - helm lint hume-helm
     - helm dependency update hume-helm
     - helm template hume-helm -f hume-helm/values.yaml
     - helm package hume-helm
-    - ls -la
-    - helm cm-push hume-*.tgz ga-public
+    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public/hume
+    - helm push hume-*.tgz oci://docker.graphaware.com/public/hume-alerting
+    - helm registry logout docker.graphaware.com/public/hume
   only:
     - main
     - tags
