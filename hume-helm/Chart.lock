@@ -12,7 +12,7 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 13.1.1
 - name: hume-alerting
-  repository: https://docker.graphaware.com/chartrepo/public
-  version: 2.20.0-SNAPSHOT
-digest: sha256:34f5e7dd1c53eae93783bfabdff34fa93548c3a11f4203931d14b0caf8572d65
-generated: "2023-08-05T15:46:07.955495+02:00"
+  repository: oci://docker.graphaware.com/public
+  version: 2.21.0-SNAPSHOT
+digest: sha256:2a548ee76a7a56a7f58f78bfd69bd0d998f2b50028e04868aaea668f13d59417
+generated: "2023-11-08T10:42:12.761988+01:00"

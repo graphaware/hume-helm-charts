@@ -17,17 +17,15 @@ upload-chart:
     - helm dependency update hume-alerting
     - helm template hume-alerting -f hume-alerting/values.yaml
     - helm package hume-alerting
-    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public/hume-alerting
-    - helm push hume-alerting-*.tgz oci://docker.graphaware.com/public/hume-alerting
-    - helm registry logout docker.graphaware.com/public/hume-alerting
+    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public
+    - helm push hume-alerting-*.tgz oci://docker.graphaware.com/public
     - rm -f hume-alerting-*.tgz
     - helm lint hume-helm
     - helm dependency update hume-helm
     - helm template hume-helm -f hume-helm/values.yaml
     - helm package hume-helm
-    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public/hume
-    - helm push hume-*.tgz oci://docker.graphaware.com/public/hume-alerting
-    - helm registry logout docker.graphaware.com/public/hume
+    - helm push hume-*.tgz oci://docker.graphaware.com/public
+    - helm registry logout docker.graphaware.com/public
   only:
     - main
     - tags
