@@ -43,9 +43,10 @@ kubectl create secret generic --from-literal=hume.licence.key=<licence-b64-strin
 > **NOTE**
 > Providing the `hume-licence` secret will install the licence automatically. If not provided you will be prompt to upload the licence file when logging in to Hume for the first time.
 
-4. Add the GraphAware Helm repository to your local repository
+4. Add the GraphAware OCI Helm repository to your local repository
 ```bash
-helm repo add --username '<username>' --password '<password>' graphaware https://docker.graphaware.com/chartrepo/public
+helm registry login -u  '<username>' docker.graphaware.com
+helm pull oci://docker.graphaware.com/public/hume --version 2.21.0
 ```
 
 ### Install the Helm chart
@@ -53,9 +54,9 @@ helm repo add --username '<username>' --password '<password>' graphaware https:/
 Assuming `hume` is the namespace name and `my-release` is the helm release name.
 
 ```bash
-$ helm install my-release graphaware/hume -n hume
+$ helm install my-release oci://docker.graphaware.com/public/hume --version 2.21.0
 or
-$ helm install my-release graphaware/hume -n hume -f values.yaml
+$ helm install my-release oci://docker.graphaware.com/public/hume --version 2.21.0 -n hume -f values.yaml
 ```
 > **NOTE**  
 > These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
