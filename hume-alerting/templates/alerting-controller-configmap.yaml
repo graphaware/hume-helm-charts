@@ -22,6 +22,7 @@ data:
   controller.remoteEventsEnabled: "{{ .Values.controller.remoteEventsEnabled }}"
   controller.execution.ttl.active: {{ .Values.controller.execution_ttl_active | quote }}
   controller.execution.ttl.ms: {{ .Values.controller.execution_ttl_ms | quote }}
+  management.server.port: "7001"
   {{- if .Values.controller.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}
