@@ -17,4 +17,8 @@ data:
   hume.security.encryption.keystore.password: {{ .Values.operator.hume_security_encryption_keystore_password }}
   hume.security.encryption.keystore.secret.alias: {{ .Values.operator.hume_security_encryption_keystore_secret_alias }}
   management.endpoints.web.exposure.include: {{ .Values.operator.management_endpoints_web_exposure_include }}
+  management.server.port: "7001"
+  {{- if .Values.controller.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
 ---

@@ -133,8 +133,8 @@ spec:
           image: "{{ .Values.humeAlertingOperatorBaseRepository }}{{ .Values.operator.image.name }}:{{ .Values.operator.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 8083
+            - name: metrics
+              containerPort: 7001
               protocol: TCP
           envFrom:
             - configMapRef:
@@ -165,13 +165,13 @@ spec:
           livenessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              initialDelaySeconds: 20
              periodSeconds: 20
           readinessProbe:
              httpGet:
                path: /actuator/health
-               port: http
+               port: metrics
              failureThreshold: 10
              initialDelaySeconds: 20
              periodSeconds: 20
