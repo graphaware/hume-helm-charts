@@ -22,4 +22,7 @@ data:
   controller.remoteEventsEnabled: "{{ .Values.controller.remoteEventsEnabled }}"
   controller.execution.ttl.active: {{ .Values.controller.execution_ttl_active | quote }}
   controller.execution.ttl.ms: {{ .Values.controller.execution_ttl_ms | quote }}
+  {{- if .Values.api.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
 ---

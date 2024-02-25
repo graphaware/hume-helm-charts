@@ -73,6 +73,19 @@ controller:
     #     secretKeyRef:
     #       key: db-username
     #       name: alerting-controller-postgres-db-username
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 
 operator:
   image:

@@ -39,6 +39,9 @@ spec:
             - name: http
               containerPort: 8200
               protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ include "hume-alerting.fullname" . }}-controller-configmap
