@@ -232,6 +232,126 @@ api:
         existingSecretKey: secret # optional, defaults to "token"
 ```
 
+### Audit logging to console logs
+
+Configuring Hume to log all logs including the audit logs to console is generally helpful in Kubernetes 
+environments so all logs can be picked up by centralised logging such as Grafana Loki for example.
+
+To do so, you will need to create a configmap that defines the log4j2 configuration
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-log4j2-configmap
+data:
+  server-logs.xml: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!--
+        ~ Copyright (c) Graph Aware Limited - All Rights Reserved
+        ~ This file is part of GraphAware Hume
+        ~ Unauthorized copying of this file, via any medium is strictly prohibited
+        ~ Proprietary and confidential
+        -->
+
+      <Configuration status="info">
+          <Properties>
+              <Property name="_hume.security.audit.enabled">${sys:hume.security.audit.enabled:-false}</Property>
+              <Property name="_hume.security.audit.log.path">${sys:hume.security.audit.log.path:-/tmp/hume-audit}</Property>
+              <Property name="_hume.logging.shortenedClassNameLength">${sys:hume.logging.shortenedClassNameLength}</Property>
+              <Property name="_hume.logging.format">${sys:hume.logging.format:-plain}</Property>
+              <Property name="_hume.logging.maxDepth">${sys:hume.logging.maxDepth}</Property>
+              <Property name="_hume.logging.maxLength">${sys:hume.logging.maxLength}</Property>
+              <Property name="pattern">%highlight{[%-5level]}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} %d{dd-MM-yyyy HH:mm:ss.SSS} %style{[%thread]}{blue} %style{[%c{1}]}{yellow} - %m%n</Property>
+              <Property name="pattern_audit">%highlight{[%-5level]}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} %d{dd-MM-yyyy HH:mm:ss.SSS} %style{[%thread]}{blue} %style{[%c{1}]}{yellow} - %m%n</Property>
+          </Properties>
+
+          <Appenders>
+              <Console name="console_plain" target="SYSTEM_OUT">
+                  <PatternLayout pattern="${pattern}" />
+              </Console>
+              <Console name="console_json" target="SYSTEM_OUT">
+                  <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json" />
+              </Console>
+
+              <Console name="audit_false" target="SYSTEM_OUT">
+                  <PatternLayout pattern="${pattern_audit}"/>
+              </Console>
+
+              <Console name="audit_console_plain" target="SYSTEM_OUT">
+                  <PatternLayout pattern="${pattern_audit}"/>
+              </Console>
+          </Appenders>
+
+          <Loggers>
+              <Root level="info" additivity="true">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Root>
+
+              <Logger name="hume.audit" level="info" additivity="false">
+                  <AppenderRef ref="audit_console_plain" />
+              </Logger>
+
+              <Logger name="org.springframework.web" level="warn" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.hibernate" level="warn" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.springframework.data.convert.CustomConversions" level="error" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.springframework.context.support" level="warn" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.hibernate.type.descriptor" level="error" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.springframework.data.jpa.repository.query" level="error" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.elasticsearch.client.RestClient" level="warn" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+
+              <Logger name="org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker"
+                      level="error" additivity="false">
+                  <AppenderRef ref="console_${_hume.logging.format}" />
+              </Logger>
+          </Loggers>
+      </Configuration>
+```
+
+Secondly you will need to mount a volume and a volumemount with the configmap, add this to the `api` section of the chart : 
+
+```yaml
+  volumes:
+      - configMap:
+          name: api-log4j2-configmap
+        name: api-log4j2-volume
+  volumeMounts:
+      - mountPath: /conf
+        name: api-log4j2-volume
+```
+
+Lastly, provide the following settings in the api environment variables
+
+```yaml
+  env:
+    - name: hume.security.audit.enabled
+      value: 'true'
+    - name: hume.security.audit.appender
+      value: 'console_plain'
+    - name: "hume.logging.config.location"
+      value: "/conf/server-logs.xml"
+```
+
 
 ## License
 
