@@ -1,4 +1,4 @@
-image: debian:stable-slim
+image: docker.graphaware.com/mirror/debian:stable-slim
 
 stages:
   - upload
