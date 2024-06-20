@@ -72,15 +72,16 @@ spec:
              httpGet:
                path: /actuator/health
                port: metrics
-             initialDelaySeconds: 20
-             periodSeconds: 20
+             initialDelaySeconds: {{ .Values.controller.probes.livenessProbe.initialDelaySeconds }}
+             periodSeconds: {{ .Values.controller.probes.livenessProbe.periodSeconds }}
+             failureThreshold: {{ .Values.controller.probes.livenessProbe.failureThreshold }}
           readinessProbe:
              httpGet:
                path: /actuator/health
                port: metrics
-             failureThreshold: 10
-             initialDelaySeconds: 20
-             periodSeconds: 20
+             initialDelaySeconds: {{ .Values.controller.probes.readinessProbe.initialDelaySeconds }}
+             periodSeconds: {{ .Values.controller.probes.readinessProbe.periodSeconds }}
+             failureThreshold: {{ .Values.controller.probes.readinessProbe.failureThreshold }}
           resources:
             {{- toYaml .Values.controller.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

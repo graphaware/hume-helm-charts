@@ -73,6 +73,15 @@ controller:
     #     secretKeyRef:
     #       key: db-username
     #       name: alerting-controller-postgres-db-username
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 20
+      periodSeconds: 20
+      failureThreshold: 3
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 20
+      failureThreshold: 20
   metrics:
     enabled: false
     service:
