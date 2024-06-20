@@ -29,3 +29,4 @@ upload-chart:
   only:
     - main
     - tags
+    - /^support/.*$/
