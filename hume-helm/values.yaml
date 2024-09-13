@@ -234,19 +234,34 @@ orchestra:
     selector: {}
   # Additional environment variables for hume-core/orchestra
   # Can also override existing environment variables
-  env: []
     # - name: spring.datasource.username
     #   valueFrom:
     #     secretKeyRef:
     #       key: db-username
     #       name: orchestra-postgres-db-username
+  env: []
+  #
+  # Init Containers
+  # Example
+    # - name: init-s3-download
+    #   image: amazon/aws-cli:latest
+    #   command: ["/bin/sh", "-c"]
+    #   args:
+    #     - |
+    #       aws s3 cp s3://bucket/my-plugin.jar /plugins
+    #   volumeMounts:
+    #     - name: plugins
+    #       mountPath: /plugins
+  initContainers: []
   # volumeMounts config that will be set on the container
-  additionalPorts: []
+    # - name: plugins
+    #   mountPath: /plugins
   volumeMounts: []
   # volumes config to be set on the orchestra pod
   volumes: []
   # volumes claim templates configs to be set on the deployment
   volumeClaimTemplates: []
+  additionalPorts: []
   startupProbe:
     failureThreshold: 20
     periodSeconds: 7

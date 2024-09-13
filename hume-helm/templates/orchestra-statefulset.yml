@@ -33,6 +33,10 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.orchestra.initContainers }}
+      initContainers:
+        {{- toYaml .Values.orchestra.initContainers | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ include "hume-helm.fullname" . }}-orchestra
           securityContext:
