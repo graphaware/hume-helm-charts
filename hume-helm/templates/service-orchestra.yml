@@ -49,7 +49,7 @@ metadata:
 spec:
   type: {{ $.Values.orchestra.webhooks.service.type }}
   ports:
-    - port: {{ $.Values.orchestra.port }}
+    - port: {{ $.Values.orchestra.webhooks.port }}
       targetPort: webhook
       protocol: TCP
       name: orchestra-webhook-{{ $index }}
