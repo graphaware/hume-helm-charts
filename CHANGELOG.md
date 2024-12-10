@@ -1,3 +1,7 @@
+2.25 
+
+- Added support for `volumes` in eventstore deployment
+
 2.19.0-SNAPSHOT
 
 - Added support for Prometheus service monitor
