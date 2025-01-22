@@ -169,6 +169,7 @@ media:
     type: NodePort
   app:
     name: hume-media
+    uri: http://hume-media:8008
   resources:
     requests:
       cpu: "500m"
@@ -179,6 +180,7 @@ media:
   volumes: [ ]
   volumeMounts: [ ]
   security:
+    apiKey: 'hms_api_key'
     native:
       jwt:
         signingKey: ""
