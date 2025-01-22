@@ -42,7 +42,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-media
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.media.image.name }}:{{ include "mediaImageTag" . }}"
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.media.image.name }}:{{ include "mediaImageTag" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: media-http
@@ -68,8 +68,8 @@ spec:
             - name: spring.datasource.password
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.existingSecret }}
-                  key: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.passwordSecretKey }}
+                  name: {{ .Values.customMediaPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customMediaPostgresql.global.postgresql.secretRef.passwordSecretKey }}
             {{- end }}
           volumeMounts:
             {{- with .Values.media.volumeMounts }}
@@ -81,14 +81,14 @@ spec:
             httpGet:
               path: /actuator/health
               port: metrics
-            initialDelaySeconds: {{ .Values.api.probes.livenessProbe.inititalDelaySeconds }}
-            periodSeconds: {{ .Values.api.probes.livenessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.api.probes.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.media.probes.livenessProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.media.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.media.probes.livenessProbe.failureThreshold }}
           startupProbe:
             httpGet:
               path: /actuator/health
               port: metrics
-            initialDelaySeconds: {{ .Values.api.probes.startupProbe.inititalDelaySeconds }}
-            periodSeconds: {{ .Values.api.probes.startupProbe.periodSeconds }}
-            failureThreshold: {{ .Values.api.probes.startupProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.media.probes.startupProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.media.probes.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.media.probes.startupProbe.failureThreshold }}
 {{- end }}

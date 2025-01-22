@@ -15,7 +15,7 @@ data:
   spring.datasource.url: "jdbc:postgresql://postgresql-media:{{ .Values.postgresqlMedia.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMedia.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlMedia.global.postgresql.auth.username }}
   spring.datasource.password: {{ .Values.postgresqlMedia.global.postgresql.auth.password }}
-  { { else } }
+  {{ else }}
   spring.datasource.url: "jdbc:postgresql://{{ .Values.customMediaPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customMediaPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customMediaPostgresql.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.customMediaPostgresql.global.postgresql.auth.username }}
   {{- if .Values.media.metrics.enabled }}

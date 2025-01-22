@@ -200,9 +200,6 @@ api:
         path: '/actuator/prometheus'
         interval: 30s
         labels: { }
-        basicAuth:
-          enabled: false
-          secretName: media-credentials-secret
 eventstore:
   enabled: false
   extraSecrets: []
