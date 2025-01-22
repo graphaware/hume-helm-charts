@@ -1,0 +1,37 @@
+{{- if .Values.media.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.media.service.type }}
+  ports:
+    - port: {{ .Values.media.port }}
+      targetPort: media
+      protocol: TCP
+      name: media
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-media
+---
+{{- if .Values.media.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media-metrics
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+    app.kubernetes.io/component: media-metrics
+spec:
+  type: {{ .Values.media.metrics.service.type }}
+  ports:
+    - port: {{ .Values.media.metrics.service.port }}
+      targetPort: {{ .Values.media.metrics.service.targetPort }}
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-media
+{{- end }}
+---
+{{- end }}

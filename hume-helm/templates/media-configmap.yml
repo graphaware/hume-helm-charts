@@ -1,0 +1,50 @@
+{{- if .Values.media.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media-configmap
+  labels:
+  {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  management.server.port: "7001"
+  {{- if .Values.media.storage.local.enabled }}
+  hume.media.storage.providers.local.enabled: 'true'
+  hume.media.storage.providers.local.path.uploaded: {{ .Values.media.storage.local.uploadPath }}
+  hume.media.storage.providers.local.path.ready: {{ .Values.media.storage.local.readyPath }}
+  {{- end }}
+  {{- if .Values.keycloak.useKeycloak.enabled }}
+  hume.security.provider: 'keycloak'
+  keycloak.realm: {{ .Values.keycloak.realm }}
+  keycloak.resource: {{ .Values.keycloak.client }}
+  keycloak.public-client: 'true'
+  keycloak.principal-attribute: 'preferred_username'
+  keycloak.use-resource-role-mappings: 'true'
+  keycloak.enabled: 'true'
+  {{- if not .Values.keycloak.internal.enabled }}
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.customKeycloak.customKeycloakEndpoint }}"
+  {{- else if and .Values.keycloak.internal.enabled .Values.ingress.enabled }}
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
+  {{- else }}
+  keycloak.auth-server-url: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
+  {{- end }}
+  {{- else }}
+  hume.security.provider: 'native'
+  hume.media.security.native.jwt.signing-key.base64: {{ .Values.media.security.native.jwt.signingKey }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.postgresqlMedia.enabled }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-media:{{ .Values.postgresqlMedia.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMedia.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlMedia.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlMedia.global.postgresql.auth.password }}
+  {{ else }}
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customMediaPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customMediaPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customMediaPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customMediaPostgresql.global.postgresql.auth.username }}
+  {{- end}}
+  {{- if .Values.media.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
+---

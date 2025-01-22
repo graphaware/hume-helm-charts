@@ -29,3 +29,11 @@
 {{ .Values.appVersion | default .Chart.AppVersion }}
 {{- end -}}
 {{- end -}}
+
+{{- define "mediaImageTag" -}}
+{{- if .Values.media.image.tag -}}
+{{ .Values.media.image.tag }}
+{{- else -}}
+{{ .Values.appVersion | default .Chart.AppVersion }}
+{{- end -}}
+{{- end -}}

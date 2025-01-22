@@ -8,11 +8,14 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.5
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.5
 - name: keycloak
   repository: https://charts.bitnami.com/bitnami
   version: 13.1.1
 - name: hume-alerting
   repository: oci://docker.graphaware.com/public
-  version: 2.21.0
-digest: sha256:e6d8eee26f26fa8dc3180ac776aedb2da3034b6602de633718650e8ded89c58d
-generated: "2023-12-14T11:43:11.26516+01:00"
+  version: 2.26.0-SNAPSHOT
+digest: sha256:7abead00be92ddb31cb6e66f235a90609dfc1622edac01d12145bf5b903a5776
+generated: "2025-01-22T19:53:14.679215+01:00"

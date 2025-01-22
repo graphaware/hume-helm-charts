@@ -27,6 +27,11 @@ dependencies:
       repository: https://charts.bitnami.com/bitnami
       alias: postgresqlEventStore
       condition: postgresqlEventStore.enabled
+    - name: postgresql
+      version: 12.1.5
+      repository: https://charts.bitnami.com/bitnami
+      alias: postgresqlMedia
+      condition: postgresqlMedia.enabled
     - name: keycloak
       version: 13.1.1
       repository: https://charts.bitnami.com/bitnami
