@@ -35,7 +35,6 @@ data:
   hume.security.provider: 'native'
   hume.media.security.native.jwt.signing-key.base64: {{ .Values.media.security.native.jwt.signingKey }}
   {{- end }}
-  {{- end }}
   {{- if .Values.postgresqlMedia.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-media:{{ .Values.postgresqlMedia.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMedia.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.postgresqlMedia.global.postgresql.auth.username }}
@@ -47,4 +46,5 @@ data:
   {{- if .Values.media.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}
+{{- end }}
 ---

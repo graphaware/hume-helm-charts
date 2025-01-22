@@ -189,6 +189,19 @@ media:
       enabled: true
       uploadPath: "/tmp/upload"
       readyPath: "/tmp/upload"
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
 
   probes:
     livenessProbe:
