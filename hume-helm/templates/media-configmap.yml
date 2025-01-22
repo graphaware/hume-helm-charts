@@ -33,7 +33,7 @@ data:
   {{- end }}
   {{- else }}
   hume.security.provider: 'native'
-  hume.media.security.native.jwt.signing-key: {{ .Values.media.security.native.jwt.signingKey }}
+  hume.media.security.native.jwt.signing-key.base64: {{ .Values.media.security.native.jwt.signingKey }}
   {{- end }}
   {{- end }}
   {{- if .Values.postgresqlMedia.enabled }}
