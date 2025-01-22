@@ -178,6 +178,16 @@ media:
   env: [ ]
   volumes: [ ]
   volumeMounts: [ ]
+  security:
+    native:
+      jwt:
+        signingKey: ""
+  storage:
+    local:
+      enabled: true
+      uploadPath: "/tmp/upload"
+      readyPath: "/tmp/upload"
+
   probes:
     livenessProbe:
       inititalDelaySeconds: 0
