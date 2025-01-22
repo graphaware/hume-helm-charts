@@ -78,9 +78,9 @@ data:
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}
   # Media
-  { { - if .Values.media.enabled } }
+  {{- if .Values.media.enabled }}
   hume.media.enabled: 'true'
   hume.media.uri: {{ .Values.media.app.uri }}
   hume.media.api-key: {{ .Values.media.security.apiKey }}
-  { { - end } }
+  {{- end }}
 ---
