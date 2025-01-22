@@ -1,0 +1,94 @@
+{{- if .Values.media.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.media.deployment.replicas | default 1 }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-media
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{ toYaml . | trim | indent 4 }}
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-media
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        {{- with .Values.media.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-media
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.media.image.name }}:{{ include "mediaImageTag" . }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: media-http
+              containerPort: 8008
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-media-configmap
+            {{- if .Values.media.extraSecrets }}
+            {{- range .Values.media.extraSecrets }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- end }}
+          env:
+            {{- with .Values.media.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if not .Values.postgresqlMedia.enabled}}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customEventstorePostgresql.global.postgresql.secretRef.passwordSecretKey }}
+            {{- end }}
+          volumeMounts:
+            {{- with .Values.media.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.media.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: {{ .Values.api.probes.livenessProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.livenessProbe.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: {{ .Values.api.probes.startupProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.api.probes.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.api.probes.startupProbe.failureThreshold }}
+{{- end }}

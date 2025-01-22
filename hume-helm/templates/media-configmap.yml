@@ -1,0 +1,25 @@
+{{- if .Values.media.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media-configmap
+  labels:
+  {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  management.server.port: "7001"
+  {{- if .Values.postgresqlMedia.enabled }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-media:{{ .Values.postgresqlMedia.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMedia.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlMedia.global.postgresql.auth.username }}
+  spring.datasource.password: {{ .Values.postgresqlMedia.global.postgresql.auth.password }}
+  { { else } }
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customMediaPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customMediaPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customMediaPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customMediaPostgresql.global.postgresql.auth.username }}
+  {{- if .Values.media.metrics.enabled }}
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  {{- end }}
+{{- end }}
+---

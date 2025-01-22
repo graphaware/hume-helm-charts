@@ -25,6 +25,8 @@ podAnnotations: {}
 postgresql-core-reference: &postgresql_core_reference postgresql-core
 postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
 postgresql-eventstore-reference: &postgresql_eventstore_reference postgresql-eventstore
+postgresql-media-reference: &postgresql_media_reference postgresql-media
+
 
 humeCoreBaseRepository: "docker.graphaware.com/hume-core/"
 humeAnnotateBaseRepository: "docker.graphaware.com/hume-eventstore/"
@@ -155,6 +157,52 @@ api:
       path: '/actuator/prometheus'
       interval: 30s
       labels: {}
+  media:
+    enabled: false
+    image:
+      name: "hume-media"
+      tag: ""
+    port: 8008
+    deployment:
+      replicas: ""
+    service:
+      type: NodePort
+    app:
+      name: hume-media
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "2048Mi"
+    username: hume
+    password: megaSecretPwd
+    env: [ ]
+    volumes: [ ]
+    volumeMounts: [ ]
+    probes:
+      livenessProbe:
+        inititalDelaySeconds: 0
+        periodSeconds: 10
+        failureThreshold: 3
+      startupProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 5
+        failureThreshold: 60
+    metrics:
+      enabled: false
+      service:
+        type: ClusterIP
+        port: 7001
+        targetPort: metrics
+      serviceMonitor:
+        enabled: false
+        jobLabel: ""
+        port: metrics
+        path: '/actuator/prometheus'
+        interval: 30s
+        labels: { }
+        basicAuth:
+          enabled: false
+          secretName: media-credentials-secret
 eventstore:
   enabled: false
   extraSecrets: []
@@ -365,6 +413,28 @@ postgresqlEventStore:
         servicePort: 5432
   fullnameOverride: *postgresql_eventstore_reference
 customEventstorePostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
+
+postgresqlMedia:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: media
+        username: media
+        password: media
+        servicePort: 5432
+  fullnameOverride: *postgresql_media_reference
+customMediaPostgresql:
   global:
     postgresql:
       auth:
