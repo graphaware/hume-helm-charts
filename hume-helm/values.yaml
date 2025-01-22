@@ -157,49 +157,49 @@ api:
       path: '/actuator/prometheus'
       interval: 30s
       labels: {}
-  media:
+media:
+  enabled: false
+  image:
+    name: "hume-media"
+    tag: ""
+  port: 8008
+  deployment:
+    replicas: ""
+  service:
+    type: NodePort
+  app:
+    name: hume-media
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2048Mi"
+  username: hume
+  password: megaSecretPwd
+  env: [ ]
+  volumes: [ ]
+  volumeMounts: [ ]
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
+    startupProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 60
+  metrics:
     enabled: false
-    image:
-      name: "hume-media"
-      tag: ""
-    port: 8008
-    deployment:
-      replicas: ""
     service:
-      type: NodePort
-    app:
-      name: hume-media
-    resources:
-      requests:
-        cpu: "500m"
-        memory: "2048Mi"
-    username: hume
-    password: megaSecretPwd
-    env: [ ]
-    volumes: [ ]
-    volumeMounts: [ ]
-    probes:
-      livenessProbe:
-        inititalDelaySeconds: 0
-        periodSeconds: 10
-        failureThreshold: 3
-      startupProbe:
-        initialDelaySeconds: 30
-        periodSeconds: 5
-        failureThreshold: 60
-    metrics:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
       enabled: false
-      service:
-        type: ClusterIP
-        port: 7001
-        targetPort: metrics
-      serviceMonitor:
-        enabled: false
-        jobLabel: ""
-        port: metrics
-        path: '/actuator/prometheus'
-        interval: 30s
-        labels: { }
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: { }
 eventstore:
   enabled: false
   extraSecrets: []

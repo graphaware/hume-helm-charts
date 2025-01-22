@@ -18,6 +18,7 @@ data:
   {{ else }}
   spring.datasource.url: "jdbc:postgresql://{{ .Values.customMediaPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customMediaPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customMediaPostgresql.global.postgresql.auth.database }}"
   spring.datasource.username: {{ .Values.customMediaPostgresql.global.postgresql.auth.username }}
+  {{- end}}
   {{- if .Values.media.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}
