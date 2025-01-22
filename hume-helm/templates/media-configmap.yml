@@ -31,10 +31,10 @@ data:
   {{- else }}
   keycloak.auth-server-url: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
   {{- end }}
-  {{- end }}
   {{- else }}
   hume.security.provider: 'native'
   hume.media.security.native.jwt.signing-key: {{ .Values.media.security.native.jwt.signingKey }}
+  {{- end }}
   {{- end }}
   {{- if .Values.postgresqlMedia.enabled }}
   spring.datasource.url: "jdbc:postgresql://postgresql-media:{{ .Values.postgresqlMedia.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMedia.global.postgresql.auth.database }}"
