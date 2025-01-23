@@ -113,6 +113,9 @@ api:
     mde: false
   remoteApi:
     enabled: false
+  media:
+    enabled: false
+    uri: ""
     # https://documentation.hume.graphaware.com/operations-manual/hume-api/api.html
     initialKey:
       create: false
