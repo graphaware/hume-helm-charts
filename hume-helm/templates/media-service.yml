@@ -9,9 +9,9 @@ spec:
   type: {{ .Values.media.service.type }}
   ports:
     - port: {{ .Values.media.port }}
-      targetPort: media
+      targetPort: media-http
       protocol: TCP
-      name: media
+      name: media-http
   selector:
     app: {{ include "hume-helm.fullname" . }}-media
 ---
