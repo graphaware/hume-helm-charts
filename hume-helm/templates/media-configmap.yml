@@ -16,6 +16,13 @@ data:
   hume.media.storage.providers.local.path.uploaded: {{ .Values.media.storage.local.uploadPath }}
   hume.media.storage.providers.local.path.ready: {{ .Values.media.storage.local.readyPath }}
   {{- end }}
+  {{- if .Values.eventstore.enabled }}
+  hume.media.notifications.event-store.enabled: "{{ Values.eventstore.enabled }}"
+  hume.eventstore.hostname: "{{ .Values.eventstore.app.name }}"
+  hume.eventstore.port: "{{ .Values.eventstore.port }}"
+  hume.eventstore.username: "{{ .Values.eventstore.username }}"
+  hume.eventstore.password: "{{ .Values.eventstore.password }}"
+  {{- end }}
   {{- if .Values.keycloak.useKeycloak.enabled }}
   hume.security.provider: 'keycloak'
   keycloak.realm: {{ .Values.keycloak.realm }}
