@@ -34,6 +34,7 @@ spec:
       {{ end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      enableServiceLinks: false
       volumes:
         {{- with .Values.media.volumes }}
         {{- toYaml . | nindent 8 }}
