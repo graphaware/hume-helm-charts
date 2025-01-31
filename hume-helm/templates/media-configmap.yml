@@ -17,7 +17,7 @@ data:
   hume.media.storage.providers.local.path.ready: {{ .Values.media.storage.local.readyPath }}
   {{- end }}
   {{- if .Values.eventstore.enabled }}
-  hume.media.notifications.event-store.enabled: "{{ Values.eventstore.enabled }}"
+  hume.media.notifications.event-store.enabled: "{{ .Values.eventstore.enabled }}"
   hume.eventstore.hostname: "{{ .Values.eventstore.app.name }}"
   hume.eventstore.port: "{{ .Values.eventstore.port }}"
   hume.eventstore.username: "{{ .Values.eventstore.username }}"
