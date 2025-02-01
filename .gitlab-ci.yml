@@ -5,7 +5,7 @@ stages:
   - upload
 
 lint-chart:
-  state: lint
+  stage: lint
   tags:
     - graphaware
     - k8s
