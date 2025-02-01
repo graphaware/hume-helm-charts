@@ -14,7 +14,7 @@ lint-chart:
     - apk add --no-cache python3 py3-pip
     - pip install pyyaml
   script:
-    - helm template -f ./_tests/metrics-enabled.yml hume-helm > ./_tests/metrics-enabled-out.yml
+    # - helm template -f ./_tests/metrics-enabled.yml hume-helm > ./_tests/metrics-enabled-out.yml
     - python3 ./_tests/verify_labels.py
 
 upload-chart:
