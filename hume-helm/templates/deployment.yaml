@@ -130,6 +130,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "hume-helm.fullname" . }}-api-configmap
+            {{- if .Values.api.extraConfigMaps }}
+            {{- range .Values.api.extraConfigMaps }}
+            - configMapRef:
+                name: {{ . }}
+            {{- end }}
+            {{- end }}
             {{- if .Values.api.extraSecrets }}
             {{- range .Values.api.extraSecrets }}
             - secretRef:
