@@ -30,7 +30,7 @@ def check_duplicate_labels(resources):
     print("✅ No duplicate labels found.")
 
 if __name__ == "__main__":
-    yaml_file = "metrics-enabled-out.yaml"  # Change this to your actual file path
+    yaml_file = "metrics-enabled-out.yml"  # Change this to your actual file path
     try:
         resources = load_yaml(yaml_file)
         check_duplicate_labels(resources)
