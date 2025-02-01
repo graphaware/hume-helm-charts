@@ -24,7 +24,7 @@ metadata:
   name: {{ include "hume-helm.fullname" . }}-orchestra-metrics
   labels:
     {{- include "hume.labels" . | nindent 4 }}
-    app.kubernetes.io/component: orchestra-metrics
+    obs.hume.k8s.io/component: orchestra-metrics
 spec:
   type: {{ .Values.orchestra.metrics.service.type }}
   ports:

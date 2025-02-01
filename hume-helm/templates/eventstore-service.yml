@@ -22,7 +22,7 @@ metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore-metrics
   labels:
     {{- include "hume.labels" . | nindent 4 }}
-    app.kubernetes.io/component: eventstore-metrics
+    obs.hume.k8s.io/component: eventstore-metrics
 spec:
   type: {{ .Values.eventstore.metrics.service.type }}
   ports:
