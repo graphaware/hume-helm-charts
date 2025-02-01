@@ -21,7 +21,7 @@ metadata:
   name: {{ include "hume-helm.fullname" . }}-api-metrics
   labels:
     {{- include "hume.labels" . | nindent 4 }}
-    app.kubernetes.io/component: api-metrics
+    obs.hume.k8s.io/component: api-metrics
 spec:
   type: {{ .Values.api.metrics.service.type }}
   ports:

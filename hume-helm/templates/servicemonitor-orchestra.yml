@@ -11,7 +11,7 @@ spec:
   jobLabel: "orchestra-metrics"
   selector:
     matchLabels:
-      app.kubernetes.io/component: orchestra-metrics
+      obs.hume.k8s.io/component: orchestra-metrics
   endpoints:
   - port: metrics
     path: {{ .Values.orchestra.metrics.serviceMonitor.path }}
