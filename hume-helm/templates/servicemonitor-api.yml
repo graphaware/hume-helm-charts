@@ -11,7 +11,7 @@ spec:
   jobLabel: "api-metrics"
   selector:
     matchLabels:
-      app.kubernetes.io/component: api-metrics
+      obs.hume.k8s.io/component: api-metrics
   endpoints:
   - port: {{ .Values.api.metrics.serviceMonitor.port }}
     path: {{ .Values.api.metrics.serviceMonitor.path }}

@@ -12,7 +12,7 @@ spec:
   jobLabel: "eventstore-metrics"
   selector:
     matchLabels:
-      app.kubernetes.io/component: eventstore-metrics
+      obs.hume.k8s.io/component: eventstore-metrics
   endpoints:
   - port: {{ .Values.eventstore.metrics.serviceMonitor.port }}
     path: {{ .Values.eventstore.metrics.serviceMonitor.path }}

@@ -1,0 +1,1375 @@
+---
+# Source: hume/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hume
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+---
+# Source: hume/charts/postgresqlCore/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql-core
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlCore
+    helm.sh/chart: postgresqlCore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  postgres-password: "bnJoTjMyQkNSWg=="
+  password: "aHVtZQ=="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: hume/charts/postgresqlEventStore/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql-eventstore
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlEventStore
+    helm.sh/chart: postgresqlEventStore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  postgres-password: "dEJTd29sZUpmUw=="
+  password: "ZXZlbnRzdG9yZQ=="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: hume/charts/postgresqlMedia/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql-media
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlMedia
+    helm.sh/chart: postgresqlMedia-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  postgres-password: "UXp3WjZWcVJWaw=="
+  password: "bWVkaWE="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: hume/charts/postgresqlOrchestra/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql-orchestra
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlOrchestra
+    helm.sh/chart: postgresqlOrchestra-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  postgres-password: "dllodW5OTUhtQw=="
+  password: "cGdzcWxzM2NyM3Q="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: hume/templates/api-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hume-api-configmap
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+data:
+  management.server.port: "7001"
+  spring.datasource.url: "jdbc:postgresql://postgresql-core:5432/hume"
+  spring.datasource.username: hume
+  spring.datasource.password: hume
+  
+  hume.orchestra.uri: "http://hume-orchestra:8100"
+  hume.driver.neo4j.transaction.timeout: "90000"
+  com.hume.core.admin.setup.step.admin_creation.auto: 'true'
+  com.hume.core.admin.setup.step.admin_creation.username: admin@hume.k8s
+  com.hume.core.admin.setup.step.admin_creation.name: admin@hume.k8s
+  com.hume.core.admin.setup.step.admin_creation.password: password
+  # Remote API Key config
+  # Alerting
+  management.endpoints.web.exposure.include: "health,prometheus,info"
+  # Media
+---
+# Source: hume/templates/orchestra-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hume-orchestra-configmap
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+data:
+  orchestra.storage.engine: db
+  spring.datasource.url: "jdbc:postgresql://postgresql-orchestra:5432/orchestra"
+  spring.datasource.username: orchestra
+  spring.datasource.password: pgsqls3cr3t
+---
+# Source: hume/templates/web-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hume-web-configmap
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+data:
+  HUME_API_URL: "http://localhost:8080"
+---
+# Source: hume/charts/postgresqlCore/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-core-hl
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlCore
+    helm.sh/chart: postgresqlCore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/name: postgresqlCore
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlCore/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-core
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlCore
+    helm.sh/chart: postgresqlCore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: postgresqlCore
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlEventStore/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-eventstore-hl
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlEventStore
+    helm.sh/chart: postgresqlEventStore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/name: postgresqlEventStore
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlEventStore/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-eventstore
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlEventStore
+    helm.sh/chart: postgresqlEventStore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: postgresqlEventStore
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlMedia/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-media-hl
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlMedia
+    helm.sh/chart: postgresqlMedia-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/name: postgresqlMedia
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlMedia/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-media
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlMedia
+    helm.sh/chart: postgresqlMedia-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: postgresqlMedia
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlOrchestra/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-orchestra-hl
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlOrchestra
+    helm.sh/chart: postgresqlOrchestra-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/name: postgresqlOrchestra
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/charts/postgresqlOrchestra/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-orchestra
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlOrchestra
+    helm.sh/chart: postgresqlOrchestra-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: postgresqlOrchestra
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: primary
+---
+# Source: hume/templates/service-api.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hume-api
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: api
+      protocol: TCP
+      name: api
+  selector:
+    app: hume-api
+---
+# Source: hume/templates/service-api.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hume-api-metrics
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+    obs.hume.k8s.io/component: api-metrics
+spec:
+  type: ClusterIP
+  ports:
+    - port: 7001
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+  selector:
+    app: hume-api
+---
+# Source: hume/templates/service-orchestra.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hume-orchestra
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8100
+      targetPort: orchestra
+      protocol: TCP
+      name: orchestra
+  selector:
+    app: hume-orchestra
+---
+# Source: hume/templates/service-orchestra.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hume-orchestra-webhook-0
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8101
+      targetPort: webhook
+      protocol: TCP
+      name: orchestra-webhook-0
+  selector:
+    statefulset.kubernetes.io/pod-name: hume-orchestra-0
+---
+# Source: hume/templates/service-web.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hume-web
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: web
+      protocol: TCP
+      name: web
+  selector:
+    app: hume-web
+---
+# Source: hume/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hume-web
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  replicas: 1
+  
+  selector:
+    matchLabels:
+      app: hume-web
+  strategy:
+      type: RollingUpdate
+  
+  template:
+    metadata:
+      labels:
+        app: hume-web
+    spec:
+      imagePullSecrets:
+        - name: graphaware-docker-creds
+      serviceAccountName: hume
+      
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: hume-web
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "docker.graphaware.com/hume-core/hume-web:2.26.0-SNAPSHOT"
+          imagePullPolicy: Always
+          ports:
+            - name: web
+              containerPort: 8081
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: hume-web-configmap
+          env:
+          resources:
+            null
+---
+# Source: hume/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hume-api
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  
+  replicas: 1
+  
+  selector:
+    matchLabels:
+      app: hume-api
+  
+  strategy:
+      type: RollingUpdate
+  
+  template:
+    metadata:
+      labels:
+        app: hume-api
+    spec:
+      imagePullSecrets:
+        - name: graphaware-docker-creds
+      serviceAccountName: hume
+      
+      securityContext:
+        fsGroup: 2000
+      # temporary disable serviceLinks until single uri config setting is available in API for eventstore connection
+      enableServiceLinks: false
+      volumes:
+      containers:
+        - name: hume-api
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "docker.graphaware.com/hume-core/hume-api:2.26.0-SNAPSHOT"
+          imagePullPolicy: Always
+          ports:
+            - name: api
+              containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: 
+            periodSeconds: 5
+            failureThreshold: 60
+          envFrom:
+            - configMapRef:
+                name: hume-api-configmap
+            - secretRef:
+                name: hume-licence
+                optional: true
+          env:
+          volumeMounts:
+          resources:
+            null
+---
+# Source: hume/charts/postgresqlCore/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-core
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlCore
+    helm.sh/chart: postgresqlCore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  replicas: 1
+  serviceName: postgresql-core-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresqlCore
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: postgresql-core
+      labels:
+        app.kubernetes.io/name: postgresqlCore
+        helm.sh/chart: postgresqlCore-12.1.5
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+      annotations:
+    spec:
+      serviceAccountName: default
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: postgresqlCore
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      hostNetwork: false
+      hostIPC: false
+      initContainers:
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:15.1.0-debian-11-r12
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "hume"
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-core
+                  key: postgres-password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-core
+                  key: password
+            - name: POSTGRES_DB
+              value: "hume"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "hume" -d "dbname=hume" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                
+                - |
+                  exec pg_isready -U "hume" -d "dbname=hume" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          resources:
+            limits: {}
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: hume/charts/postgresqlEventStore/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-eventstore
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlEventStore
+    helm.sh/chart: postgresqlEventStore-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  replicas: 1
+  serviceName: postgresql-eventstore-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresqlEventStore
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: postgresql-eventstore
+      labels:
+        app.kubernetes.io/name: postgresqlEventStore
+        helm.sh/chart: postgresqlEventStore-12.1.5
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+      annotations:
+    spec:
+      serviceAccountName: default
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: postgresqlEventStore
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      hostNetwork: false
+      hostIPC: false
+      initContainers:
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:15.1.0-debian-11-r12
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "eventstore"
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-eventstore
+                  key: postgres-password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-eventstore
+                  key: password
+            - name: POSTGRES_DB
+              value: "eventstore"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "eventstore" -d "dbname=eventstore" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                
+                - |
+                  exec pg_isready -U "eventstore" -d "dbname=eventstore" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          resources:
+            limits: {}
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: hume/charts/postgresqlMedia/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-media
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlMedia
+    helm.sh/chart: postgresqlMedia-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  replicas: 1
+  serviceName: postgresql-media-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresqlMedia
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: postgresql-media
+      labels:
+        app.kubernetes.io/name: postgresqlMedia
+        helm.sh/chart: postgresqlMedia-12.1.5
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+      annotations:
+    spec:
+      serviceAccountName: default
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: postgresqlMedia
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      hostNetwork: false
+      hostIPC: false
+      initContainers:
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:15.1.0-debian-11-r12
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "media"
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-media
+                  key: postgres-password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-media
+                  key: password
+            - name: POSTGRES_DB
+              value: "media"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "media" -d "dbname=media" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                
+                - |
+                  exec pg_isready -U "media" -d "dbname=media" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          resources:
+            limits: {}
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: hume/charts/postgresqlOrchestra/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-orchestra
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: postgresqlOrchestra
+    helm.sh/chart: postgresqlOrchestra-12.1.5
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  replicas: 1
+  serviceName: postgresql-orchestra-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresqlOrchestra
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: postgresql-orchestra
+      labels:
+        app.kubernetes.io/name: postgresqlOrchestra
+        helm.sh/chart: postgresqlOrchestra-12.1.5
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+      annotations:
+    spec:
+      serviceAccountName: default
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: postgresqlOrchestra
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      hostNetwork: false
+      hostIPC: false
+      initContainers:
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:15.1.0-debian-11-r12
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "orchestra"
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-orchestra
+                  key: postgres-password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-orchestra
+                  key: password
+            - name: POSTGRES_DB
+              value: "orchestra"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "orchestra" -d "dbname=orchestra" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                
+                - |
+                  exec pg_isready -U "orchestra" -d "dbname=orchestra" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          resources:
+            limits: {}
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: hume/templates/orchestra-statefulset.yml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hume-orchestra
+  labels:
+    app.kubernetes.io/name: hume-web
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    helm.sh/chart: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: hume
+spec:
+  serviceName: "orchestra"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hume-orchestra
+  template:
+    metadata:
+      labels:
+        app: hume-orchestra
+    spec:
+      imagePullSecrets:
+        - name: graphaware-docker-creds
+      serviceAccountName: hume
+      
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: hume-orchestra
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "docker.graphaware.com/hume-core/hume-orchestra:2.26.0-SNAPSHOT"
+          imagePullPolicy: Always
+          ports:
+            - name: orchestra
+              containerPort: 8100
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+            - name: webhook
+              containerPort: 8101
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /actuator/metrics
+              port: metrics
+            failureThreshold: 20
+            periodSeconds: 7
+          livenessProbe:
+            httpGet:
+              path: /actuator/metrics
+              port: metrics
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/metrics
+              port: metrics
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+          envFrom:
+            - configMapRef:
+                name: hume-orchestra-configmap
+          env:
+          resources:
+            null
+          volumeMounts:
+      volumes:
+  volumeClaimTemplates:
+---
+# Source: hume/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "hume-test-connection"
+  labels:
+    helm.sh/chart: hume-2.26.0-SNAPSHOT
+    app.kubernetes.io/name: hume
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "2.26.0-SNAPSHOT"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['hume:8081']
+  restartPolicy: Never
