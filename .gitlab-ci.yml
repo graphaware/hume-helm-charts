@@ -1,7 +1,22 @@
 image: docker.graphaware.com/mirror/debian:stable-slim
 
 stages:
+  # - lint
   - upload
+
+# lint-chart:
+#   stage: lint
+#   tags:
+#     - graphaware
+#     - k8s
+#   image: alpine/helm:3.13.0
+#   before_script:
+#     - apk add --no-cache python3 py3-pip
+#     - pip install pyyaml
+#   script:
+#     - export HARBOR_USERNAME='robot$imagepull-secret-shared'
+#     # - helm template -f ./_tests/metrics-enabled.yml hume-helm > ./_tests/metrics-enabled-out.yml
+#     - python3 ./_tests/verify_labels.py
 
 upload-chart:
   stage: upload
