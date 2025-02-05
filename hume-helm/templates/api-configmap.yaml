@@ -81,6 +81,7 @@ data:
   {{- if .Values.api.media.enabled }}
   hume.media.enabled: 'true'
   hume.media.uri: {{ .Values.api.media.uri }}
+  hume.media.uri-fe: {{ .Values.api.media.uri-fe }}
   hume.media.api-key: {{ .Values.media.security.apiKey }}
   {{- end }}
 ---
