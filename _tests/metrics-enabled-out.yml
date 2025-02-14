@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "bnJoTjMyQkNSWg=="
+  postgres-password: "R2V4Q0dZY043eQ=="
   password: "aHVtZQ=="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
@@ -42,7 +42,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "dEJTd29sZUpmUw=="
+  postgres-password: "VXFxNERmM0xPaA=="
   password: "ZXZlbnRzdG9yZQ=="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
@@ -59,7 +59,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "UXp3WjZWcVJWaw=="
+  postgres-password: "aHlPUTA4UDcwNg=="
   password: "bWVkaWE="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
@@ -76,7 +76,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "dllodW5OTUhtQw=="
+  postgres-password: "dzZZOGs2ZlN5NQ=="
   password: "cGdzcWxzM2NyM3Q="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---

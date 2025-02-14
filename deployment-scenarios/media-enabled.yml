@@ -1,0 +1,9 @@
+api:
+  remoteApi:
+    enabled: true
+    initialKey:
+      create: true
+      existingSecret: hello
+      existingSecretKey: api-token
+media:
+  enabled: true

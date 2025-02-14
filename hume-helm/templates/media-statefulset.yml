@@ -1,0 +1,112 @@
+{{- if .Values.media.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  serviceName: "media"
+  # do not allow media service to be scaled for now
+  # replicas: {{ .Values.media.deployment.replicas | int | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-media
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-media
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.media.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.media.initContainers }}
+      initContainers:
+        {{- toYaml .Values.media.initContainers | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-media
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.media.image.name }}:{{ include "mediaImageTag" . }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: media-http
+              containerPort: {{ .Values.media.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: {{ .Values.media.probes.startupProbe.path }}
+              port: {{ .Values.media.probes.startupProbe.port }}
+            failureThreshold: {{ .Values.media.probes.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.media.probes.startupProbe.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.media.probes.livenessProbe.path }}
+              port: {{ .Values.media.probes.livenessProbe.port }}
+            failureThreshold: {{ .Values.media.probes.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.media.probes.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.media.probes.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.media.probes.readinessProbe.path }}
+              port: {{ .Values.media.probes.readinessProbe.port }}
+            failureThreshold: {{ .Values.media.probes.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.media.probes.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.media.probes.readinessProbe.timeoutSeconds }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-media-configmap
+            {{- if .Values.media.extraSecrets }}
+            {{- range .Values.media.extraSecrets }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- end }}
+          env:
+            {{- with .Values.media.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if not .Values.postgresqlMedia.enabled}}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customMediaPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customMediaPostgresql.global.postgresql.secretRef.passwordSecretKey }}
+            {{- end }}
+          volumeMounts:
+            {{- with .Values.media.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.media.resources | nindent 12 }}
+      {{- with .Values.media.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8}}
+      {{- end }}
+      volumes:
+        {{- with .Values.media.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+  volumeClaimTemplates:
+    {{- with .Values.media.volumeClaimTemplates }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}
