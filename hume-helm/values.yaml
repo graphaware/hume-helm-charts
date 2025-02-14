@@ -211,19 +211,19 @@ media:
       inititalDelaySeconds: 0
       periodSeconds: 10
       failureThreshold: 3
-      path: /actuator/metrics
+      path: /actuator/prometheus
       port: metrics
     startupProbe:
       initialDelaySeconds: 30
       periodSeconds: 5
       failureThreshold: 60
-      path: /actuator/metrics
+      path: /actuator/prometheus
       port: metrics
     readinessProbe:
       failureThreshold: 10
       timeoutSeconds: 10
       periodSeconds: 5
-      path: /actuator/metrics
+      path: /actuator/prometheus
       port: metrics
   metrics:
     enabled: false
