@@ -28,6 +28,7 @@ spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
       {{ end }}
+      enableServiceLinks: false
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.media.nodeSelector }}
