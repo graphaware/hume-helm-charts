@@ -192,9 +192,10 @@ media:
       enabled: true
       uploadPath: "/tmp/upload"
       readyPath: "/tmp/upload"
-  file:
-    initial_status: "READY"
-    max_size: "200MB"
+  
+    file:
+      initial_status: "READY"
+      max_size: "200MB"
   metrics:
     enabled: false
     service:
