@@ -1,6 +1,6 @@
 # 2.26
 
-- Added hume-media
+- Added hume-media statefulset
 - Added `extraConfigMaps` to hume-api for providing externally created configmaps to the api environment
 
 # 2.25 

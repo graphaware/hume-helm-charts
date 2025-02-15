@@ -1,0 +1,18 @@
+{{- if and .Values.api.metrics.enabled .Values.media.metrics.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-media-service-monitor
+  labels:
+    {{- with .Values.media.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  jobLabel: "media-metrics"
+  selector:
+    matchLabels:
+      obs.hume.k8s.io/component: media-metrics
+  endpoints:
+    - port: {{ .Values.api.metrics.serviceMonitor.port }}
+      path: {{ .Values.api.metrics.serviceMonitor.path }}
+{{- end -}}

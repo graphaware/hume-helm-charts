@@ -11,6 +11,8 @@ metadata:
   {{- end }}
 data:
   management.server.port: "7001"
+  hume.media.upload.initial_file_status: {{ .Values.media.storage.file.initial_status }}
+  hume.media.upload.max-file-size: {{ .Values.media.storage.file.max_size }}
   {{- if .Values.media.storage.local.enabled }}
   hume.media.storage.providers.local.enabled: 'true'
   hume.media.storage.providers.local.path.uploaded: {{ .Values.media.storage.local.uploadPath }}

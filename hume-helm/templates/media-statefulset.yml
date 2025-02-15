@@ -62,6 +62,7 @@ spec:
             httpGet:
               path: {{ .Values.media.probes.livenessProbe.path }}
               port: {{ .Values.media.probes.livenessProbe.port }}
+            initialDelaySeconds: {{ .Values.media.probes.livenessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.media.probes.livenessProbe.failureThreshold }}
             periodSeconds: {{ .Values.media.probes.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.media.probes.livenessProbe.timeoutSeconds }}

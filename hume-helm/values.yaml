@@ -192,6 +192,9 @@ media:
       enabled: true
       uploadPath: "/tmp/upload"
       readyPath: "/tmp/upload"
+  file:
+    initial_status: "READY"
+    max_size: "200MB"
   metrics:
     enabled: false
     service:
@@ -208,7 +211,7 @@ media:
 
   probes:
     livenessProbe:
-      inititalDelaySeconds: 0
+      initialDelaySeconds: 0
       periodSeconds: 10
       failureThreshold: 3
       path: /actuator/prometheus
@@ -225,19 +228,9 @@ media:
       periodSeconds: 5
       path: /actuator/prometheus
       port: metrics
-  metrics:
-    enabled: false
-    service:
-      type: ClusterIP
-      port: 7001
-      targetPort: metrics
-    serviceMonitor:
-      enabled: false
-      jobLabel: ""
-      port: metrics
-      path: '/actuator/prometheus'
-      interval: 30s
-      labels: { }
+
+
+
 eventstore:
   enabled: false
   extraSecrets: []
