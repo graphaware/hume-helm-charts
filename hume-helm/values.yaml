@@ -29,7 +29,6 @@ postgresql-media-reference: &postgresql_media_reference postgresql-media
 
 
 humeCoreBaseRepository: "docker.graphaware.com/hume-core/"
-humeAnnotateBaseRepository: "docker.graphaware.com/hume-eventstore/"
 imagePullPolicy: "Always"
 tiers:
   discover:

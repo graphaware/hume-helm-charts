@@ -42,7 +42,7 @@ spec:
         - name: {{ include "hume-helm.fullname" . }}-eventstore
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.humeAnnotateBaseRepository }}{{ .Values.eventstore.image.name }}:{{ include "eventStoreImageTag" . }}"
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.eventstore.image.name }}:{{ include "eventStoreImageTag" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: eventstore-grpc
