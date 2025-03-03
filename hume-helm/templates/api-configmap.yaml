@@ -25,6 +25,7 @@ data:
   hume.feature.mde.enabled: "true"
   {{- end }}
   {{- if .Values.eventstore.enabled }}
+  hume.eventstore.enabled: "true"
   hume.eventstore.hostname: "{{ .Values.eventstore.app.name }}"
   hume.eventstore.port: "{{ .Values.eventstore.port }}"
   hume.eventstore.username: "{{ .Values.eventstore.username }}"
