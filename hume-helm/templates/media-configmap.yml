@@ -18,6 +18,18 @@ data:
   hume.media.storage.providers.local.path.uploaded: {{ .Values.media.storage.local.uploadPath }}
   hume.media.storage.providers.local.path.ready: {{ .Values.media.storage.local.readyPath }}
   {{- end }}
+  {{- if .Values.media.storage.minio.enabled }}
+  hume.media.storage.providers.minio.enabled: 'true'
+  hume.media.storage.providers.minio.path.uploaded: {{ .Values.media.storage.minio.uploadPath }}
+  hume.media.storage.providers.minio.path.ready: {{ .Values.media.storage.minio.readyPath }}
+  hume.media.storage.providers.minio.access-key: {{ .Values.media.storage.minio.accessKey }}
+  hume.media.storage.providers.minio.secret-key: {{ .Values.media.storage.minio.accessSecret }}
+  {{- end }}
+  {{- if .Values.media.storage.s3.enabled }}
+  hume.media.storage.providers.s3.enabled: 'true'
+  hume.media.storage.providers.s3.path.uploaded: {{ .Values.media.storage.s3.uploadPath }}
+  hume.media.storage.providers.s3.path.ready: {{ .Values.media.storage.s3.readyPath }}
+  {{- end }}
   {{- if .Values.eventstore.enabled }}
   hume.media.notifications.event-store.enabled: "{{ .Values.eventstore.enabled }}"
   hume.eventstore.hostname: "{{ .Values.eventstore.app.name }}"

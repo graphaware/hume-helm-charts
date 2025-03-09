@@ -188,9 +188,19 @@ media:
         signingKey: ""
   storage:
     local:
-      enabled: true
+      enabled: false
       uploadPath: "/tmp/upload"
       readyPath: "/tmp/upload"
+    s3:
+      enabled: false
+      uploadPath: ""
+      readyPath: ""
+    minio:
+      enabled: false
+      uploadPath: ""
+      readyPath: ""
+      accessKey: ""
+      accessSecret: ""
   
     file:
       initial_status: "READY"
