@@ -80,7 +80,7 @@ data:
   {{- end }}
   # Media
   {{- if .Values.api.media.enabled }}
-  hume.media.enabled: 'true'
+  hume.media.enabled: {{ .Values.api.media.enabled }}
   hume.media.uri: {{ .Values.api.media.uri }}
   hume.media.uri-fe: {{ .Values.api.media.uriFe }}
   hume.media.api-key: {{ .Values.media.security.apiKey }}
