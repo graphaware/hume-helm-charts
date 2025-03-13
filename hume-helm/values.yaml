@@ -224,7 +224,7 @@ media:
       initialDelaySeconds: 0
       periodSeconds: 10
       failureThreshold: 3
-      path: /actuator/prometheus
+      path: /actuator/health
       port: metrics
     startupProbe:
       initialDelaySeconds: 30
@@ -236,7 +236,7 @@ media:
       failureThreshold: 10
       timeoutSeconds: 10
       periodSeconds: 5
-      path: /actuator/prometheus
+      path: /actuator/health
       port: metrics
 
 
