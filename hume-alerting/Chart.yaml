@@ -3,8 +3,8 @@ name: hume-alerting
 description: A Helm chart for Kubernetes
 type: application
 icon: https://s3.eu-west-1.amazonaws.com/www-graphaware-com.infra.graphaware.com/favicon.ico
-version: "2.26.0"
-appVersion: "2.26.0"
+version: "2.27.0-SNAPSHOT"
+appVersion: "2.27.0-SNAPSHOT"
 dependencies:
   - name: postgresql
     version: 12.1.5
