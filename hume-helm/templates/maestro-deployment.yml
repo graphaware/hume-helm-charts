@@ -52,6 +52,8 @@ spec:
               containerPort: 7001
               protocol: TCP
           env:
+            - name: management.server.port
+              value: '7001'
             - name: maestro.model.provider
               value: {{ .Values.maestro.model.provider }}
             {{- with .Values.maestro.openai.apiKey }}
@@ -81,20 +83,20 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.maestro.resources | nindent 12 }}
-          # livenessProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: metrics
-          #   initialDelaySeconds: {{ .Values.maestro.probes.livenessProbe.inititalDelaySeconds }}
-          #   periodSeconds: {{ .Values.maestro.probes.livenessProbe.periodSeconds }}
-          #   failureThreshold: {{ .Values.maestro.probes.livenessProbe.failureThreshold }}
-          # startupProbe:
-          #   httpGet:
-          #     path: /actuator/health
-          #     port: metrics
-          #   initialDelaySeconds: {{ .Values.maestro.probes.startupProbe.inititalDelaySeconds }}
-          #   periodSeconds: {{ .Values.maestro.probes.startupProbe.periodSeconds }}
-          #   failureThreshold: {{ .Values.maestro.probes.startupProbe.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: {{ .Values.maestro.probes.livenessProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.maestro.probes.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.maestro.probes.livenessProbe.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: metrics
+            initialDelaySeconds: {{ .Values.maestro.probes.startupProbe.inititalDelaySeconds }}
+            periodSeconds: {{ .Values.maestro.probes.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.maestro.probes.startupProbe.failureThreshold }}
 {{- end }}
 
 ---
