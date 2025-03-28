@@ -1,0 +1,18 @@
+{{- if .Values.maestro.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-maestro-primary-configmap
+  labels:
+  {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  hume.feature.maestro.enabled: 'true'
+  hume.maestro.agent.main.key: 'main'
+  hume.maestro.agent.main.name: 'maestro'
+  hume.maestro.agent.main.uri: "http://{{ include "hume-helm.fullname" . }}-maestro:{{ .Values.maestro.port }}/chat"
+{{- end }}

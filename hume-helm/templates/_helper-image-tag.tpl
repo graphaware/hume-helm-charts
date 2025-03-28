@@ -37,3 +37,11 @@
 {{ .Values.appVersion | default .Chart.AppVersion }}
 {{- end -}}
 {{- end -}}
+
+{{- define "maestroImageTag" -}}
+{{- if .Values.maestro.image.tag -}}
+{{ .Values.maestro.image.tag }}
+{{- else -}}
+{{ .Values.appVersion | default .Chart.AppVersion }}
+{{- end -}}
+{{- end -}}

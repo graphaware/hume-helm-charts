@@ -293,6 +293,73 @@ eventstore:
       basicAuth:
         enabled: false
         secretName: eventstore-credentials-secret
+
+maestro:
+  enabled: false
+  primaryConfigMapRef: 'api-maestro-primary-configmap'
+  additionalConfigMapRef: ''
+  model:
+    provider: 'ollama'
+  # provider specific settings
+  ollama:
+    base-url: ''
+  openai:
+    apiKey:
+      secretKeyName: ''
+      secretKeyRef: ''
+  azure-openai:
+    deployment:
+      name: ''
+    endpoint: ''
+    apiKey:
+      secretKeyName: ''
+      secretKeyRef: ''
+  log-llm-requests: 'false'
+  image:
+    name: "hume-maestro"
+    tag: ""
+  port: 8090
+  deployment:
+    replicas: ""
+  service:
+    type: NodePort
+  app:
+    name: hume-maestro
+  # Additional environment variables for hume-maestro
+  # Can also override existing environment variables
+  env: []
+    # - name: spring.datasource.username
+    #   valueFrom:
+    #     secretKeyRef:
+    #       key: db-username
+    #       name: eventstore-postgres-db-username
+  # volumes templates configs to be set on the deployment
+  volumes: []
+  # volumeMounts config that will be set on the container
+  volumeMounts: []
+  probes:
+    livenessProbe:
+      inititalDelaySeconds: 0
+      periodSeconds: 10
+      failureThreshold: 3
+    startupProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 60
+  metrics:
+    enabled: false
+    service:
+      type: ClusterIP
+      port: 7001
+      targetPort: metrics
+    serviceMonitor:
+      enabled: false
+      jobLabel: ""
+      port: metrics
+      path: '/actuator/prometheus'
+      interval: 30s
+      labels: {}
+
 orchestra:
   enabled: true
   cluster:
@@ -441,7 +508,7 @@ customOrchestraPostgresql:
         passwordSecretKey: ""
 # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise is using custom DB endpoint
 postgresqlEventStore:
-  enabled: true
+  enabled: false
   global:
     postgresql:
       auth:
@@ -463,7 +530,7 @@ customEventstorePostgresql:
         passwordSecretKey: ""
 
 postgresqlMedia:
-  enabled: true
+  enabled: false
   global:
     postgresql:
       auth:

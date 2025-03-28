@@ -1,0 +1,138 @@
+{{- if .Values.maestro.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-maestro
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.maestro.deployment.replicas | default 1 }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ include "hume-helm.fullname" . }}-maestro
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{ toYaml . | trim | indent 4 }}
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hume-helm.fullname" . }}-maestro
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "hume-helm.serviceAccountName" . }}
+      {{ end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        {{- with .Values.maestro.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: {{ include "hume-helm.fullname" . }}-maestro
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.humeCoreBaseRepository }}{{ .Values.maestro.image.name }}:{{ include "maestroImageTag" . }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8090
+              protocol: TCP
+            - name: metrics
+              containerPort: 7001
+              protocol: TCP
+          env:
+            - name: maestro.model.provider
+              value: {{ .Values.maestro.model.provider }}
+            {{- with .Values.maestro.openai.apiKey }}
+            {{- if and .secretKeyName .secretKeyRef }}
+            - name: maestro.openai.api-key
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretKeyName }}
+                  key: {{ .secretKeyRef }}
+            {{- end }}
+            {{- end }}
+            {{- with (index .Values.maestro "azure-openai").apiKey }}
+            {{- if and .secretKeyName .secretKeyRef }}
+            - name: maestro.azure-openai.api-key
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretKeyName }}
+                  key: {{ .secretKeyRef }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.maestro.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            {{- with .Values.maestro.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.maestro.resources | nindent 12 }}
+          # livenessProbe:
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: metrics
+          #   initialDelaySeconds: {{ .Values.maestro.probes.livenessProbe.inititalDelaySeconds }}
+          #   periodSeconds: {{ .Values.maestro.probes.livenessProbe.periodSeconds }}
+          #   failureThreshold: {{ .Values.maestro.probes.livenessProbe.failureThreshold }}
+          # startupProbe:
+          #   httpGet:
+          #     path: /actuator/health
+          #     port: metrics
+          #   initialDelaySeconds: {{ .Values.maestro.probes.startupProbe.inititalDelaySeconds }}
+          #   periodSeconds: {{ .Values.maestro.probes.startupProbe.periodSeconds }}
+          #   failureThreshold: {{ .Values.maestro.probes.startupProbe.failureThreshold }}
+{{- end }}
+
+---
+
+{{- if .Values.maestro.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-maestro
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.maestro.service.type }}
+  ports:
+    - port: {{ .Values.maestro.port }}
+      targetPort: http
+      protocol: TCP
+      name: maestro
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-maestro
+---
+{{- if .Values.maestro.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-maestro-metrics
+  labels:
+    {{- include "hume.labels" . | nindent 4 }}
+    obs.hume.k8s.io/component: maestro-metrics
+spec:
+  type: {{ .Values.maestro.metrics.service.type }}
+  ports:
+    - port: {{ .Values.maestro.metrics.service.port }}
+      targetPort: {{ .Values.maestro.metrics.service.targetPort }}
+      protocol: TCP
+      name: metrics
+  selector:
+    app: {{ include "hume-helm.fullname" . }}-maestro
+{{- end }}
+---
+{{- end }}

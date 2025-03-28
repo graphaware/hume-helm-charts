@@ -16,6 +16,6 @@ dependencies:
   version: 13.1.1
 - name: hume-alerting
   repository: oci://docker.graphaware.com/public
-  version: 2.26.0-SNAPSHOT
-digest: sha256:7abead00be92ddb31cb6e66f235a90609dfc1622edac01d12145bf5b903a5776
-generated: "2025-01-22T19:53:14.679215+01:00"
+  version: 2.27.0-SNAPSHOT
+digest: sha256:3b789feba6e0b089d4ed29d535ddf2616ad45ddd4edf6488e239f43d83a17c74
+generated: "2025-03-28T14:46:43.295805+01:00"
