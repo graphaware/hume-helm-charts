@@ -1,0 +1,15 @@
+api:
+  remoteApi:
+    enabled: true
+    initialKey:
+      create: true
+      existingSecret: hello
+      existingSecretKey: api-token
+maestro:
+  enabled: true
+  model:
+    provider: openai
+  openai:
+    apiKey:
+      secretKeyName: 'my-openai-secret'
+      secretKeyRef: 'key'

@@ -1,3 +1,9 @@
+# 2.26.1
+
+- [Breaking change] : The `postgresqlEventstore.enabled` value is now `false` by default, this prevents an orphan postgresql server to be deployed even if the eventstore service itself was disabled.
+- [Breaking change] : The `postgresqlMedia.enabled` value is now `false` by default, this prevents an orphan postgresql server to be deployed even if the media service itself was disabled.
+- Add Maestro deployment
+
 # 2.26
 
 - Added hume-media statefulset
