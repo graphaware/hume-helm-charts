@@ -4,6 +4,7 @@ metadata:
   name: {{ include "hume-alerting.fullname" . }}-operator
   labels:
     {{- include "hume-alerting.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-alerting-operator
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.operator.deployment.replicas | default 1 }}
@@ -11,6 +12,8 @@ spec:
   selector:
     matchLabels:
       app: {{ include "hume-alerting.fullname" . }}-operator
+      app.kubernetes.io/component: hume-alerting-operator
+      {{- include "hume-alerting.labels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.operator.podAnnotations }}
@@ -18,8 +21,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "hume-alerting.selectorLabels" . | nindent 8 }}
+        {{- include "hume-alerting.labels" . | nindent 8 }}
         app: {{ include "hume-alerting.fullname" . }}-operator
+        app.kubernetes.io/component: hume-alerting-operator
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

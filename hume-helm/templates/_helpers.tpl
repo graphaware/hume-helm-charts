@@ -65,11 +65,11 @@ Create the name of the service account to use
 Common labels
 */}}
 {{- define "hume.labels" -}}
-app.kubernetes.io/name: {{ include "hume-helm.fullname" . }}-web
+app.kubernetes.io/name: {{ include "hume-helm.fullname" . }}
 app.kubernetes.io/version: {{ default .Chart.AppVersion | quote }}
 helm.sh/chart: {{ include "hume-helm.fullname" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/component: {{ include "hume-helm.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/part-of: {{ .Chart.Name }}
 {{- end -}}
 

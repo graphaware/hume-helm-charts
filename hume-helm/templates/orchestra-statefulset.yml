@@ -4,6 +4,7 @@ kind: StatefulSet
 metadata:
   name: {{ include "hume-helm.fullname" . }}-orchestra
   labels:
+    app.kubernetes.io/component: hume-orchestra
     {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
@@ -15,11 +16,29 @@ spec:
   selector:
     matchLabels:
       app: {{ include "hume-helm.fullname" . }}-orchestra
+      {{- include "hume.labels" . | nindent 6 }}
+      app.kubernetes.io/component: hume-orchestra
   template:
     metadata:
       labels:
         app: {{ include "hume-helm.fullname" . }}-orchestra
+        app.kubernetes.io/component: hume-orchestra
+        {{- include "hume.labels" . | nindent 8 }}
     spec:
+      {{- if ge (.Values.orchestra.deployment.replicas | int) 2 }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - hume-orchestra
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

@@ -34,12 +34,12 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "hume-alerting.labels" -}}
-helm.sh/chart: {{ include "hume-alerting.chart" . }}
-{{ include "hume-alerting.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/name: {{ include "hume-alerting.fullname" . }}
+app.kubernetes.io/version: {{ default .Chart.AppVersion | quote }}
+helm.sh/chart: {{ include "hume-alerting.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/part-of: {{ .Chart.Name }}
 {{- end }}
 
 {{/*
