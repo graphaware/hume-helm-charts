@@ -15,13 +15,11 @@ spec:
   replicas: {{ .Values.orchestra.deployment.replicas | int | default 1 }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-orchestra
-      {{- include "hume.labels" . | nindent 6 }}
+      {{- include "hume.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: hume-orchestra
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-orchestra
         app.kubernetes.io/component: hume-orchestra
         {{- include "hume.labels" . | nindent 8 }}
     spec:

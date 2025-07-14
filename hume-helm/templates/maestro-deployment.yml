@@ -16,9 +16,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-maestro
       app.kubernetes.io/component: hume-maestro
-      {{- include "hume.labels" . | nindent 6 }}
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{- with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -26,7 +25,6 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-maestro
         app.kubernetes.io/component: hume-maestro
         {{- include "hume.labels" . | nindent 8 }}
     spec:

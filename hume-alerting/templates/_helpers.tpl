@@ -46,7 +46,7 @@ app.kubernetes.io/part-of: {{ .Chart.Name }}
 Selector labels
 */}}
 {{- define "hume-alerting.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "hume-alerting.name" . }}
+app.kubernetes.io/name: {{ include "hume-alerting.fullname" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 

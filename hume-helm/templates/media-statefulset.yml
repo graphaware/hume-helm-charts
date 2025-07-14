@@ -16,13 +16,11 @@ spec:
   # replicas: {{ .Values.media.deployment.replicas | int | default 1 }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-media
       app.kubernetes.io/component: hume-media
-      {{- include "hume.labels" . | nindent 6 }}
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-media
         app.kubernetes.io/component: hume-media
         {{- include "hume.labels" . | nindent 8 }}
     spec:

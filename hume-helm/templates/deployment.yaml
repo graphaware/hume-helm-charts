@@ -15,9 +15,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-web
       app.kubernetes.io/component: hume-web
-      {{- include "hume.labels" . | nindent 6 }}
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{- with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -25,7 +24,6 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-web
         app.kubernetes.io/component: hume-web
         {{- include "hume.labels" . | nindent 8 }}
     spec:
@@ -81,9 +79,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-api
       app.kubernetes.io/component: hume-api
-      {{- include "hume.labels" . | nindent 6 }}
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{ with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -91,7 +88,6 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-api
         app.kubernetes.io/component: hume-api
         {{- include "hume.labels" . | nindent 8 }}
     spec:
