@@ -99,10 +99,10 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: app
+                - key: "app.kubernetes.io/component"
                   operator: In
                   values:
-                  - hume-api
+                  - "hume-api"
               topologyKey: "kubernetes.io/hostname"
       {{- end }}
       {{- with .Values.imagePullSecrets }}

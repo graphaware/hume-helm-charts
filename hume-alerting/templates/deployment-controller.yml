@@ -24,6 +24,20 @@ spec:
         {{- include "hume-alerting.labels" . | nindent 8 }}
         app.kubernetes.io/component: hume-alerting-controller
     spec:
+      {{- if ge (.Values.controller.deployment.replicas | int) 2 }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app.kubernetes.io/component"
+                  operator: In
+                  values:
+                  - "hume-alerting-controller"
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

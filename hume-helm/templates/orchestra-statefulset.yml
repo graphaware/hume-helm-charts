@@ -31,10 +31,10 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: app
+                - key: "app.kubernetes.io/component"
                   operator: In
                   values:
-                  - hume-orchestra
+                  - "hume-orchestra"
               topologyKey: "kubernetes.io/hostname"
       {{- end }}
       {{- with .Values.imagePullSecrets }}
