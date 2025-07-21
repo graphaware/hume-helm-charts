@@ -8,15 +8,15 @@ appVersion: "2.27.0-SNAPSHOT"
 dependencies:
   - name: postgresql
     version: 12.1.5
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     alias: postgresqlAlertingController
     condition: postgresqlAlertingController.enabled
   - name: postgresql
     version: 12.1.5
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     alias: postgresqlAlertingOperator
     condition: postgresqlAlertingOperator.enabled
   - name: kafka
     version: 22.1.4
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: kafka.internal.enabled

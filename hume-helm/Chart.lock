@@ -1,21 +1,21 @@
 dependencies:
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: keycloak
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 13.1.1
 - name: hume-alerting
   repository: oci://docker.graphaware.com/public
   version: 2.27.0-SNAPSHOT
-digest: sha256:7242495439405ec7aff81757cce2305246b38fb55f55859da71ebc33354f4595
-generated: "2025-07-07T13:24:43.488196+02:00"
+digest: sha256:4cffcade739f244ee470b35855d873d2415d75dc016d995d4329e85d675cb362
+generated: "2025-07-21T18:48:58.55283+02:00"

@@ -1,12 +1,12 @@
 dependencies:
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 12.1.5
 - name: kafka
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   version: 22.1.4
-digest: sha256:c6e55c2bf057cb5835f983586e278884c9496b801efebc0cc6f834d5d6f2de05
-generated: "2023-06-13T15:25:16.125061+02:00"
+digest: sha256:fc0735ac65dce7dfba945fedbef15a38f5f728311566345ae5b11e49850e4d4b
+generated: "2025-07-21T18:49:19.704136+02:00"

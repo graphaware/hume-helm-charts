@@ -14,27 +14,27 @@ description: "Helm Chart for GraphAware Hume - A Graph-Powered Insights Engine"
 dependencies:
     - name: postgresql
       version: 12.1.5
-      repository: https://charts.bitnami.com/bitnami
+      repository: oci://registry-1.docker.io/bitnamicharts
       alias: postgresqlCore
       condition: postgresqlCore.enabled
     - name: postgresql
       version: 12.1.5
-      repository: https://charts.bitnami.com/bitnami
+      repository: oci://registry-1.docker.io/bitnamicharts
       alias: postgresqlOrchestra
       condition: postgresqlOrchestra.enabled
     - name: postgresql
       version: 12.1.5
-      repository: https://charts.bitnami.com/bitnami
+      repository: oci://registry-1.docker.io/bitnamicharts
       alias: postgresqlEventStore
       condition: postgresqlEventStore.enabled
     - name: postgresql
       version: 12.1.5
-      repository: https://charts.bitnami.com/bitnami
+      repository: oci://registry-1.docker.io/bitnamicharts
       alias: postgresqlMedia
       condition: postgresqlMedia.enabled
     - name: keycloak
       version: 13.1.1
-      repository: https://charts.bitnami.com/bitnami
+      repository: oci://registry-1.docker.io/bitnamicharts
       alias: keycloak
       condition: keycloak.internal.enabled
     - name: hume-alerting
