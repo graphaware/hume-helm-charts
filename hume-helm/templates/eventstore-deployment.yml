@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore
   labels:
+    app.kubernetes.io/component: hume-eventstore
     {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
@@ -15,7 +16,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-eventstore
+      app.kubernetes.io/component: hume-eventstore
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{- with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -23,7 +25,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-eventstore
+        app.kubernetes.io/component: hume-eventstore
+        {{- include "hume.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

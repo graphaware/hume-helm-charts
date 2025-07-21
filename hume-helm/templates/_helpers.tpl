@@ -31,24 +31,24 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
+Selector labels
 */}}
-{{- define "hume-helm.labels" -}}
-helm.sh/chart: {{ include "hume-helm.chart" . }}
-{{ include "hume-helm.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- define "hume.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "hume-helm.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Selector labels
+Common labels
 */}}
-{{- define "hume-helm.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "hume-helm.name" . }}
+{{- define "hume.labels" -}}
+app.kubernetes.io/name: {{ include "hume-helm.fullname" . }}
+app.kubernetes.io/version: {{ default .Chart.AppVersion | quote }}
+helm.sh/chart: {{ include "hume-helm.fullname" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
+app.kubernetes.io/part-of: {{ .Chart.Name }}
+{{- end -}}
 
 {{/*
 Create the name of the service account to use
@@ -60,16 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-Common labels
-*/}}
-{{- define "hume.labels" -}}
-app.kubernetes.io/name: {{ include "hume-helm.fullname" . }}-web
-app.kubernetes.io/version: {{ default .Chart.AppVersion | quote }}
-helm.sh/chart: {{ include "hume-helm.fullname" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/component: {{ include "hume-helm.fullname" . }}
-{{- end -}}
-
