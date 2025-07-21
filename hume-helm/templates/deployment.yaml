@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "hume-helm.fullname" . }}-web
   labels:
+    app.kubernetes.io/component: hume-web
     {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
@@ -14,7 +15,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-web
+      app.kubernetes.io/component: hume-web
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{- with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -22,7 +24,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-web
+        app.kubernetes.io/component: hume-web
+        {{- include "hume.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -64,6 +67,7 @@ kind: Deployment
 metadata:
   name: {{ include "hume-helm.fullname" . }}-api
   labels:
+    app.kubernetes.io/component: hume-api
     {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
@@ -75,7 +79,8 @@ spec:
   {{ end }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-api
+      app.kubernetes.io/component: hume-api
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   {{ with .Values.deploymentStrategy }}
   strategy:
   {{ toYaml . | trim | indent 4 }}
@@ -83,8 +88,23 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-api
+        app.kubernetes.io/component: hume-api
+        {{- include "hume.labels" . | nindent 8 }}
     spec:
+      {{- if ge (.Values.api.deployment.replicas | int) 2 }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app.kubernetes.io/component"
+                  operator: In
+                  values:
+                  - "hume-api"
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

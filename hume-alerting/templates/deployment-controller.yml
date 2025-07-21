@@ -4,13 +4,15 @@ metadata:
   name: {{ include "hume-alerting.fullname" . }}-controller
   labels:
     {{- include "hume-alerting.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-alerting-controller
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.controller.deployment.replicas | default 1 }}
   {{- end }}
   selector:
     matchLabels:
-      app: {{ include "hume-alerting.fullname" . }}-controller
+      app.kubernetes.io/component: hume-alerting-controller
+      {{- include "hume-alerting.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,9 +21,23 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "alerting-controller-configmap.yaml") . | sha256sum }}
       {{- end }}
       labels:
-        {{- include "hume-alerting.selectorLabels" . | nindent 8 }}
-        app: {{ include "hume-alerting.fullname" . }}-controller
+        {{- include "hume-alerting.labels" . | nindent 8 }}
+        app.kubernetes.io/component: hume-alerting-controller
     spec:
+      {{- if ge (.Values.controller.deployment.replicas | int) 2 }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: "app.kubernetes.io/component"
+                  operator: In
+                  values:
+                  - "hume-alerting-controller"
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

@@ -4,6 +4,7 @@ kind: StatefulSet
 metadata:
   name: {{ include "hume-helm.fullname" . }}-media
   labels:
+    app.kubernetes.io/component: hume-media
     {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
@@ -15,11 +16,13 @@ spec:
   # replicas: {{ .Values.media.deployment.replicas | int | default 1 }}
   selector:
     matchLabels:
-      app: {{ include "hume-helm.fullname" . }}-media
+      app.kubernetes.io/component: hume-media
+      {{- include "hume.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "hume-helm.fullname" . }}-media
+        app.kubernetes.io/component: hume-media
+        {{- include "hume.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
