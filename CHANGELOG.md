@@ -1,7 +1,7 @@
 # 2.27.0
 
 - Kubernetes labels standardization
-- Added pod anti affinity for hume-api and hume-orchestra services
+- Added pod anti affinity for hume-api, hume-orchestra and hume-alerting services
 
 # 2.26.1
 
