@@ -138,7 +138,8 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-helm.fullname" . }}-maestro
+    app.kubernetes.io/component: hume-maestro
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---
 {{- end }}
