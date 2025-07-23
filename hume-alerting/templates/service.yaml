@@ -1,6 +1,6 @@
 apiVersion: v1
 kind: Service
-metadata:
+metadat:
   name: {{ include "hume-alerting.fullname" . }}-controller
   labels:
     {{- include "hume-alerting.labels" . | nindent 4 }}
@@ -12,7 +12,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ include "hume-alerting.fullname" . }}-controller
+    app.kubernetes.io/component: hume-alerting-controller
+    {{- include "hume-alerting.selectorLabels" . | nindent 4 }}
 ---
 {{- if .Values.controller.metrics.enabled }}
 apiVersion: v1
@@ -30,7 +31,8 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-alerting.fullname" . }}-controller
+    app.kubernetes.io/component: hume-alerting-controller
+    {{- include "hume-alerting.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---
 {{- if .Values.operator.metrics.enabled }}
@@ -49,6 +51,7 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-alerting.fullname" . }}-operator
+    app.kubernetes.io/component: hume-alerting-operator
+    {{- include "hume-alerting.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---

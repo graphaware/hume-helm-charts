@@ -16,4 +16,5 @@ spec:
       protocol: TCP
       name: web
   selector:
-    app: {{ include "hume-helm.fullname" . }}-web
+    app.kubernetes.io/component: hume-web
+    {{- include "hume.selectorLabels" . | nindent 4 }}

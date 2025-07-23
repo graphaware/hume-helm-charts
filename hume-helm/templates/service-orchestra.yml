@@ -13,7 +13,8 @@ spec:
       protocol: TCP
       name: orchestra
   selector:
-    app: {{ include "hume-helm.fullname" . }}-orchestra
+    {{- include "hume.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-orchestra
 {{- end }}
 ---
 {{- if .Values.orchestra.enabled -}}
@@ -33,7 +34,8 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-helm.fullname" . }}-orchestra
+    {{- include "hume.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-orchestra
 {{- end }}
 {{- end }}
 ---
@@ -54,7 +56,8 @@ spec:
       protocol: TCP
       name: orchestra-webhook-{{ $index }}
   selector:
-    statefulset.kubernetes.io/pod-name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $index }}
+    {{- include "hume.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-orchestra
 ---
 {{- end }}
 {{- end }}

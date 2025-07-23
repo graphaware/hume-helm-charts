@@ -12,7 +12,8 @@ spec:
       protocol: TCP
       name: api
   selector:
-    app: {{ include "hume-helm.fullname" . }}-api
+    app.kubernetes.io/component: hume-api
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 ---
 {{- if .Values.api.metrics.enabled }}
 apiVersion: v1
@@ -30,6 +31,7 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-helm.fullname" . }}-api
+    app.kubernetes.io/component: hume-api
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---

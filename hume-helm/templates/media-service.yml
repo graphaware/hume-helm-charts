@@ -13,7 +13,8 @@ spec:
       protocol: TCP
       name: media-http
   selector:
-    app: {{ include "hume-helm.fullname" . }}-media
+    app.kubernetes.io/component: hume-media
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 ---
 {{- if .Values.media.metrics.enabled }}
 apiVersion: v1
@@ -31,7 +32,6 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-helm.fullname" . }}-media
-{{- end }}
----
+    app.kubernetes.io/component: hume-media
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 {{- end }}

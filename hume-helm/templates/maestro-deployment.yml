@@ -119,7 +119,8 @@ spec:
       protocol: TCP
       name: maestro
   selector:
-    app: {{ include "hume-helm.fullname" . }}-maestro
+    app.kubernetes.io/component: hume-maestro
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 ---
 {{- if .Values.maestro.metrics.enabled }}
 apiVersion: v1
