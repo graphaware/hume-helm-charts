@@ -4,6 +4,7 @@ kind: Ingress
 metadata:
   name: {{ include "hume-helm.fullname" . }}-web-ingress
   labels:
+    app.kubernetes.io/component: hume-web
     {{- include "hume.labels" . | nindent 4 }}
   {{- if .Values.ingress.annotations }}
   annotations:

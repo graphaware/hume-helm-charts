@@ -2,6 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "hume-alerting.fullname" . }}-controller-configmap
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-alerting-controller
 data:
   logging.format: {{ .Values.controller.logging_format }}
   spring.mail.host: {{ .Values.controller.mail_host }}

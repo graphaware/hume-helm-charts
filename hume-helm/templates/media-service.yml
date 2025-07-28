@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-media
   labels:
+    app.kubernetes.io/component: hume-media
     {{- include "hume.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.media.service.type }}
@@ -15,6 +16,7 @@ spec:
   selector:
     app.kubernetes.io/component: hume-media
     {{- include "hume.selectorLabels" . | nindent 4 }}
+{{- end }}
 ---
 {{- if .Values.media.metrics.enabled }}
 apiVersion: v1
@@ -22,8 +24,8 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-media-metrics
   labels:
+    app.kubernetes.io/component: hume-media
     {{- include "hume.labels" . | nindent 4 }}
-    app.kubernetes.io/component: media-metrics
 spec:
   type: {{ .Values.media.metrics.service.type }}
   ports:

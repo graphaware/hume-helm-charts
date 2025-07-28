@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore
   labels:
+    app.kubernetes.io/component: hume-evenstore
     {{- include "hume.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.eventstore.service.type }}
@@ -22,6 +23,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore-metrics
   labels:
+    app.kubernetes.io/component: hume-evenstore
     {{- include "hume.labels" . | nindent 4 }}
     obs.hume.k8s.io/component: eventstore-metrics
 spec:

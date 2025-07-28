@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-api
   labels:
+    app.kubernetes.io/component: hume-api
     {{- include "hume.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.api.service.type }}
@@ -21,6 +22,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-api-metrics
   labels:
+    app.kubernetes.io/component: hume-api
     {{- include "hume.labels" . | nindent 4 }}
     obs.hume.k8s.io/component: api-metrics
 spec:

@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-orchestra
   labels:
+    app.kubernetes.io/component: hume-orchestra
     {{- include "hume.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.orchestra.service.type }}
@@ -26,6 +27,7 @@ metadata:
   labels:
     {{- include "hume.labels" . | nindent 4 }}
     obs.hume.k8s.io/component: orchestra-metrics
+    app.kubernetes.io/component: hume-orchestra
 spec:
   type: {{ .Values.orchestra.metrics.service.type }}
   ports:
@@ -47,6 +49,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" $ }}-orchestra-webhook-{{ $index }}
   labels:
+    app.kubernetes.io/component: hume-orchestra
     {{- include "hume.labels" $ | nindent 4 }}
 spec:
   type: {{ $.Values.orchestra.webhooks.service.type }}
@@ -56,8 +59,7 @@ spec:
       protocol: TCP
       name: orchestra-webhook-{{ $index }}
   selector:
-    {{- include "hume.selectorLabels" . | nindent 4 }}
+    {{- include "hume.selectorLabels" $ | nindent 4 }}
     app.kubernetes.io/component: hume-orchestra
----
 {{- end }}
 {{- end }}

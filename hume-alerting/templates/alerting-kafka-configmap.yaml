@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "hume-alerting.fullname" . }}-kafka-configmap
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
 data:
   {{- if .Values.kafka.internal.enabled }}
   BROKERS: "{{ include "hume-alerting.fullname" . }}-kafka:{{ .Values.kafka.internal.port }}"

@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "hume-helm.fullname" . }}-orchestra-configmap
   labels:
-  {{- include "hume.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-orchestra
+    {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
   {{ toYaml . | indent 4 }}
