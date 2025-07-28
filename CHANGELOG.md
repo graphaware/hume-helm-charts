@@ -1,3 +1,8 @@
+# 2.27.0
+
+- Kubernetes labels standardization
+- Added pod anti affinity for hume-api, hume-orchestra and hume-alerting services
+
 # 2.26.1
 
 - [Breaking change] : The `postgresqlEventstore.enabled` value is now `false` by default, this prevents an orphan postgresql server to be deployed even if the eventstore service itself was disabled.

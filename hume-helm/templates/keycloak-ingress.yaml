@@ -5,6 +5,7 @@ kind: Ingress
 metadata:
   name: {{ include "hume-helm.fullname" . }}-keycloak-ingress
   labels:
+    app.kubernetes.io/component: keycloak
     {{- include "hume.labels" . | nindent 4 }}
   {{- if .Values.ingress.annotations }}
   annotations:
