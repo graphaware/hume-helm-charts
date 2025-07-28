@@ -1,6 +1,6 @@
 # 2.27.0
 
-- Kubernetes labels standardization
+- [Breaking change] : Kubernetes/Helm labels standardization. This change requires manual deletion of all deployments and statefulsets because of `.spec.selector` labels change.
 - Added pod anti affinity for hume-api, hume-orchestra and hume-alerting services
 
 # 2.26.1
