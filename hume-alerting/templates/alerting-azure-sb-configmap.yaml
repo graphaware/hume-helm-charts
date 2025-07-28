@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "hume-alerting.fullname" . }}-azure-sb-configmap
+  labels:
+    {{- include "hume-alerting.labels" . | nindent 4 }}
 data:
   azure.servicebus.connection.string: {{ required "A valid Azure Service Bus connection string required" .Values.azure.serviceBus.connection_string | quote }}
   azure.servicebus.subscription.id: {{ required "A valid Azure Service Bus connection subscription required" .Values.azure.serviceBus.subscription_id | quote }}

@@ -5,7 +5,8 @@ kind: ConfigMap
 metadata:
   name: api-maestro-primary-configmap
   labels:
-  {{- include "hume.labels" . | nindent 4 }}
+    app.kubernetes.io/component: hume-maestro
+    {{- include "hume.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
   annotations:
   {{ toYaml . | indent 4 }}

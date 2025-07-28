@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore
   labels:
+    app.kubernetes.io/component: hume-evenstore
     {{- include "hume.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.eventstore.service.type }}
@@ -13,7 +14,8 @@ spec:
       protocol: TCP
       name: eventstore
   selector:
-    app: {{ include "hume-helm.fullname" . }}-eventstore
+    app.kubernetes.io/component: hume-eventstore
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 ---
 {{- if .Values.eventstore.metrics.enabled }}
 apiVersion: v1
@@ -21,6 +23,7 @@ kind: Service
 metadata:
   name: {{ include "hume-helm.fullname" . }}-eventstore-metrics
   labels:
+    app.kubernetes.io/component: hume-evenstore
     {{- include "hume.labels" . | nindent 4 }}
     obs.hume.k8s.io/component: eventstore-metrics
 spec:
@@ -31,7 +34,8 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: {{ include "hume-helm.fullname" . }}-eventstore
+    app.kubernetes.io/component: hume-eventstore
+    {{- include "hume.selectorLabels" . | nindent 4 }}
 {{- end }}
 ---
 {{- end }}
