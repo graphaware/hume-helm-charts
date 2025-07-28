@@ -59,7 +59,6 @@ spec:
       protocol: TCP
       name: orchestra-webhook-{{ $index }}
   selector:
-    {{- include "hume.selectorLabels" $ | nindent 4 }}
-    app.kubernetes.io/component: hume-orchestra
+    statefulset.kubernetes.io/pod-name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $index }}
 {{- end }}
 {{- end }}
