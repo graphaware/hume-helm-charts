@@ -60,5 +60,6 @@ spec:
       name: orchestra-webhook-{{ $index }}
   selector:
     statefulset.kubernetes.io/pod-name: {{ include "hume-helm.fullname" $ }}-orchestra-{{ $index }}
+---
 {{- end }}
 {{- end }}
