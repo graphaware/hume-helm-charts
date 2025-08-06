@@ -1,7 +1,7 @@
 # 2.27.0
 
 - [Breaking change] : Kubernetes/Helm labels standardization. This change requires manual deletion of all deployments and statefulsets because of `.spec.selector` labels change.
-- [Breaking change]: Because of recent Bitname [update](https://github.com/bitnami/charts/issues/35164) we have migrated all Bitnami 3rd party Docker images and Helm charts to our Docker registry.
+- [Breaking change]: Because of recent Bitnami [update](https://github.com/bitnami/charts/issues/35164) we have migrated all Bitnami 3rd party Docker images and Helm charts to our Docker registry.
 - Added pod anti affinity for hume-api, hume-orchestra and hume-alerting services.
 
 # 2.26.1
