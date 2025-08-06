@@ -38,6 +38,6 @@ dependencies:
       alias: keycloak
       condition: keycloak.internal.enabled
     - name: hume-alerting
-      version: 2.27.0"
+      version: 2.27.0
       repository: oci://docker.graphaware.com/public
       condition: alerting.enabled
