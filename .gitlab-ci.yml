@@ -28,11 +28,11 @@ upload-chart:
     - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 &&  chmod 700 get_helm.sh
     - ./get_helm.sh
     - export HARBOR_USERNAME='robot$imagepull-secret-shared'
+    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public
     - helm lint hume-alerting
     - helm dependency update hume-alerting
     - helm template hume-alerting -f hume-alerting/values.yaml
     - helm package hume-alerting
-    - helm registry login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD docker.graphaware.com/public
     - helm push hume-alerting-*.tgz oci://docker.graphaware.com/public
     - rm -f hume-alerting-*.tgz
     - helm lint hume-helm
