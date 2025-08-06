@@ -60,6 +60,10 @@ keycloak:
     enabled: false
   customKeycloak:
     customKeycloakEndpoint: ""
+  image:
+    registry: docker.graphaware.com
+    repository: public/bitnami/keycloak
+    tag: 20.0.5-debian-11-r1
   realm: ""
   client: ""
   fullnameOverride: hume-keycloak
@@ -465,6 +469,10 @@ hume-alerting:
 postgresqlCore:
   # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
   enabled: true
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:
@@ -487,6 +495,10 @@ customApiPostgresql:
 # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise it is using custom DB endpoint
 postgresqlOrchestra:
   enabled: true
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:
@@ -509,6 +521,10 @@ customOrchestraPostgresql:
 # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise is using custom DB endpoint
 postgresqlEventStore:
   enabled: false
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:
@@ -528,9 +544,12 @@ customEventstorePostgresql:
       secretRef:
         existingSecret: ""
         passwordSecretKey: ""
-
 postgresqlMedia:
   enabled: false
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:
