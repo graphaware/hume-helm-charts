@@ -8,6 +8,10 @@ humeAlertingOperatorBaseRepository: "docker.graphaware.com/hume-alerting/"
 humeMessagingProvider: "kafka"
 
 kafka:
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/kafka"
+    tag: "3.5.0-debian-11-r7"
   internal:
     enabled: true
     port: 9092
@@ -215,6 +219,10 @@ affinity: {}
 
 postgresqlAlertingController:
   enabled: true
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:
@@ -237,6 +245,10 @@ customAlertingControllerPostgresql:
 
 postgresqlAlertingOperator:
   enabled: true
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
   global:
     postgresql:
       auth:

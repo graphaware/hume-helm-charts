@@ -1,12 +1,12 @@
 dependencies:
 - name: postgresql
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: oci://docker.graphaware.com/public/bitnami
   version: 12.1.5
 - name: postgresql
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: oci://docker.graphaware.com/public/bitnami
   version: 12.1.5
 - name: kafka
-  repository: oci://registry-1.docker.io/bitnamicharts
+  repository: oci://docker.graphaware.com/public/bitnami
   version: 22.1.4
-digest: sha256:fc0735ac65dce7dfba945fedbef15a38f5f728311566345ae5b11e49850e4d4b
-generated: "2025-07-21T18:49:19.704136+02:00"
+digest: sha256:9dcd7e86abd16ce9d2f3389a1f90db0e669ae8d6720320dde28979f99438d5a3
+generated: "2025-08-04T11:07:35.986019+02:00"
