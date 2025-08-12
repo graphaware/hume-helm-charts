@@ -33,7 +33,7 @@ dependencies:
       alias: postgresqlMedia
       condition: postgresqlMedia.enabled
     - name: keycloak
-      version: 13.1.1
+      version: 14.4.0
       repository: oci://docker.graphaware.com/public/bitnami
       alias: keycloak
       condition: keycloak.internal.enabled
