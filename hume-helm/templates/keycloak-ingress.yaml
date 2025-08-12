@@ -1,4 +1,5 @@
-{{- if .Values.keycloak.enabled -}}
+{{- if .Values.keycloak.useKeycloak.enabled -}}
+{{- if .Values.keycloak.internal.enabled -}}
 {{- if .Values.ingress.enabled -}}
 apiVersion: {{ .Values.ingress.apiVersion }}
 kind: Ingress
@@ -38,5 +39,6 @@ spec:
                 name: {{ include "hume-helm.fullname" . }}-keycloak
                 port:
                   name: http
+{{- end }}
 {{- end }}
 {{- end }}
