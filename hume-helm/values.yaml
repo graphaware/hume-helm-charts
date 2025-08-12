@@ -62,8 +62,8 @@ keycloak:
     customKeycloakEndpoint: ""
   image:
     registry: docker.graphaware.com
-    repository: public/bitnami/keycloak
-    tag: 20.0.5-debian-11-r1
+    repository: internal/keycloak
+    tag: 21.1.1-enhanced
   realm: ""
   client: ""
   fullnameOverride: hume-keycloak
