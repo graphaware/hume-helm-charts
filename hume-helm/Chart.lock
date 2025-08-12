@@ -13,9 +13,9 @@ dependencies:
   version: 12.1.5
 - name: keycloak
   repository: oci://docker.graphaware.com/public/bitnami
-  version: 13.1.1
+  version: 14.4.0
 - name: hume-alerting
   repository: oci://docker.graphaware.com/public
-  version: 2.27.0-RC1
-digest: sha256:a8eaf7dd2f1812e2ab8865cb2e089a75c076f0878030fb773caf5ea30d8a1647
-generated: "2025-08-04T11:00:25.766508+02:00"
+  version: 2.27.0
+digest: sha256:04cd951efce399aae5b61452f37ccfde9bfade22468c602747a8c1b4e17f200b
+generated: "2025-08-11T13:45:30.909867+02:00"
