@@ -4,6 +4,12 @@
 - [Breaking change]: Because of recent Bitnami [update](https://github.com/bitnami/charts/issues/35164) we have migrated all Bitnami 3rd party Docker images and Helm charts to our Docker registry.
 - Added pod anti affinity for hume-api, hume-orchestra and hume-alerting services.
 - Bumped Keycloak helm chart to `14.4.0` and Keycloak image version to `21`.
+- Extended web deployment with options to add custom nginx headers. Below an example of values for `web.extraHeaders`.
+    ```
+    extraHeaders:
+      - add_header X-Custom1 "custom header 1";
+      - add_header X-Custom2 "custom header 2";
+    ```
 
 # 2.26.1
 

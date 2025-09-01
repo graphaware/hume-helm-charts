@@ -61,6 +61,18 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
+          volumeMounts:
+          {{- if .Values.web.extraHeaders }}
+            - name: extra-headers
+              mountPath: /etc/nginx/conf.d/extra-headers.conf
+              subPath: extra-headers.conf
+          {{- end }}
+      volumes:
+      {{- if .Values.web.extraHeaders }}
+        - name: extra-headers
+          configMap:
+            name: {{ include "hume-helm.fullname" . }}-web-extra-headers-configmap
+      {{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
