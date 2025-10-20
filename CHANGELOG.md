@@ -1,3 +1,5 @@
+# 2.27.4
+
 # 2.27.0
 
 - [Breaking change] : Kubernetes/Helm labels standardization. This change requires manual deletion of all deployments and statefulsets because of `.spec.selector` labels change.
