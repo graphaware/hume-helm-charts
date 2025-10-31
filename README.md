@@ -352,6 +352,41 @@ Lastly, provide the following settings in the api environment variables
       value: "/conf/server-logs.xml"
 ```
 
+## Operations
+
+### Manual heap dumps
+
+Support engineers might rely on a heap dump to identify memory issues occurring in running environments. The following procedure explains how to manually produce a heap dump when Orchestra is running on a Kubernetes pod ( same procedure applies for other services).
+
+**Generate the heap dump**
+
+Note : In Orchestra containers, the PID of the java process is always `1`.
+
+In the Orchestra container, perform the following : 
+
+```bash
+jcmd 1 GC.heap_dump /tmp/heapdump-orchestra-$(date +%s).hprof
+
+Picked up _JAVA_OPTIONS: -XX:+UseContainerSupport -XX:MaxRAMPercentage=80 -XX:MinRAMPercentage=80
+1:
+Dumping heap to /tmp/heapdump-orchestra-1760966998.hprof ...
+Heap dump file created [191955424 bytes in 0.454 secs]
+
+bash-5.2$ ls -l /tmp/ | grep heapdu
+-rw-------. 1 appuser appuser 191955424 Oct 20 13:29 heapdump-orchestra-1760966998.hprof
+```
+
+Create a debug ephemeral container :
+
+```bash
+kubectl debug -n <namespace> -it hume-orchestra-0 --image busybox --target hume-orchestra
+```
+
+Download the heap dump locally with kubectl
+
+```bash
+kubectl cp -n <namespace> -c debugger-qxqbs hume-orchestra-0:/proc/1/root/tmp/heapdump-orchestra-1760966998.hprof  heapdump-orchestra-1760966998.hprof
+```
 
 ## License
 
