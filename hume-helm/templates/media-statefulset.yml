@@ -13,7 +13,7 @@ metadata:
 spec:
   serviceName: "media"
   # do not allow media service to be scaled for now
-  # replicas: {{ .Values.media.deployment.replicas | int | default 1 }}
+  replicas: {{ .Values.media.deployment.replicas | int | default 1 }}
   selector:
     matchLabels:
       app.kubernetes.io/component: hume-media

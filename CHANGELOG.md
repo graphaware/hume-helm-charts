@@ -1,4 +1,10 @@
+# 2.28.1
+
+- Enable the `media` statefulset to scale up to more than 1 replica.
+
 # 2.28.0
+
+- Upgraded services to 2.28.0
 
 # 2.27.5
 
