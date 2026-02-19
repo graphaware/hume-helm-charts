@@ -145,6 +145,9 @@ spec:
             - name: metrics
               containerPort: 7001
               protocol: TCP
+            - name: security-server
+              containerPort: {{ .Values.api.securityServer.service.port }}
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /actuator/health

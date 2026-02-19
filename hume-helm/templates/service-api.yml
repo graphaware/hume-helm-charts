@@ -16,6 +16,24 @@ spec:
     app.kubernetes.io/component: hume-api
     {{- include "hume.selectorLabels" . | nindent 4 }}
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-api-security-server
+  labels:
+    app.kubernetes.io/component: hume-api
+    {{- include "hume.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.api.service.type }}
+  ports:
+    - port: {{ .Values.api.securityServer.service.port }}
+      targetPort: security-server
+      protocol: TCP
+      name: security-server
+  selector:
+    app.kubernetes.io/component: hume-api
+    {{- include "hume.selectorLabels" . | nindent 4 }}
+---
 {{- if .Values.api.metrics.enabled }}
 apiVersion: v1
 kind: Service
