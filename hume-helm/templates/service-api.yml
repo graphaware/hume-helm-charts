@@ -24,7 +24,7 @@ metadata:
     app.kubernetes.io/component: hume-api
     {{- include "hume.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.api.service.type }}
+  type: {{ .Values.api.securityServer.service.type }}
   ports:
     - port: {{ .Values.api.securityServer.service.port }}
       targetPort: security-server
