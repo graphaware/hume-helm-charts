@@ -68,6 +68,6 @@ data:
   {{- if .Values.media.metrics.enabled }}
   management.endpoints.web.exposure.include: "health,prometheus,info"
   {{- end }}
-  hume.security.uri: "{{ include "hume-helm.fullname" . }}-api-security-server:{{ .Values.api.port }}"
+  hume.security.uri: "{{ include "hume-helm.fullname" . }}-api-security-server:{{ .Values.api.securityServer.service.port }}"
 {{- end }}
 ---
