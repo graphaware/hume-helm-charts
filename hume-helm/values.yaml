@@ -152,7 +152,7 @@ api:
       # by default we use a large value of 300 seconds for slow environments
       initialDelaySeconds: 30
       periodSeconds: 5
-      failureThreshold: 60
+      failureThreshold: 600
   metrics:
     enabled: false
     service:
