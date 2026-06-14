@@ -120,8 +120,8 @@ api:
   remoteApi:
     enabled: false
   media:
-    enabled: false
-    uri: ""
+    enabled: true
+    uri: "http://hume-media:8008"
     # https://documentation.hume.graphaware.com/operations-manual/hume-api/api.html
     initialKey:
       create: false
@@ -171,7 +171,7 @@ api:
       type: ClusterIP
       port: 9080
 media:
-  enabled: false
+  enabled: true
   image:
     name: "hume-media"
     tag: ""
@@ -253,7 +253,7 @@ media:
 
 
 eventstore:
-  enabled: false
+  enabled: true
   extraSecrets: []
   image:
     name: "hume-eventstore"
@@ -527,7 +527,7 @@ customOrchestraPostgresql:
         passwordSecretKey: ""
 # When enabled the chart will install internal Bitnami PostgreSQL chart otherwise is using custom DB endpoint
 postgresqlEventStore:
-  enabled: false
+  enabled: true
   image:
     registry: "docker.graphaware.com"
     repository: "mirror/bitnami/postgresql"
@@ -552,7 +552,7 @@ customEventstorePostgresql:
         existingSecret: ""
         passwordSecretKey: ""
 postgresqlMedia:
-  enabled: false
+  enabled: true
   image:
     registry: "docker.graphaware.com"
     repository: "mirror/bitnami/postgresql"
