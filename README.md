@@ -1,405 +1,129 @@
 <!--- app-name: Hume -->
 
-# Hume packaged by GraphAware
+# Hume — Helm Chart by GraphAware
 
-Hume is an enterprise-level graph analytics solution that is easy to set up, maintain, and use. Hume helps organisations gain a competitive advantage by leveraging the power of graphs.
+[Hume](https://www.graphaware.com/products/hume/) is an enterprise graph analytics platform that lets teams build, explore, and operationalize graph-based intelligence on top of Neo4j.
 
-[Overview of Hume](https://www.graphaware.com/products/hume/)
+This repository contains the official Helm charts for deploying Hume on Kubernetes.
 
-Trademarks: This software listing is packaged by GraphAware. The respective trademarks mentioned in the offering are owned by the respective companies, and use of them does not imply any affiliation or endorsement.
-
-## Introduction
-
-GraphAware charts for Helm are carefully engineered, actively maintained and are the quickest and easiest way to deploy containers on a Kubernetes cluster that are ready to handle production workloads.
-
-This chart bootstraps a [Hume](https://github.com/graphaware/hume-helm-charts) deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+---
 
 ## Prerequisites
 
 - Kubernetes 1.19+
 - Helm 3.2.0+
-- Customer account in https://docker.graphaware.com/ in order to download both Helm chart and docker images
+- A GraphAware account with access to `docker.graphaware.com`
 - A Hume licence key
 
-## Installing the Chart
+> Neo4j is **not** included in the chart. You must provision it separately.
 
-### Prepare the release
+---
 
-1. Create a new namespace dedicated for Hume, assuming `hume` will be the namespace name
+## Quick Install
+
+**1. Log in to the Helm registry**
+
+```bash
+helm registry login -u '<username>' -p '<password>' docker.graphaware.com
+```
+
+**2. Create a namespace and image pull secret**
+
 ```bash
 kubectl create namespace hume
+
+kubectl create secret docker-registry graphaware-docker-creds \
+  --docker-server='docker.graphaware.com' \
+  --docker-username='<username>' \
+  --docker-password='<password>' \
+  -n hume
 ```
 
-2. Create the `docker-registry` secret with your GraphAware docker registry credentials
-```bash
-kubectl create secret docker-registry graphaware-docker-creds --docker-server='docker.graphaware.com' --docker-username='<username>' --docker-password='<password>' -n hume
-```
-
-3. Optionally, create the `hume-licence` secret with your Hume licence key (.b64 file content)
-```bash
-kubectl create secret generic --from-literal=hume.licence.key=<licence-b64-string> -n hume
-```
-
-> **NOTE**
-> Providing the `hume-licence` secret will install the licence automatically. If not provided you will be prompt to upload the licence file when logging in to Hume for the first time.
-
-4. Add the GraphAware OCI Helm repository to your local repository
-```bash
-helm registry login -u  '<username>' docker.graphaware.com
-helm pull oci://docker.graphaware.com/public/hume --version 2.21.0
-```
-
-### Install the Helm chart
-
-Assuming `hume` is the namespace name and `my-release` is the helm release name.
+**3. (Optional) Pre-load your licence key**
 
 ```bash
-$ helm install my-release oci://docker.graphaware.com/public/hume --version 2.21.0
-or
-$ helm install my-release oci://docker.graphaware.com/public/hume --version 2.21.0 -n hume -f values.yaml
-```
-> **NOTE**  
-> These commands deploy a Hume application on the Kubernetes cluster in the default configuration. It means that the Hume application will not be exposed to the Internet. If you want to access it via Ingress below we will provide a few examples.
-
-### Verify the installation
-
-1. Check the pods are ready
-```bash
-kubectl get pods -n hume
-NAME                       READY   STATUS    RESTARTS        AGE
-dev-release-0              1/1     Running   0               8m24s
-hume-api-897bbccb7-6g6vk   1/1     Running   1 (8m13s ago)   8m24s
-hume-orchestra-0           1/1     Running   0               8m24s
-hume-web-8d7d855fc-kwhvv   1/1     Running   0               8m24s
-postgresql-core-0          1/1     Running   0               8m24s
+kubectl create secret generic hume-licence \
+  --from-literal=hume.licence.key=<content-of-your-b64-file> \
+  -n hume
 ```
 
-2. Check the services look OK
+If omitted, Hume will prompt you to upload the licence on first login.
+
+**4. Install**
 
 ```bash
-kubectl get svc -n hume
-NAME                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                        AGE
-dev-release          ClusterIP      10.99.0.111     <none>        7687/TCP,7474/TCP,7473/TCP                     9m29s
-dev-release-admin    ClusterIP      10.100.142.91   <none>        6362/TCP,7687/TCP,7474/TCP,7473/TCP            9m29s
-dev-release-neo4j    LoadBalancer   10.106.141.47   localhost     7474:31776/TCP,7473:31964/TCP,7687:30353/TCP   9m29s
-hume-api             NodePort       10.97.248.25    <none>        8080:32081/TCP                                 9m29s
-hume-orchestra       ClusterIP      10.98.32.28     <none>        8100/TCP                                       9m29s
-hume-web             ClusterIP      10.104.105.20   <none>        8081/TCP                                       9m29s
-postgresql-core      ClusterIP      10.106.90.201   <none>        5432/TCP                                       9m29s
-postgresql-core-hl   ClusterIP      None            <none>        5432/TCP                                       9m29s
+helm install hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume
 ```
 
-3. Use `port-forwarding` to get access to the Hume user interface
-
-From one terminal run the following command : 
-```bash
-kubectl port-forward service/hume-web 8081:8081 -n hume
-```
-
-From another terminal run the following command : 
-```bash
-kubectl port-forward service/hume-api 8080:8080 -n hume
-```
-
-In a web browser, open the Hume user interface at http://localhost:8081.
-
-Use the default username/password `admin@hume.k8s / password` to log in to Hume.
-
-## Ingress
-
-In order to deploy Ingress resource we have to define `baseDomain` parameter and annotations per your Ingress Controller.
-
-**[AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/)**
-
-Example of `values.yaml`:
-```bash
-baseDomain: "<your-domain>"
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: "alb"
-    alb.ingress.kubernetes.io/scheme: "internal"
-    alb.ingress.kubernetes.io/group.name: "default-internal"
-    alb.ingress.kubernetes.io/target-type: "ip"
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
-    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-```
-
-**[Nginx Ingresss Controller](https://kubernetes.github.io/ingress-nginx/)**
-
-Example of `values.yaml`:
-```bash
-baseDomain: "<your-domain>"
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-```
-## Uninstalling the Chart
-
-To uninstall/delete the `my-release` deployment:
+**5. Access the UI (local / no ingress)**
 
 ```bash
-$ helm uninstall my-release -n hume
-```
-The command removes all the Kubernetes components associated with the chart and deletes the release.
-## Parameters
-
-| Name                      | Description                                                                         | Value                             |
-| ------------------------- | ----------------------------------------------------------------------------------- | --------------------------------- |
-| `baseDomain`              | Domain name (for example graphaware.com)                                            | `""`                              |
-| `imagePullSecrets`        | Docker registry secret name                                                         | `graphaware-docker-creds`         |
-| `autoscaling`             | Enable autoscaling for Hume                                                         | `"false"`                         |
-| `deploymentStrategy`      | Kubernetes Deployment Strategy Type                                                 | `"RollingUpdate"`                 |
-| `nameOverride`            | String to partially override hume.fullname                                          | `""`                              |
-| `fullnameOverride`        | String to fully override hume.fullname                                              | `"hume"`                          |
-| `ingress.enabled`         | Enables ingress                                                                     | `"false"`                         |
-| `autoscaling`             | Enable autoscaling for Hume                                                         | `"false"`                         |
-| `keycloak.enabled`        | Enable Keycloak                                                                     | `"false"`                         |
-| `serviceAccount.create`   | Enable ServiceAccount                                                               | `"true"`                          |
-
-## Using your own Docker registry
-
-When you need to use your own Docker registry, for example in air gapped environments you will need to copy the images from our Docker registry to yours.
-
-Additionally you need to adapt the chart to change the coordinates of the Docker images, to do so you can 
-override the following values : 
-
-| Chart | value | default | override |
-| --- | --- | --- | --- |
-| hume-core | `humeCoreBaseRepository` | `docker.graphaware.com/hume-core/` | `your-docker-domain.example/` |
-| hume-alerting | `humeAlertingBaseRepository` | `docker.graphaware.com/hume-alerting/` | `your-docker-domain.example/` |
-
-**Don't forget the trailing slash at the end of the repository name**
-
-## Overriding container environment variables
-
-The chart comes with default sensible environment variables. Those variables can be overriden for each service in their respective `env` section.
-
-For eg, to use a secret for the API postgres database password, you can provide the secret name like this 
-
-```yaml
-# values.yml
-api:
-  env:
-    - name: spring.datasource.password
-      valueFrom:
-        secretKeyRef:
-          key: db-password
-          name: api-postgres-db-password
+kubectl port-forward service/hume-web 8081:8081 -n hume &
+kubectl port-forward service/hume-api 8080:8080 -n hume &
 ```
 
-## Deployment with all the persistence outside of Kubernetes
+Open [http://localhost:8081](http://localhost:8081) and log in with `admin@hume.k8s` / `password`.
 
-It is not uncommon to have a PostgreSQL server and Neo4j server outside of Kubernetes. It's then necessary to disable all persistence dependencies and override the defaults for connections to those, Keycloak is often installed outside of the chart as well.
+> **Change the default admin credentials before exposing Hume externally.**
 
-See [`deployment-scenarios/external-persistence/values.yaml`](./deployment-scenarios/external-persistence/values.yml) for an example configuration.
+---
 
-## Install specific versions
+## Documentation
 
-You can install a specific version of the chart by specifying the chart version 
+The full documentation lives in [`docs/`](./docs/index.md).
+
+| I want to… | Go to |
+|---|---|
+| Understand what gets deployed | [Architecture Overview](docs/getting-started/architecture.md) |
+| Deploy to a real cluster with ingress | [Basic Installation](docs/installation/basic-installation.md) |
+| Configure AWS ALB or Nginx ingress | [Ingress](docs/configuration/ingress.md) |
+| Connect to an external PostgreSQL | [Databases](docs/configuration/databases.md) |
+| Set up SSO with Keycloak | [Authentication](docs/configuration/authentication.md) |
+| Enable LLM integration | [Maestro](docs/optional-services/maestro.md) |
+| Enable alerting | [Alerting](docs/optional-services/alerting.md) |
+| Upgrade from a previous version | [Upgrade Guide](docs/installation/upgrade-guide.md) |
+| Set up monitoring with Prometheus | [Monitoring](docs/production/monitoring.md) |
+| Diagnose a broken deployment | [Troubleshooting](docs/operations/troubleshooting.md) |
+| See all configuration parameters | [Values Reference](docs/reference/values-hume-helm.md) |
+
+---
+
+## Charts
+
+| Chart | Description |
+|---|---|
+| `hume-helm` | Core platform: Web, API, Orchestra, EventStore, Media, Maestro |
+| `hume-alerting` | Alerting engine: Controller, Operator, Kafka (separately licensed) |
 
 ```bash
-helm install my-release graphaware/hume -f values.yml --version 2.16.8
+# Install a specific version
+helm install hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume -f values.yaml
+
+# Upgrade
+helm upgrade hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume -f values.yaml
+
+# Uninstall (PVCs are retained)
+helm uninstall hume -n hume
 ```
 
-## Initial API Key creation
+---
 
-Hume can be configured to have an initial api key created when the application starts the first time.
+## Deployment Scenarios
 
-```yaml
-api:
-  remoteApi:
-    enabled: true
-    initialKey:
-      create: true
-      name: my-initial-key
-      token: my-insecure-token
-      roles: ADMINISTRATOR
-```
+The [`deployment-scenarios/`](./deployment-scenarios/) directory contains ready-to-use values files for common setups:
 
-Optionally, you can use an existing secret for the token
+| Scenario | Description |
+|---|---|
+| `external-persistence/` | External PostgreSQL and Keycloak |
+| `hume-sso-keycloak/` | SSO with internal Keycloak |
+| `orchestra-cluster/` | Orchestra in cluster mode with Prometheus monitoring |
+| `maestro/` | Maestro with OpenAI |
+| `initial-api-key/` | Pre-configured API key for automation |
 
-```yaml
-api:
-  remoteApi:
-    enabled: true
-      initialyKey:
-        create: true
-        name: my-initial-key
-        roles: ADMINISTRATOR
-        existingSecret: hume-api-key-secret # name of the secret to use
-        existingSecretKey: secret # optional, defaults to "token"
-```
-
-### Audit logging to console logs
-
-Configuring Hume to log all logs including the audit logs to console is generally helpful in Kubernetes 
-environments so all logs can be picked up by centralised logging such as Grafana Loki for example.
-
-To do so, you will need to create a configmap that defines the log4j2 configuration
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: api-log4j2-configmap
-data:
-  server-logs.xml: |
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!--
-        ~ Copyright (c) Graph Aware Limited - All Rights Reserved
-        ~ This file is part of GraphAware Hume
-        ~ Unauthorized copying of this file, via any medium is strictly prohibited
-        ~ Proprietary and confidential
-        -->
-
-      <Configuration status="info">
-          <Properties>
-              <Property name="_hume.security.audit.enabled">${sys:hume.security.audit.enabled:-false}</Property>
-              <Property name="_hume.security.audit.log.path">${sys:hume.security.audit.log.path:-/tmp/hume-audit}</Property>
-              <Property name="_hume.logging.shortenedClassNameLength">${sys:hume.logging.shortenedClassNameLength}</Property>
-              <Property name="_hume.logging.format">${sys:hume.logging.format:-plain}</Property>
-              <Property name="_hume.logging.maxDepth">${sys:hume.logging.maxDepth}</Property>
-              <Property name="_hume.logging.maxLength">${sys:hume.logging.maxLength}</Property>
-              <Property name="pattern">%highlight{[%-5level]}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} %d{dd-MM-yyyy HH:mm:ss.SSS} %style{[%thread]}{blue} %style{[%c{1}]}{yellow} - %m%n</Property>
-              <Property name="pattern_audit">%highlight{[%-5level]}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} %d{dd-MM-yyyy HH:mm:ss.SSS} %style{[%thread]}{blue} %style{[%c{1}]}{yellow} - %m%n</Property>
-          </Properties>
-
-          <Appenders>
-              <Console name="console_plain" target="SYSTEM_OUT">
-                  <PatternLayout pattern="${pattern}" />
-              </Console>
-              <Console name="console_json" target="SYSTEM_OUT">
-                  <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json" />
-              </Console>
-
-              <Console name="audit_false" target="SYSTEM_OUT">
-                  <PatternLayout pattern="${pattern_audit}"/>
-              </Console>
-
-              <Console name="audit_console_plain" target="SYSTEM_OUT">
-                  <PatternLayout pattern="${pattern_audit}"/>
-              </Console>
-          </Appenders>
-
-          <Loggers>
-              <Root level="info" additivity="true">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Root>
-
-              <Logger name="hume.audit" level="info" additivity="false">
-                  <AppenderRef ref="audit_console_plain" />
-              </Logger>
-
-              <Logger name="org.springframework.web" level="warn" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.hibernate" level="warn" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.springframework.data.convert.CustomConversions" level="error" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.springframework.context.support" level="warn" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.hibernate.type.descriptor" level="error" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.springframework.data.jpa.repository.query" level="error" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.elasticsearch.client.RestClient" level="warn" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-
-              <Logger name="org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker"
-                      level="error" additivity="false">
-                  <AppenderRef ref="console_${_hume.logging.format}" />
-              </Logger>
-          </Loggers>
-      </Configuration>
-```
-
-Secondly you will need to mount a volume and a volumemount with the configmap, add this to the `api` section of the chart : 
-
-```yaml
-  volumes:
-      - configMap:
-          name: api-log4j2-configmap
-        name: api-log4j2-volume
-  volumeMounts:
-      - mountPath: /conf
-        name: api-log4j2-volume
-```
-
-Lastly, provide the following settings in the api environment variables
-
-```yaml
-  env:
-    - name: hume.security.audit.enabled
-      value: 'true'
-    - name: hume.security.audit.appender
-      value: 'console_plain'
-    - name: "hume.logging.config.location"
-      value: "/conf/server-logs.xml"
-```
-
-## Operations
-
-### Manual heap dumps
-
-Support engineers might rely on a heap dump to identify memory issues occurring in running environments. The following procedure explains how to manually produce a heap dump when Orchestra is running on a Kubernetes pod ( same procedure applies for other services).
-
-**Generate the heap dump**
-
-Note : In Orchestra containers, the PID of the java process is always `1`.
-
-In the Orchestra container, perform the following : 
-
-```bash
-jcmd 1 GC.heap_dump /tmp/heapdump-orchestra-$(date +%s).hprof
-
-Picked up _JAVA_OPTIONS: -XX:+UseContainerSupport -XX:MaxRAMPercentage=80 -XX:MinRAMPercentage=80
-1:
-Dumping heap to /tmp/heapdump-orchestra-1760966998.hprof ...
-Heap dump file created [191955424 bytes in 0.454 secs]
-
-bash-5.2$ ls -l /tmp/ | grep heapdu
--rw-------. 1 appuser appuser 191955424 Oct 20 13:29 heapdump-orchestra-1760966998.hprof
-```
-
-Create a debug ephemeral container :
-
-```bash
-kubectl debug -n <namespace> -it hume-orchestra-0 --image busybox --target hume-orchestra
-```
-
-Download the heap dump locally with kubectl
-
-```bash
-kubectl cp -n <namespace> -c debugger-qxqbs hume-orchestra-0:/proc/1/root/tmp/heapdump-orchestra-1760966998.hprof  heapdump-orchestra-1760966998.hprof
-```
+---
 
 ## License
 
 Copyright &copy; 2022 GraphAware
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Licensed under the Apache License, Version 2.0. See [LICENSE](http://www.apache.org/licenses/LICENSE-2.0) for details.
