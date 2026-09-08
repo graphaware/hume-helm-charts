@@ -61,7 +61,7 @@ If you skip this step, Hume will prompt you to upload the licence file on first 
 
 ```bash
 helm install hume oci://docker.graphaware.com/public/hume \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume
 ```
 

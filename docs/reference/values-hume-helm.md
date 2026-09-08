@@ -69,7 +69,7 @@ Legend: **Required** = must be set before install · **Prod** = default is unsaf
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `api.image.name` | string | `"hume-api"` | Image name. Full image: `humeCoreBaseRepository + api.image.name`. |
-| `api.image.tag` | string | `""` | Image tag. Defaults to chart `appVersion` (3.0.0). |
+| `api.image.tag` | string | `""` | Image tag. Defaults to chart `appVersion` (3.2.0). |
 | `api.port` | int | `8080` | API port. |
 | `api.service.type` | string | `"NodePort"` | Service type. Use `ClusterIP` when behind an ingress. |
 | `api.deployment.replicas` | string | `""` | Replica count. Empty = 1. |

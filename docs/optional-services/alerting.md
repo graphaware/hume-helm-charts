@@ -37,7 +37,7 @@ Install alerting separately from the core Hume chart. Useful when you want indep
 
 ```bash
 helm install hume-alerting oci://docker.graphaware.com/public/hume-alerting \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume \
   -f alerting-values.yaml
 ```

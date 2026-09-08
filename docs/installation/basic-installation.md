@@ -28,7 +28,7 @@ Install with overlays:
 
 ```bash
 helm install hume oci://docker.graphaware.com/public/hume \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume \
   -f values-base.yaml \
   -f values-production.yaml
@@ -104,7 +104,7 @@ postgresqlOrchestra:
 
 ```bash
 helm install hume oci://docker.graphaware.com/public/hume \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume \
   -f values.yaml
 ```
@@ -113,7 +113,7 @@ For CI/CD pipelines, use `helm upgrade --install` — it is idempotent (installs
 
 ```bash
 helm upgrade --install hume oci://docker.graphaware.com/public/hume \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume \
   -f values.yaml
 ```
@@ -124,7 +124,7 @@ helm upgrade --install hume oci://docker.graphaware.com/public/hume \
 
 ```bash
 helm upgrade --install hume oci://docker.graphaware.com/public/hume \
-  --version 3.0.0 \
+  --version 3.2.0 \
   -n hume \
   -f values.yaml
 ```
@@ -132,7 +132,7 @@ helm upgrade --install hume oci://docker.graphaware.com/public/hume \
 To inspect available versions before installing, pull the chart:
 
 ```bash
-helm pull oci://docker.graphaware.com/public/hume --version 3.0.0 --untar
+helm pull oci://docker.graphaware.com/public/hume --version 3.2.0 --untar
 ```
 
 ---
