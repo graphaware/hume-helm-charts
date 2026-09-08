@@ -17,7 +17,7 @@ This repository contains the official Helm charts for deploying Hume on Kubernet
 
 > Neo4j is **not** included in the chart. You must provision it separately.
 
-> **Chart version:** the commands below install `3.0.0`, the latest released version at the time of writing. This branch's `hume-helm/Chart.yaml` is currently at `3.3.0-dev` — an unreleased, in-progress build that has not been published to `docker.graphaware.com` and cannot be installed. Always use the latest **released** version (no `-dev`/`-SNAPSHOT` suffix); check with your GraphAware contact if unsure.
+> **Chart version:** the commands below install `3.2.0`, the latest released version at the time of writing. This branch's `hume-helm/Chart.yaml` is currently at `3.3.0-dev` — an unreleased, in-progress build that has not been published to `docker.graphaware.com` and cannot be installed. Always use the latest **released** version (no `-dev`/`-SNAPSHOT` suffix); check with your GraphAware contact if unsure.
 
 ---
 
@@ -56,7 +56,7 @@ If omitted, Hume will prompt you to upload the licence on first login.
 **4. Install**
 
 ```bash
-helm install hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume
+helm install hume oci://docker.graphaware.com/public/hume --version 3.2.0 -n hume
 ```
 
 **5. Wait for pods to be ready**
@@ -110,10 +110,10 @@ The full documentation lives in [`docs/`](./docs/index.md).
 
 ```bash
 # Install a specific version
-helm install hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume -f values.yaml
+helm install hume oci://docker.graphaware.com/public/hume --version 3.2.0 -n hume -f values.yaml
 
 # Upgrade
-helm upgrade hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume -f values.yaml
+helm upgrade hume oci://docker.graphaware.com/public/hume --version 3.2.0 -n hume -f values.yaml
 
 # Uninstall (PVCs are retained)
 helm uninstall hume -n hume
