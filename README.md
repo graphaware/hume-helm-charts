@@ -17,9 +17,13 @@ This repository contains the official Helm charts for deploying Hume on Kubernet
 
 > Neo4j is **not** included in the chart. You must provision it separately.
 
+> **Chart version:** the commands below install `3.0.0`, the latest released version at the time of writing. This branch's `hume-helm/Chart.yaml` is currently at `3.3.0-dev` — an unreleased, in-progress build that has not been published to `docker.graphaware.com` and cannot be installed. Always use the latest **released** version (no `-dev`/`-SNAPSHOT` suffix); check with your GraphAware contact if unsure.
+
 ---
 
 ## Quick Install
+
+This walks through a local/evaluation setup with port-forwarding — no ingress or domain required. For a full walkthrough with pod-readiness checks and verification steps, see the [Quick Start guide](docs/getting-started/quick-start.md).
 
 **1. Log in to the Helm registry**
 
@@ -55,7 +59,15 @@ If omitted, Hume will prompt you to upload the licence on first login.
 helm install hume oci://docker.graphaware.com/public/hume --version 3.0.0 -n hume
 ```
 
-**5. Access the UI (local / no ingress)**
+**5. Wait for pods to be ready**
+
+```bash
+kubectl get pods -n hume -w
+```
+
+All pods should reach `Running` within a few minutes (the API pod may restart once while waiting for the database — this is expected).
+
+**6. Access the UI (local / no ingress)**
 
 ```bash
 kubectl port-forward service/hume-web 8081:8081 -n hume &
@@ -64,7 +76,7 @@ kubectl port-forward service/hume-api 8080:8080 -n hume &
 
 Open [http://localhost:8081](http://localhost:8081) and log in with `admin@hume.k8s` / `password`.
 
-> **Change the default admin credentials before exposing Hume externally.**
+> **For evaluation only.** This setup uses default admin credentials, embedded PostgreSQL with no replication, and no TLS. It is not suitable for production. Change the default admin credentials before exposing Hume externally, and see [Basic Installation](docs/installation/basic-installation.md) for a production-ready setup.
 
 ---
 
@@ -75,7 +87,8 @@ The full documentation lives in [`docs/`](./docs/index.md).
 | I want to… | Go to |
 |---|---|
 | Understand what gets deployed | [Architecture Overview](docs/getting-started/architecture.md) |
-| Deploy to a real cluster with ingress | [Basic Installation](docs/installation/basic-installation.md) |
+| Run Hume locally in minutes | [Quick Start](docs/getting-started/quick-start.md) |
+| Deploy to a real cluster with ingress | [Prerequisites](docs/getting-started/prerequisites.md) → [Basic Installation](docs/installation/basic-installation.md) |
 | Configure AWS ALB or Nginx ingress | [Ingress](docs/configuration/ingress.md) |
 | Connect to an external PostgreSQL | [Databases](docs/configuration/databases.md) |
 | Set up SSO with Keycloak | [Authentication](docs/configuration/authentication.md) |
