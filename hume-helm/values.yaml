@@ -26,6 +26,7 @@ postgresql-core-reference: &postgresql_core_reference postgresql-core
 postgresql-orchestra-reference: &postgresql_orchestra_reference postgresql-orchestra
 postgresql-eventstore-reference: &postgresql_eventstore_reference postgresql-eventstore
 postgresql-media-reference: &postgresql_media_reference postgresql-media
+postgresql-maestro-reference: &postgresql_maestro_reference postgresql-maestro
 
 
 humeCoreBaseRepository: "docker.graphaware.com/hume-core/"
@@ -566,6 +567,31 @@ postgresqlMedia:
         servicePort: 5432
   fullnameOverride: *postgresql_media_reference
 customMediaPostgresql:
+  global:
+    postgresql:
+      auth:
+        database: ""
+        hostname: ""
+        username: ""
+        servicePort: 5432
+      secretRef:
+        existingSecret: ""
+        passwordSecretKey: ""
+postgresqlMaestro:
+  enabled: false
+  image:
+    registry: "docker.graphaware.com"
+    repository: "mirror/bitnami/postgresql"
+    tag: "15.1.0-debian-11-r12"
+  global:
+    postgresql:
+      auth:
+        database: maestro
+        username: maestro
+        password: maestro
+        servicePort: 5432
+  fullnameOverride: *postgresql_maestro_reference
+customMaestroPostgresql:
   global:
     postgresql:
       auth:

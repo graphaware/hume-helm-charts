@@ -1,3 +1,8 @@
+# 3.3.0
+
+- [Breaking change]: Maestro 3.3 requires PostgreSQL. Enable `postgresqlMaestro.enabled` or configure `customMaestroPostgresql`; the chart fails to render when Maestro is enabled without either.
+- Maestro validates the user token forwarded by Hume API, configured with the same `keycloak.*` settings as Hume API and Hume Media.
+
 # 2.28.1
 
 - Enable the `media` statefulset to scale up to more than 1 replica.

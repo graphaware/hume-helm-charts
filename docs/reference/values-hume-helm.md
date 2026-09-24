@@ -370,6 +370,19 @@ External database override key: `customMediaPostgresql`.
 
 ---
 
+## PostgreSQL — Maestro (`postgresqlMaestro`)
+
+| Parameter | Default | Description |
+|---|---|---|
+| `postgresqlMaestro.enabled` | `false` | Deploy embedded PostgreSQL for Maestro. Maestro 3.3+ requires either this or `customMaestroPostgresql`. |
+| `postgresqlMaestro.global.postgresql.auth.database` | `"maestro"` | Database name. |
+| `postgresqlMaestro.global.postgresql.auth.username` | `"maestro"` | Username. |
+| `postgresqlMaestro.global.postgresql.auth.password` | `"maestro"` | **Prod** — change this. |
+
+External database override key: `customMaestroPostgresql` (password via `secretRef.existingSecret`).
+
+---
+
 ## Service Account
 
 | Parameter | Type | Default | Description |

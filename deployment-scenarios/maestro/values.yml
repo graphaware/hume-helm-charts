@@ -13,3 +13,5 @@ maestro:
     apiKey:
       secretKeyName: 'my-openai-secret'
       secretKeyRef: 'key'
+postgresqlMaestro:
+  enabled: true
