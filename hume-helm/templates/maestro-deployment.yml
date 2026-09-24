@@ -24,6 +24,8 @@ spec:
   {{ end }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/maestro-configmap.yml") . | sha256sum }}
       labels:
         app.kubernetes.io/component: hume-maestro
         {{- include "hume.labels" . | nindent 8 }}
@@ -54,9 +56,19 @@ spec:
             - name: metrics
               containerPort: 7001
               protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "hume-helm.fullname" . }}-maestro-configmap
           env:
             - name: management.server.port
               value: '7001'
+            {{- if not .Values.postgresqlMaestro.enabled }}
+            - name: spring.datasource.password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customMaestroPostgresql.global.postgresql.secretRef.existingSecret }}
+                  key: {{ .Values.customMaestroPostgresql.global.postgresql.secretRef.passwordSecretKey }}
+            {{- end }}
             - name: maestro.model.provider
               value: {{ .Values.maestro.model.provider }}
             {{- with .Values.maestro.openai.apiKey }}

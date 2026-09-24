@@ -1,0 +1,65 @@
+{{- if .Values.maestro.enabled -}}
+{{- /* fail early on settings maestro cannot start without */}}
+{{- if and (not .Values.postgresqlMaestro.enabled) (not .Values.customMaestroPostgresql.global.postgresql.auth.hostname) }}
+{{- fail "maestro requires PostgreSQL: set postgresqlMaestro.enabled=true or configure customMaestroPostgresql" }}
+{{- end }}
+{{- if and (not .Values.postgresqlMaestro.enabled) (not .Values.customMaestroPostgresql.global.postgresql.secretRef.existingSecret) }}
+{{- fail "customMaestroPostgresql.global.postgresql.secretRef.existingSecret is required when postgresqlMaestro is disabled" }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hume-helm.fullname" . }}-maestro-configmap
+  labels:
+    app.kubernetes.io/component: hume-maestro
+    {{- include "hume.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
+data:
+  # LLM provider settings
+  maestro.log-llm-requests-responses: {{ index .Values.maestro "log-llm-requests" | default "false" | quote }}
+  {{- with (index .Values.maestro.ollama "base-url") }}
+  maestro.ollama.base-url: {{ . | quote }}
+  {{- end }}
+  {{- with (index .Values.maestro "azure-openai") }}
+  {{- if .deployment.name }}
+  maestro.azure-openai.deployment.name: {{ .deployment.name | quote }}
+  {{- end }}
+  {{- if .endpoint }}
+  maestro.azure-openai.endpoint: {{ .endpoint | quote }}
+  {{- end }}
+  {{- end }}
+  # PostgreSQL - conversations, queries and the query work queue
+  {{- if .Values.postgresqlMaestro.enabled }}
+  spring.datasource.url: "jdbc:postgresql://postgresql-maestro:{{ .Values.postgresqlMaestro.global.postgresql.auth.servicePort }}/{{ .Values.postgresqlMaestro.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.postgresqlMaestro.global.postgresql.auth.username | quote }}
+  spring.datasource.password: {{ .Values.postgresqlMaestro.global.postgresql.auth.password | quote }}
+  {{- else }}
+  spring.datasource.url: "jdbc:postgresql://{{ .Values.customMaestroPostgresql.global.postgresql.auth.hostname }}:{{ .Values.customMaestroPostgresql.global.postgresql.auth.servicePort }}/{{ .Values.customMaestroPostgresql.global.postgresql.auth.database }}"
+  spring.datasource.username: {{ .Values.customMaestroPostgresql.global.postgresql.auth.username | quote }}
+  {{- end }}
+  # Security - maestro authenticates the user token hume-api forwards with every conversation call
+  {{- if .Values.keycloak.useKeycloak.enabled }}
+  hume.security.provider: 'keycloak'
+  keycloak.realm: {{ .Values.keycloak.realm }}
+  keycloak.resource: {{ .Values.keycloak.client }}
+  keycloak.public-client: 'true'
+  keycloak.principal-attribute: 'preferred_username'
+  keycloak.use-resource-role-mappings: 'true'
+  keycloak.enabled: 'true'
+  {{- if not .Values.keycloak.internal.enabled }}
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.customKeycloak.customKeycloakEndpoint }}"
+  {{- else if and .Values.keycloak.internal.enabled .Values.ingress.enabled }}
+  keycloak.auth-server-url: "{{ .Values.ingress.protocol.scheme }}://{{ .Values.keycloak.app.name }}{{ .Values.ingress.appNameSuffix }}.{{ required "Missing required baseDomain parameter!" .Values.baseDomain }}"
+  {{- else }}
+  keycloak.auth-server-url: "http://localhost:{{ .Values.keycloak.service.ports.http }}"
+  {{- end }}
+  {{- else }}
+  hume.security.provider: 'native'
+  {{- end }}
+  # hume-api security server - the async query workers resolve the roles of the user who submitted a query
+  hume.security.client.enabled: 'true'
+  hume.security.uri: "http://{{ include "hume-helm.fullname" . }}-api-security-server:{{ .Values.api.securityServer.service.port }}"
+{{- end }}

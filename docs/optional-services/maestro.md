@@ -94,33 +94,56 @@ kubectl create secret generic azure-openai-secret \
 
 ---
 
-## Agent ConfigMap
+## PostgreSQL
 
-Maestro uses a ConfigMap to define the AI agents available in the Hume UI. The `primaryConfigMapRef` value (default: `api-maestro-primary-configmap`) must point to a ConfigMap that exists in the same namespace.
-
-Create a minimal agent ConfigMap:
+Since 3.3 Maestro stores conversations, queries and its query work queue in PostgreSQL and runs its own
+Liquibase migrations on startup. Enable the bundled database:
 
 ```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: api-maestro-primary-configmap
-  namespace: hume
-data:
-  agents.yaml: |
-    agents:
-      - id: "default"
-        name: "Hume Assistant"
-        uri: "http://hume-maestro:8090"
+postgresqlMaestro:
+  enabled: true
 ```
 
-Apply it before installing or upgrading the chart:
+or point Maestro to an existing server (the user needs `CREATE` on the schema):
 
-```bash
-kubectl apply -f maestro-agents-configmap.yaml
+```yaml
+customMaestroPostgresql:
+  global:
+    postgresql:
+      auth:
+        hostname: 'my-postgres.example.com'
+        servicePort: 5432
+        database: 'maestro'
+        username: 'maestro'
+      secretRef:
+        existingSecret: 'maestro-db-credentials'
+        passwordSecretKey: 'password'
 ```
 
-If you have a second, supplementary ConfigMap (for additional agents), reference it with:
+---
+
+## Security
+
+Hume API forwards the user's token with every Maestro call, and Maestro validates it:
+
+- **Keycloak** (`keycloak.useKeycloak.enabled: true`) - configured like Hume API and Hume Media, from the same
+  `keycloak.realm`, `keycloak.client` and Keycloak URL; Maestro validates tokens against the realm's JWKS endpoint.
+- **Native security** - Maestro verifies the tokens signed by Hume API, so it needs Hume API's signing secret.
+  The chart does not provide it: set the same value as `hume.security.native.jwt.key` on both services
+  (`api.env` and `maestro.env`). Otherwise Hume API generates its own secret and keeps it in its database.
+
+Queries are processed asynchronously. The workers look up the submitting user's roles through the Hume API
+security server, using the same built-in `hume.security.api-key` as Hume API and Hume Media. If you change that
+key, set it on all three services (`api.env`, `media.env`, `maestro.env`).
+
+---
+
+## Agent ConfigMap
+
+The chart registers Maestro as a Hume API agent (key `main`) through the `api-maestro-primary-configmap`
+ConfigMap, using Maestro's synchronous `/chat` endpoint.
+
+To add further agents, put their `hume.maestro.agent.*` properties in your own ConfigMap and reference it with:
 
 ```yaml
 maestro:
@@ -173,6 +196,9 @@ maestro:
       enabled: true
       labels:
         release: kube-prometheus-stack
+
+postgresqlMaestro:
+  enabled: true
 
 api:
   remoteApi:

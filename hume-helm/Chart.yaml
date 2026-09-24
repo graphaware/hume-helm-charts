@@ -32,6 +32,11 @@ dependencies:
       repository: oci://docker.graphaware.com/public/bitnami
       alias: postgresqlMedia
       condition: postgresqlMedia.enabled
+    - name: postgresql
+      version: 12.1.5
+      repository: oci://docker.graphaware.com/public/bitnami
+      alias: postgresqlMaestro
+      condition: postgresqlMaestro.enabled
     - name: keycloak
       version: 14.4.0
       repository: oci://docker.graphaware.com/public/bitnami
